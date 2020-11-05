@@ -24,10 +24,7 @@
 %%
 
 prog:
-  | f = funcs; EOF { f }
-  ;
-
-funcs: f = list(func) { f }
+  | f = list(func); EOF { f }
   ;
 
 func:
@@ -35,10 +32,7 @@ func:
   ;
 
 block:
-  | LBRACE; ls = lines; RBRACE { ls }
-  ;
-
-lines: ls = list(line) { ls }
+  | LBRACE; ls = list(line); RBRACE { ls }
   ;
 
 line:

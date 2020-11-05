@@ -8,7 +8,7 @@ except ImportError:
         def jit_merge_point(self,**kw): pass
         def can_enter_jit(self,**kw): pass
 
-jitdriver = JitDriver(greens=['pc', 'program'], reds=['stack'])
+jitdriver = JitDriver(greens=['pc', 'program'], reds=['stack', 'variable_store'])
 def jitpolicy(driver):
     from rpython.jit.codewriter.policy import JitPolicy
     return JitPolicy()
@@ -16,13 +16,20 @@ def jitpolicy(driver):
 def mainloop(program):
     pc = 0
     stack = []
+    variable_store = {}
 
     while pc < len(program):
-        jitdriver.jit_merge_point(pc=pc, program=program, stack=stack)
+        jitdriver.jit_merge_point(pc=pc, program=program, stack=stack, variable_store=variable_store)
         code = program[pc]
         ops = code.split(" ")
-        if ops[0] == "LOAD":
+        if ops[0] == "LOAD_CONST":
             stack.append(int(ops[1]))
+        elif ops[0] == "LOAD_VAR":
+            x = str(ops[1])
+            stack.append(variable_store[x])
+        elif ops[0] == "STORE_VAR":
+            x = str(ops[1])
+            variable_store[x] = stack.pop()
         elif code == "ADD":
             y = stack.pop()
             x = stack.pop()
