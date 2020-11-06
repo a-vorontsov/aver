@@ -1,5 +1,8 @@
-import sys
-import os
+import sys, os
+from rpython.rlib import rfile
+
+LINE_BUFFER_LENGTH = 1024
+
 try:
     from rpython.rlib.jit import JitDriver
 except ImportError:
@@ -13,7 +16,7 @@ def jitpolicy(driver):
     from rpython.jit.codewriter.policy import JitPolicy
     return JitPolicy()
 
-def mainloop(program):
+def mainloop(program, stdin, stdout):
     pc = 0
     stack = []
     variable_store = {}
@@ -46,10 +49,13 @@ def mainloop(program):
             y = stack.pop()
             x = stack.pop()
             stack.append(x*y)
-
+        elif code == "PRINT":
+            print stack.pop()
+        elif code == "INPUT":
+            stdout.write("> ")
+            line = stdin.readline(LINE_BUFFER_LENGTH).strip()
+            stack.append(int(line))
         pc += 1
-
-    print(stack.pop())
 
 def parse(program):
     parsed = []
@@ -59,7 +65,7 @@ def parse(program):
             parsed.append(line.rstrip("\n"))
     return parsed
 
-def run(fp):
+def run(fp, stdin, stdout):
     program_contents = ""
     while True:
         read = os.read(fp, 4096)
@@ -68,7 +74,7 @@ def run(fp):
         program_contents += read
     os.close(fp)
     program = parse(program_contents)
-    mainloop(program)
+    mainloop(program, stdin, stdout)
 
 def entry_point(argv):
     try:
@@ -77,7 +83,12 @@ def entry_point(argv):
         print "You must supply a filename"
         return 1
 
-    run(os.open(filename, os.O_RDONLY, 0777))
+    stdin, stdout, stderr = rfile.create_stdio()
+    try:
+        run(os.open(filename, os.O_RDONLY, 0777), stdin, stdout)
+    except:
+        return 1
+
     return 0
 
 def target(*args):

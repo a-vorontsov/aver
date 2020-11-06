@@ -1,4 +1,5 @@
 open Ast
+open Printf
 
 let parse (s : string) : prog =
   let lexbuf = Lexing.from_string s in
@@ -13,8 +14,9 @@ let parse_file (f : string) : prog =
 
 let rec gen_expr_bytecode (e : expr) =
   match e with
-  | Int i -> Printf.sprintf "LOAD_CONST %d\n" i
-  | Var v -> Printf.sprintf "LOAD_VAR %s\n" v
+  | Input -> sprintf "INPUT\n"
+  | Int i -> sprintf "LOAD_CONST %d\n" i
+  | Var v -> sprintf "LOAD_VAR %s\n" v
   | Binop (b, x, y) -> (
       match b with
       | Add -> gen_expr_bytecode x ^ gen_expr_bytecode y ^ "ADD\n"
@@ -23,12 +25,12 @@ let rec gen_expr_bytecode (e : expr) =
       | Sub -> gen_expr_bytecode x ^ gen_expr_bytecode y ^ "SUB\n" )
 
 let gen_assign_bytecode (a : assignment) =
-  match a with s, e -> gen_expr_bytecode e ^ Printf.sprintf "STORE_VAR %s\n" s
+  match a with s, e -> gen_expr_bytecode e ^ sprintf "STORE_VAR %s\n" s
 
 let gen_stmt_bytecode (s : stmt) =
   match s with
   | Astmt a -> gen_assign_bytecode a
-  | Aexpr a -> gen_expr_bytecode a
+  | Print a -> gen_expr_bytecode a ^ sprintf "PRINT\n"
 
 let rec gen_bytecode (ast : prog) =
   let program = "" in
@@ -36,7 +38,7 @@ let rec gen_bytecode (ast : prog) =
 
 let write_file (s : string) =
   let oc = open_out "a.avb" in
-  Printf.fprintf oc "%s" s;
+  fprintf oc "%s" s;
   close_out oc
 
 let () =

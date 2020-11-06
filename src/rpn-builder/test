@@ -1,5 +1,11 @@
-x = 1010*15
-y = x+x
-y = y+x
-z = y*x
-z
+x = 1010 * 15
+print x
+y = x + x
+print y
+y = y + x
+print y
+z = y * x
+print z
+a = input * 4
+print a
+print 1 + 2
