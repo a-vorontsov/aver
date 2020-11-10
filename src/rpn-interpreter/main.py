@@ -1,20 +1,21 @@
 import sys, os
+from opcodes import OpCode
 from rpython.rlib import rfile
 
 LINE_BUFFER_LENGTH = 1024
 
-try:
-    from rpython.rlib.jit import JitDriver
-except ImportError:
-    class JitDriver(object):
-        def __init__(self,**kw): pass
-        def jit_merge_point(self,**kw): pass
-        def can_enter_jit(self,**kw): pass
+# try:
+#     from rpython.rlib.jit import JitDriver
+# except ImportError:
+#     class JitDriver(object):
+#         def __init__(self,**kw): pass
+#         def jit_merge_point(self,**kw): pass
+#         def can_enter_jit(self,**kw): pass
 
-jitdriver = JitDriver(greens=['pc', 'program'], reds=['stack', 'variable_store'])
-def jitpolicy(driver):
-    from rpython.jit.codewriter.policy import JitPolicy
-    return JitPolicy()
+# jitdriver = JitDriver(greens=['pc', 'program'], reds=['stack', 'variable_store'])
+# def jitpolicy(driver):
+#     from rpython.jit.codewriter.policy import JitPolicy
+#     return JitPolicy()
 
 def mainloop(program, stdin, stdout):
     pc = 0
@@ -22,36 +23,36 @@ def mainloop(program, stdin, stdout):
     variable_store = {}
 
     while pc < len(program):
-        jitdriver.jit_merge_point(pc=pc, program=program, stack=stack, variable_store=variable_store)
+        # jitdriver.jit_merge_point(pc=pc, program=program, stack=stack, variable_store=variable_store)
         code = program[pc]
-        ops = code.split(" ")
-        if ops[0] == "LOAD_CONST":
+        ops = code.split('\t')
+        if ops[0] == OpCode.LOAD_CONST:
             stack.append(int(ops[1]))
-        elif ops[0] == "LOAD_VAR":
+        elif ops[0] == OpCode.LOAD_VAR:
             x = str(ops[1])
             stack.append(variable_store[x])
-        elif ops[0] == "STORE_VAR":
+        elif ops[0] == OpCode.STORE_VAR:
             x = str(ops[1])
             variable_store[x] = stack.pop()
-        elif code == "ADD":
+        elif code == OpCode.ADD:
             y = stack.pop()
             x = stack.pop()
             stack.append(x+y)
-        elif code == "SUB":
+        elif code == OpCode.SUBTRACT:
             y = stack.pop()
             x = stack.pop()
             stack.append(x-y)
-        elif code == "DIV":
+        elif code == OpCode.DIVIDE:
             y = stack.pop()
             x = stack.pop()
             stack.append(x/y)
-        elif code == "MULT":
+        elif code == OpCode.MULTIPLY:
             y = stack.pop()
             x = stack.pop()
             stack.append(x*y)
-        elif code == "PRINT":
+        elif code == OpCode.PRINT:
             print stack.pop()
-        elif code == "INPUT":
+        elif code == OpCode.INPUT:
             stdout.write("> ")
             line = stdin.readline(LINE_BUFFER_LENGTH).strip()
             stack.append(int(line))

@@ -1,7 +1,10 @@
 default: clean build
 
+run:
+	dune exec ./main.exe
+
 build:
-	ocamlbuild -use-ocamlfind main.native
+	dune build main.exe
 
 clean:
-	ocamlbuild -clean
+	dune clean

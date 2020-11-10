@@ -1,11 +1,13 @@
-x = 1010 * 15
-print x
-y = x + x
-print y
-y = y + x
-print y
-z = y * x
-print z
-a = input * 4
-print a
-print 1 + 2
+x = 1010 * 15;
+print x;
+y = -x + x;
+print y;
+y = y + x;
+print y;
+z = y * x;
+print z;
+a = input * 4;
+print a;
+print 1 + 2;
+b = -1;
+print b;

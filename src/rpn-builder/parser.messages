@@ -1,0 +1,227 @@
+prog: ID EQUALS INT RPAREN
+##
+## Ends in an error in state: 22.
+##
+## assignment -> ID EQUALS expr . [ SEMICOLON ]
+## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## ID EQUALS expr
+##
+
+qwer
+
+prog: ID EQUALS TIMES
+##
+## Ends in an error in state: 21.
+##
+## assignment -> ID EQUALS . expr [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## ID EQUALS
+##
+
+wert
+
+prog: ID TIMES
+##
+## Ends in an error in state: 20.
+##
+## assignment -> ID . EQUALS expr [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## ID
+##
+
+erty
+
+prog: PRINT INT DIV INT PRINT
+##
+## Ends in an error in state: 17.
+##
+## expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr DIV expr . [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr DIV expr
+##
+
+rtyu
+
+prog: PRINT INT DIV TIMES
+##
+## Ends in an error in state: 16.
+##
+## expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr DIV
+##
+
+tyui
+
+prog: PRINT INT MINUS TIMES
+##
+## Ends in an error in state: 11.
+##
+## expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr MINUS
+##
+
+yuio
+
+prog: PRINT INT PLUS INT PRINT
+##
+## Ends in an error in state: 15.
+##
+## expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr PLUS expr . [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr PLUS expr
+##
+
+uiop
+
+prog: PRINT INT PLUS TIMES
+##
+## Ends in an error in state: 14.
+##
+## expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr PLUS
+##
+
+asdf
+
+prog: PRINT INT RPAREN
+##
+## Ends in an error in state: 18.
+##
+## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## stmt -> PRINT expr . SEMICOLON [ PRINT ID EOF ]
+##
+## The known suffix of the stack is as follows:
+## PRINT expr
+##
+
+sdfg
+
+prog: PRINT INT SEMICOLON TIMES
+##
+## Ends in an error in state: 25.
+##
+## list(stmt) -> stmt . list(stmt) [ EOF ]
+##
+## The known suffix of the stack is as follows:
+## stmt
+##
+
+dfgh
+
+prog: PRINT INT TIMES INT PRINT
+##
+## Ends in an error in state: 10.
+##
+## expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr TIMES expr . [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr TIMES expr
+##
+
+fghj
+
+prog: PRINT INT TIMES TIMES
+##
+## Ends in an error in state: 9.
+##
+## expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr TIMES
+##
+
+ghjk
+
+prog: PRINT LPAREN INT SEMICOLON
+##
+## Ends in an error in state: 8.
+##
+## expr -> expr . DIV expr [ TIMES RPAREN PLUS MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MINUS DIV ]
+## expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## LPAREN expr
+##
+
+hjkl
+
+prog: PRINT LPAREN TIMES
+##
+## Ends in an error in state: 4.
+##
+## expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## LPAREN
+##
+
+zxcv
+
+prog: PRINT MINUS TIMES
+##
+## Ends in an error in state: 2.
+##
+## expr -> MINUS . INT [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## MINUS
+##
+
+xcvb
+
+prog: PRINT TIMES
+##
+## Ends in an error in state: 1.
+##
+## stmt -> PRINT . expr SEMICOLON [ PRINT ID EOF ]
+##
+## The known suffix of the stack is as follows:
+## PRINT
+##
+
+cvbn
+
+prog: TIMES
+##
+## Ends in an error in state: 0.
+##
+## prog' -> . prog [ # ]
+##
+## The known suffix of the stack is as follows:
+##
+##
+
+vbnm
