@@ -30,8 +30,8 @@ let gen_condition_bytecode c j b =
           ( match o with
           | BEquals -> CMPEQ j
           | BNequals -> CMPNEQ j
-          | GreaterThan -> CMPLT j
-          | LessThan -> CMPGT j )
+          | GreaterThan -> CMPGT j
+          | LessThan -> CMPLT j )
           b
 
 let rec gen_while_bytecode c sl b =
