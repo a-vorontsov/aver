@@ -19,20 +19,27 @@ let int = '-'? digit+
 let letter = ['a'-'z' 'A'-'Z']
 let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
-rule read =
+rule token =
   parse
-  | white { read lexbuf }
-  | newline { next_line lexbuf; read lexbuf }
+  | white { token lexbuf }
+  | newline { next_line lexbuf; token lexbuf }
   | "/" { DIV }
   | "-" { MINUS }
   | "*" { TIMES }
   | "+" { PLUS }
   | "(" { LPAREN }
   | ")" { RPAREN }
+  | "{" { LBRACE }
+  | "}" { RBRACE }
   | "=" { EQUALS }
+  | "==" { BEQUALS }
+  | "!=" { BNEQUALS }
+  | "<" { LT }
+  | ">" { GT }
   | ";" { SEMICOLON }
   | "print" { PRINT }
   | "input" { INPUT }
+  | "while" { WHILE }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | id { ID (Lexing.lexeme lexbuf) }
   | eof { EOF }

@@ -12,7 +12,7 @@ let get_parse_error env =
 let rec parse lexbuf (checkpoint : Ast.prog I.checkpoint) =
   match checkpoint with
   | I.InputNeeded _env ->
-      let token = Lexer.read lexbuf in
+      let token = Lexer.token lexbuf in
       let startp = lexbuf.lex_start_p and endp = lexbuf.lex_curr_p in
       let checkpoint = I.offer checkpoint (token, startp, endp) in
       parse lexbuf checkpoint

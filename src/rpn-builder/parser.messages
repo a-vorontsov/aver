@@ -1,22 +1,24 @@
-prog: ID EQUALS INT RPAREN
+prog: ID EQUALS ID RPAREN
 ##
-## Ends in an error in state: 22.
+## Ends in an error in state: 25.
 ##
-## assignment -> ID EQUALS expr . [ SEMICOLON ]
-## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MINUS DIV ]
-## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MINUS DIV ]
-## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MINUS DIV ]
-## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MINUS DIV ]
+## stmt -> assignment . SEMICOLON [ PRINT ID EOF ]
 ##
 ## The known suffix of the stack is as follows:
-## ID EQUALS expr
+## assignment
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 20, spurious reduction of production assignment -> ID EQUALS expr
 ##
 
-qwer
+state25
 
 prog: ID EQUALS TIMES
 ##
-## Ends in an error in state: 21.
+## Ends in an error in state: 19.
 ##
 ## assignment -> ID EQUALS . expr [ SEMICOLON ]
 ##
@@ -24,11 +26,11 @@ prog: ID EQUALS TIMES
 ## ID EQUALS
 ##
 
-wert
+state19
 
 prog: ID TIMES
 ##
-## Ends in an error in state: 20.
+## Ends in an error in state: 18.
 ##
 ## assignment -> ID . EQUALS expr [ SEMICOLON ]
 ##
@@ -36,27 +38,11 @@ prog: ID TIMES
 ## ID
 ##
 
-erty
-
-prog: PRINT INT DIV INT PRINT
-##
-## Ends in an error in state: 17.
-##
-## expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr DIV expr . [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-##
-## The known suffix of the stack is as follows:
-## expr DIV expr
-##
-
-rtyu
+state18
 
 prog: PRINT INT DIV TIMES
 ##
-## Ends in an error in state: 16.
+## Ends in an error in state: 14.
 ##
 ## expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
 ##
@@ -64,11 +50,11 @@ prog: PRINT INT DIV TIMES
 ## expr DIV
 ##
 
-tyui
+state14
 
 prog: PRINT INT MINUS TIMES
 ##
-## Ends in an error in state: 11.
+## Ends in an error in state: 9.
 ##
 ## expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
 ##
@@ -76,27 +62,11 @@ prog: PRINT INT MINUS TIMES
 ## expr MINUS
 ##
 
-yuio
-
-prog: PRINT INT PLUS INT PRINT
-##
-## Ends in an error in state: 15.
-##
-## expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr PLUS expr . [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-##
-## The known suffix of the stack is as follows:
-## expr PLUS expr
-##
-
-uiop
+state9
 
 prog: PRINT INT PLUS TIMES
 ##
-## Ends in an error in state: 14.
+## Ends in an error in state: 12.
 ##
 ## expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
 ##
@@ -104,11 +74,11 @@ prog: PRINT INT PLUS TIMES
 ## expr PLUS
 ##
 
-asdf
+Missing right hand value for binary operator
 
 prog: PRINT INT RPAREN
 ##
-## Ends in an error in state: 18.
+## Ends in an error in state: 16.
 ##
 ## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MINUS DIV ]
 ## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MINUS DIV ]
@@ -120,11 +90,11 @@ prog: PRINT INT RPAREN
 ## PRINT expr
 ##
 
-sdfg
+state16
 
 prog: PRINT INT SEMICOLON TIMES
 ##
-## Ends in an error in state: 25.
+## Ends in an error in state: 23.
 ##
 ## list(stmt) -> stmt . list(stmt) [ EOF ]
 ##
@@ -132,27 +102,11 @@ prog: PRINT INT SEMICOLON TIMES
 ## stmt
 ##
 
-dfgh
-
-prog: PRINT INT TIMES INT PRINT
-##
-## Ends in an error in state: 10.
-##
-## expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr TIMES expr . [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-## expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-##
-## The known suffix of the stack is as follows:
-## expr TIMES expr
-##
-
-fghj
+state23
 
 prog: PRINT INT TIMES TIMES
 ##
-## Ends in an error in state: 9.
+## Ends in an error in state: 7.
 ##
 ## expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
 ##
@@ -160,11 +114,11 @@ prog: PRINT INT TIMES TIMES
 ## expr TIMES
 ##
 
-ghjk
+state7
 
 prog: PRINT LPAREN INT SEMICOLON
 ##
-## Ends in an error in state: 8.
+## Ends in an error in state: 6.
 ##
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MINUS DIV ]
 ## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MINUS DIV ]
@@ -176,11 +130,11 @@ prog: PRINT LPAREN INT SEMICOLON
 ## LPAREN expr
 ##
 
-hjkl
+state6
 
 prog: PRINT LPAREN TIMES
 ##
-## Ends in an error in state: 4.
+## Ends in an error in state: 2.
 ##
 ## expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
 ##
@@ -188,19 +142,7 @@ prog: PRINT LPAREN TIMES
 ## LPAREN
 ##
 
-zxcv
-
-prog: PRINT MINUS TIMES
-##
-## Ends in an error in state: 2.
-##
-## expr -> MINUS . INT [ TIMES SEMICOLON RPAREN PLUS MINUS DIV ]
-##
-## The known suffix of the stack is as follows:
-## MINUS
-##
-
-xcvb
+state2
 
 prog: PRINT TIMES
 ##
@@ -212,7 +154,7 @@ prog: PRINT TIMES
 ## PRINT
 ##
 
-cvbn
+state1
 
 prog: TIMES
 ##
@@ -224,4 +166,4 @@ prog: TIMES
 ##
 ##
 
-vbnm
+state0

@@ -4,7 +4,7 @@ run:
 	dune exec ./main.exe
 
 build:
-	dune build main.exe
+	dune build
 
 clean:
 	dune clean
