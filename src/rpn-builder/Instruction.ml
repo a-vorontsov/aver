@@ -2,12 +2,12 @@ open Printf
 
 type instruction =
   | LOAD_CONST of int
-  | LOAD_VAR of string
+  | LOAD_VAR of int
   | ADD
   | MULTIPLY
   | DIVIDE
   | SUBTRACT
-  | STORE_VAR of string
+  | STORE_VAR of int
   | PRINT
   | INPUT
   | CMPNEQ of int
@@ -19,17 +19,17 @@ type instruction =
 type bytecode = instruction list
 
 let as_string = function
-  | LOAD_CONST i -> sprintf "OP_LOAD_CONST %d" i
-  | LOAD_VAR s -> sprintf "OP_LOAD_VAR %s" s
-  | ADD -> "OP_ADD"
-  | MULTIPLY -> "OP_MULTIPLY"
-  | DIVIDE -> "OP_DIVIDE"
-  | SUBTRACT -> "OP_SUBTRACT"
-  | STORE_VAR s -> sprintf "OP_STORE_VAR %s" s
-  | PRINT -> "OP_PRINT"
-  | INPUT -> "OP_INPUT"
-  | CMPNEQ i -> sprintf "OP_CMPNEQ %d" i
-  | CMPEQ i -> sprintf "OP_CMPEQ %d" i
-  | CMPLT i -> sprintf "OP_CMPLT %d" i
-  | CMPGT i -> sprintf "OP_CMPGT %d" i
-  | JUMP i -> sprintf "OP_JMP %d" i
+  | LOAD_CONST i -> sprintf "0 %d" i
+  | LOAD_VAR i -> sprintf "1 %d" i
+  | ADD -> "2"
+  | MULTIPLY -> "3"
+  | DIVIDE -> "4"
+  | SUBTRACT -> "5"
+  | STORE_VAR i -> sprintf "6 %d" i
+  | PRINT -> "7"
+  | INPUT -> "8"
+  | CMPNEQ i -> sprintf "9 %d" i
+  | CMPEQ i -> sprintf "10 %d" i
+  | CMPLT i -> sprintf "11 %d" i
+  | CMPGT i -> sprintf "12 %d" i
+  | JUMP i -> sprintf "13 %d" i

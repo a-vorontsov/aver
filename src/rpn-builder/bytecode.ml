@@ -1,6 +1,23 @@
 open Ast
 open Instruction
 
+let vars_table = Hashtbl.create 32
+
+let var_counter = ref 0
+
+let new_var () =
+  incr var_counter;
+  !var_counter
+
+let replace_var op =
+  let var = Hashtbl.find_opt vars_table op in
+  match var with
+  | Some var' -> var'
+  | None ->
+      let var' = new_var () in
+      Hashtbl.add vars_table op var';
+      var'
+
 let rec append_bc c bc =
   match bc with [] -> [ c ] | h :: t -> h :: append_bc c t
 
@@ -8,7 +25,7 @@ let rec gen_expr_bytecode e b =
   match e with
   | Input -> append_bc INPUT b
   | Int i -> append_bc (LOAD_CONST i) b
-  | Var v -> append_bc (LOAD_VAR v) b
+  | Var v -> append_bc (LOAD_VAR (replace_var v)) b
   | Binop (o, x, y) ->
       gen_expr_bytecode x b @ gen_expr_bytecode y b
       @ append_bc
@@ -20,7 +37,8 @@ let rec gen_expr_bytecode e b =
           b
 
 let gen_assign_bytecode a b =
-  match a with s, e -> gen_expr_bytecode e b @ append_bc (STORE_VAR s) b
+  match a with
+  | s, e -> gen_expr_bytecode e b @ append_bc (STORE_VAR (replace_var s)) b
 
 let gen_condition_bytecode c j b =
   match c with

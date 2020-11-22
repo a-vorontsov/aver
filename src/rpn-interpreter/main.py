@@ -1,5 +1,6 @@
-import sys, os
+import sys, os, array
 from opcodes import OpCode
+from stack import Stack
 from rpython.rlib import rfile
 
 LINE_BUFFER_LENGTH = 1024
@@ -28,53 +29,71 @@ def readline():
 
 def mainloop(program, stdin):
     pc = 0
-    stack = []
-    variable_store = {}
+    stack = Stack()
+    variable_store = [0] * 10
 
     while pc < len(program):
         jitdriver.jit_merge_point(pc=pc, program=program, stack=stack, variable_store=variable_store)
         code = program[pc]
-        ops = code.split(' ')
+        ops = code
         opcode = ops[0]
-        # print get_location(pc, program)
+
         if opcode == OpCode.LOAD_CONST:
-            stack.append(int(ops[1]))
+            stack.push(ops[1])
         elif opcode == OpCode.LOAD_VAR:
-            x = str(ops[1])
-            stack.append(variable_store[x])
+            x = ops[1]
+            stack.push(variable_store[x])
         elif opcode == OpCode.STORE_VAR:
-            x = str(ops[1])
+            x = ops[1]
             variable_store[x] = stack.pop()
         elif opcode == OpCode.ADD:
             y = stack.pop()
             x = stack.pop()
-            stack.append(x+y)
+            stack.push(x+y)
         elif opcode == OpCode.SUBTRACT:
             y = stack.pop()
             x = stack.pop()
-            stack.append(x-y)
+            stack.push(x-y)
         elif opcode == OpCode.DIVIDE:
             y = stack.pop()
             x = stack.pop()
-            stack.append(x/y)
+            stack.push(x/y)
         elif opcode == OpCode.MULTIPLY:
             y = stack.pop()
             x = stack.pop()
-            stack.append(x*y)
+            stack.push(x*y)
         elif opcode == OpCode.CMPNEQ:
             y = stack.pop()
             x = stack.pop()
             if x == y:
-                jump_to = int(ops[1])
+                jump_to = ops[1]
+                pc = pc + jump_to
+        elif opcode == OpCode.CMPEQ:
+            y = stack.pop()
+            x = stack.pop()
+            if x != y:
+                jump_to = ops[1]
+                pc = pc + jump_to
+        elif opcode == OpCode.CMPGT:
+            y = stack.pop()
+            x = stack.pop()
+            if x <= y:
+                jump_to = ops[1]
+                pc = pc + jump_to
+        elif opcode == OpCode.CMPLT:
+            y = stack.pop()
+            x = stack.pop()
+            if x >= y:
+                jump_to = ops[1]
                 pc = pc + jump_to
         elif opcode == OpCode.JMP:
-            jump_to = int(ops[1])
+            jump_to = ops[1]
             pc = pc + jump_to
         elif opcode == OpCode.PRINT:
             print stack.pop()
         elif opcode == OpCode.INPUT:
             line = readline()
-            stack.append(int(line))
+            stack.push(int(line))
         pc += 1
 
 def parse(program):
@@ -82,7 +101,7 @@ def parse(program):
     lines = program.split("\n")
     for line in lines:
         if line != "":
-            parsed.append(line.rstrip("\n"))
+            parsed.append([int(x) for x in line.rstrip("\n").split(' ')])
     return parsed
 
 def run(fp, stdin):
