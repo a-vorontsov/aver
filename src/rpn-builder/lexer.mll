@@ -27,6 +27,7 @@ rule token =
   | "-" { MINUS }
   | "*" { TIMES }
   | "+" { PLUS }
+  | "%" { MOD }
   | "(" { LPAREN }
   | ")" { RPAREN }
   | "{" { LBRACE }
@@ -40,6 +41,9 @@ rule token =
   | "print" { PRINT }
   | "input" { INPUT }
   | "while" { WHILE }
+  | "if" { IF }
+  | "else" { ELSE }
+  | "pass" { PASS }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | id { ID (Lexing.lexeme lexbuf) }
   | eof { EOF }

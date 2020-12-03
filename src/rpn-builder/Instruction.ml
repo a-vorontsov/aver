@@ -7,6 +7,7 @@ type instruction =
   | MULTIPLY
   | DIVIDE
   | SUBTRACT
+  | MOD
   | STORE_VAR of int
   | PRINT
   | INPUT
@@ -15,6 +16,7 @@ type instruction =
   | CMPLT of int
   | CMPGT of int
   | JUMP of int
+  | PASS
 
 type bytecode = instruction list
 
@@ -25,11 +27,13 @@ let as_string = function
   | MULTIPLY -> "3"
   | DIVIDE -> "4"
   | SUBTRACT -> "5"
-  | STORE_VAR i -> sprintf "6 %d" i
-  | PRINT -> "7"
-  | INPUT -> "8"
-  | CMPNEQ i -> sprintf "9 %d" i
-  | CMPEQ i -> sprintf "10 %d" i
-  | CMPLT i -> sprintf "11 %d" i
-  | CMPGT i -> sprintf "12 %d" i
-  | JUMP i -> sprintf "13 %d" i
+  | MOD -> "6"
+  | STORE_VAR i -> sprintf "7 %d" i
+  | PRINT -> "8"
+  | INPUT -> "9"
+  | CMPNEQ i -> sprintf "10 %d" i
+  | CMPEQ i -> sprintf "11 %d" i
+  | CMPLT i -> sprintf "12 %d" i
+  | CMPGT i -> sprintf "13 %d" i
+  | JUMP i -> sprintf "14 %d" i
+  | PASS -> "15"

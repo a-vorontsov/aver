@@ -13,3 +13,6 @@ b = -1 + -2;
 print b;
 hello = 3+4;
 print hello;
+print 1%5;
+print 2%5;
+print 9%5;

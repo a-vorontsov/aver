@@ -62,6 +62,10 @@ def mainloop(program, stdin):
             y = stack.pop()
             x = stack.pop()
             stack.push(x*y)
+        elif opcode == OpCode.MOD:
+            y = stack.pop()
+            x = stack.pop()
+            stack.push(x%y)
         elif opcode == OpCode.CMPNEQ:
             y = stack.pop()
             x = stack.pop()
@@ -94,6 +98,8 @@ def mainloop(program, stdin):
         elif opcode == OpCode.INPUT:
             line = readline()
             stack.push(int(line))
+        elif opcode == OpCode.PASS:
+            pass
         pc += 1
 
 def parse(program):

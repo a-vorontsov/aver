@@ -33,6 +33,7 @@ let rec gen_expr_bytecode e b =
           | Add -> ADD
           | Mult -> MULTIPLY
           | Div -> DIVIDE
+          | Mod -> MOD
           | Sub -> SUBTRACT )
           b
 
@@ -60,11 +61,25 @@ let rec gen_while_bytecode c sl b =
   condition @ stmts
   @ append_bc (JUMP (-(List.length stmts + List.length condition + 1))) b
 
+and gen_if_bytecode c s s' b =
+  let stmts_if =
+    List.fold_left (fun acc stmt -> acc @ gen_stmt_bytecode stmt []) b s
+  in
+  let stmts_else =
+    List.fold_left (fun acc stmt -> acc @ gen_stmt_bytecode stmt []) b s'
+  in
+  let condition = gen_condition_bytecode c (List.length stmts_if + 1) b in
+  condition @ stmts_if
+  @ append_bc (JUMP (List.length stmts_else)) b
+  @ stmts_else
+
 and gen_stmt_bytecode s b =
   match s with
   | Assign a -> gen_assign_bytecode a b
   | Print a -> gen_expr_bytecode a b @ append_bc PRINT b
+  | If (c, s, s') -> gen_if_bytecode c s s' b
   | While (c, s) -> gen_while_bytecode c s b
+  | Pass -> append_bc PASS b
 
 let gen_bytecode a =
   List.fold_left (fun acc stmt -> acc @ gen_stmt_bytecode stmt []) [] a

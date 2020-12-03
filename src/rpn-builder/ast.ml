@@ -1,4 +1,4 @@
-type bop = Add | Mult | Div | Sub
+type bop = Add | Mult | Div | Sub | Mod
 
 type expr = Input | Int of int | Var of string | Binop of bop * expr * expr
 
@@ -11,7 +11,10 @@ type assignment = string * expr
 type stmt =
   | Assign of assignment
   | Print of expr
-  (* | If of condition * stmt * stmt *)
-  | While of condition * stmt list
+  | If of condition * block * block
+  | While of condition * block
+  | Pass
 
-type prog = stmt list
+and block = stmt list
+
+type prog = block
