@@ -1,4 +1,6 @@
-import sys, os, array
+import sys
+import os
+import array
 from opcodes import OpCode
 from stack import Stack
 from rpython.rlib import rfile
@@ -9,23 +11,29 @@ try:
     from rpython.rlib.jit import JitDriver
 except ImportError:
     class JitDriver(object):
-        def __init__(self,**kw): pass
-        def jit_merge_point(self,**kw): pass
-        def can_enter_jit(self,**kw): pass
+        def __init__(self, **kw): pass
+        def jit_merge_point(self, **kw): pass
+        def can_enter_jit(self, **kw): pass
 
 
 def get_location(pc, program):
     return "%s | %s" % (str(pc), program[pc])
 
-jitdriver = JitDriver(greens=['pc', 'program'], reds=['stack', 'variable_store'], get_printable_location=get_location)
+
+jitdriver = JitDriver(greens=['pc', 'program'], reds=[
+                      'stack', 'variable_store'], get_printable_location=get_location)
+
 
 def readline():
     res = ''
     while True:
         buf = os.read(0, 16)
-        if not buf: return res
+        if not buf:
+            return res
         res += buf
-        if res[-1] == '\n': return res[:-1]
+        if res[-1] == '\n':
+            return res[:-1]
+
 
 def mainloop(program, stdin):
     pc = 0
@@ -33,7 +41,8 @@ def mainloop(program, stdin):
     variable_store = [0] * 10
 
     while pc < len(program):
-        jitdriver.jit_merge_point(pc=pc, program=program, stack=stack, variable_store=variable_store)
+        jitdriver.jit_merge_point(
+            pc=pc, program=program, stack=stack, variable_store=variable_store)
         code = program[pc]
         ops = code
         opcode = ops[0]
@@ -49,23 +58,23 @@ def mainloop(program, stdin):
         elif opcode == OpCode.ADD:
             y = stack.pop()
             x = stack.pop()
-            stack.push(x+y)
+            stack.push(x + y)
         elif opcode == OpCode.SUBTRACT:
             y = stack.pop()
             x = stack.pop()
-            stack.push(x-y)
+            stack.push(x - y)
         elif opcode == OpCode.DIVIDE:
             y = stack.pop()
             x = stack.pop()
-            stack.push(x/y)
+            stack.push(x / y)
         elif opcode == OpCode.MULTIPLY:
             y = stack.pop()
             x = stack.pop()
-            stack.push(x*y)
+            stack.push(x * y)
         elif opcode == OpCode.MOD:
             y = stack.pop()
             x = stack.pop()
-            stack.push(x%y)
+            stack.push(x % y)
         elif opcode == OpCode.CMPNEQ:
             y = stack.pop()
             x = stack.pop()
@@ -102,6 +111,7 @@ def mainloop(program, stdin):
             pass
         pc += 1
 
+
 def parse(program):
     parsed = []
     lines = program.split("\n")
@@ -109,6 +119,7 @@ def parse(program):
         if line != "":
             parsed.append([int(x) for x in line.rstrip("\n").split(' ')])
     return parsed
+
 
 def run(fp, stdin):
     program_contents = ""
@@ -120,6 +131,7 @@ def run(fp, stdin):
     os.close(fp)
     program = parse(program_contents)
     mainloop(program, stdin)
+
 
 def entry_point(argv):
     try:
@@ -136,12 +148,15 @@ def entry_point(argv):
 
     return 0
 
+
 def target(*args):
     return entry_point, None
+
 
 def jitpolicy(driver):
     from rpython.jit.codewriter.policy import JitPolicy
     return JitPolicy()
+
 
 if __name__ == "__main__":
     entry_point(sys.argv)
