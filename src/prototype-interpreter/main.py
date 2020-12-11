@@ -4,24 +4,17 @@ import array
 from opcodes import OpCode
 from stack import Stack
 from rpython.rlib import rfile
+from rpython.rlib import jit
 
 LINE_BUFFER_LENGTH = 1024
-
-try:
-    from rpython.rlib.jit import JitDriver
-except ImportError:
-    class JitDriver(object):
-        def __init__(self, **kw): pass
-        def jit_merge_point(self, **kw): pass
-        def can_enter_jit(self, **kw): pass
 
 
 def get_location(pc, program):
     return "%s | %s" % (str(pc), program[pc])
 
 
-jitdriver = JitDriver(greens=['pc', 'program'], reds=[
-                      'stack', 'variable_store'], get_printable_location=get_location)
+jitdriver = jit.JitDriver(greens=['pc', 'program'], reds=[
+    'stack', 'variable_store'], get_printable_location=get_location)
 
 
 def readline():
@@ -35,6 +28,7 @@ def readline():
             return res[:-1]
 
 
+@jit.unroll_safe
 def mainloop(program, stdin):
     pc = 0
     stack = Stack()
@@ -149,8 +143,12 @@ def entry_point(argv):
     return 0
 
 
-def target(*args):
-    return entry_point, None
+def target(driver, args):
+    if driver.config.translation.jit:
+        driver.exe_name = "aver"
+    else:
+        driver.exe_name = "aver-nojit"
+    return entry_point
 
 
 def jitpolicy(driver):
@@ -158,5 +156,7 @@ def jitpolicy(driver):
     return JitPolicy()
 
 
-if __name__ == "__main__":
-    entry_point(sys.argv)
+if __name__ == '__main__':
+    from rpython.translator.driver import TranslationDriver
+    entry = target(TranslationDriver(), sys.argv)
+    sys.exit(entry(sys.argv))
