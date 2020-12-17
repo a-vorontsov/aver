@@ -1,14 +1,14 @@
 PYPYPATH?=~/pypy
 RPYTHON?=$(PYPYPATH)/rpython/bin/rpython
 
-aver-no-jit:
+no-jit:
 	@mkdir -p bin/
 	PYTHONPATH=$(PYTHONPATH):$(PYPYPATH):. $(RPYTHON) --batch main.py
 	@mv ./aver-nojit ./bin/
 
-aver-jit:
+jit:
 	@mkdir -p bin/
 	PYTHONPATH=$(PYTHONPATH):$(PYPYPATH):. $(RPYTHON) --batch -Ojit main.py
 	@mv ./aver ./bin/
 
-.PHONY: aver-no-jit aver-jit
+.PHONY: no-jit jit

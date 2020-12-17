@@ -1,11 +1,12 @@
-n = 12;
-f = 2;
-while (f < n / 2 + 1) {
-    if ((n / f) * f == n) {
-        print f;
-    } else {
-        pass;
+func main() {
+    n = 12;
+    f = 2;
+    while (f < n / 2 + 1) {
+        if ((n / f) * f == n) {
+            print f;
+        } else {
+            pass;
+        }
+        f = f + 1;
     }
-    f = f + 1;
 }
-print 23;

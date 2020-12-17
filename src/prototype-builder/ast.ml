@@ -6,6 +6,8 @@ type booleanop = BEquals | BNequals | GreaterThan | LessThan
 
 type condition = Bincond of booleanop * expr * expr
 
+type params = Params of string list
+
 type assignment = string * expr
 
 type stmt =
@@ -13,8 +15,13 @@ type stmt =
   | Print of expr
   | If of condition * block * block
   | While of condition * block
+  | Call of string * expr list
   | Pass
 
 and block = stmt list
 
-type prog = block
+type func = Func of string * params * block
+
+type funcs = func list
+
+type prog = funcs

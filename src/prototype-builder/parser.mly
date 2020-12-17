@@ -9,12 +9,13 @@
 %token BEQUALS BNEQUALS GT LT
 %token LPAREN RPAREN
 %token LBRACE RBRACE
+%token SEMICOLON COMMA
 %token PRINT INPUT
 %token IF ELSE
 %token PASS
 %token WHILE
+%token FUNC
 %token EOF
-%token SEMICOLON
 
 %left PLUS MINUS
 %left DIV TIMES MOD
@@ -40,20 +41,40 @@
   | MOD { Mod }
 
 prog:
-  | s = stmt* EOF { s }
+  | f = func* EOF { f }
+  // | s = stmt* EOF { s }
+
+func:
+  | FUNC x = ID ps = params b = block { Func (x, Params ps, b) }
+
+block:
+  | LBRACE ls = line* RBRACE { ls }
+
+line:
+  | s = stmt { s }
+
+params:
+  | LPAREN ps = param_list RPAREN { ps }
+
+param_list:
+  | ps = separated_list(COMMA, param) { ps }
+
+param:
+  | x = ID { x }
 
 stmt:
   | s = assignment SEMICOLON { Assign s }
   | PRINT e = expr SEMICOLON { Print e }
-  | IF LPAREN c = condition RPAREN LBRACE s1 = stmt* RBRACE ELSE LBRACE s2 = stmt* RBRACE { If (c, s1, s2) }
-  | WHILE LPAREN c = condition RPAREN LBRACE s = stmt* RBRACE { While (c, s) }
+  | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If (c, s1, s2) }
+  | WHILE LPAREN c = condition RPAREN s = block { While (c, s) }
   | PASS SEMICOLON { Pass }
+  | x = ID LPAREN p = separated_list(COMMA, expr) RPAREN SEMICOLON { Call (x, p) }
 
 condition:
   | e1 = expr o = bop e2 = expr { Bincond (o, e1, e2) }
 
 assignment:
-  | x = ID; EQUALS; e = expr { x, e }
+  | x = ID EQUALS e = expr { x, e }
 
 expr:
   | i = INT { Int i }

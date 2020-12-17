@@ -38,12 +38,14 @@ rule token =
   | "<" { LT }
   | ">" { GT }
   | ";" { SEMICOLON }
+  | "," { COMMA }
   | "print" { PRINT }
   | "input" { INPUT }
   | "while" { WHILE }
   | "if" { IF }
   | "else" { ELSE }
   | "pass" { PASS }
+  | "func" { FUNC }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | id { ID (Lexing.lexeme lexbuf) }
   | eof { EOF }

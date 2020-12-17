@@ -1,0 +1,19 @@
+func test() {
+    print 23;
+}
+
+func hello() {
+    print 1+2;
+    test();
+}
+
+func main() {
+    x = 32;
+    if (x == 2) {
+        print x;
+    } else {
+        print 2;
+    }
+    test();
+    hello();
+}

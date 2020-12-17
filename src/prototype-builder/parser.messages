@@ -1,6 +1,31 @@
-prog: ID EQUALS INT WHILE
+prog: FUNC ID LPAREN ID COMMA WHILE
 ##
-## Ends in an error in state: 43.
+## Ends in an error in state: 9.
+##
+## separated_nonempty_list(COMMA,param) -> param COMMA . separated_nonempty_list(COMMA,param) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## param COMMA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>9
+
+prog: FUNC ID LPAREN ID WHILE
+##
+## Ends in an error in state: 8.
+##
+## separated_nonempty_list(COMMA,param) -> param . [ RPAREN ]
+## separated_nonempty_list(COMMA,param) -> param . COMMA separated_nonempty_list(COMMA,param) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## param
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>8
+
+prog: FUNC ID LPAREN RPAREN LBRACE ID EQUALS INT WHILE
+##
+## Ends in an error in state: 63.
 ##
 ## assignment -> ID EQUALS expr . [ SEMICOLON ]
 ## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
@@ -13,11 +38,11 @@ prog: ID EQUALS INT WHILE
 ## ID EQUALS expr
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>63
 
-prog: ID EQUALS WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE ID EQUALS WHILE
 ##
-## Ends in an error in state: 42.
+## Ends in an error in state: 62.
 ##
 ## assignment -> ID EQUALS . expr [ SEMICOLON ]
 ##
@@ -25,361 +50,287 @@ prog: ID EQUALS WHILE
 ## ID EQUALS
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>62
 
-prog: ID WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE ID LPAREN INT COMMA WHILE
 ##
-## Ends in an error in state: 41.
+## Ends in an error in state: 60.
+##
+## separated_nonempty_list(COMMA,expr) -> expr COMMA . separated_nonempty_list(COMMA,expr) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## expr COMMA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>60
+
+prog: FUNC ID LPAREN RPAREN LBRACE ID LPAREN INT WHILE
+##
+## Ends in an error in state: 59.
+##
+## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . MOD expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
+## separated_nonempty_list(COMMA,expr) -> expr . [ RPAREN ]
+## separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>59
+
+prog: FUNC ID LPAREN RPAREN LBRACE ID LPAREN WHILE
+##
+## Ends in an error in state: 55.
+##
+## stmt -> ID LPAREN . loption(separated_nonempty_list(COMMA,expr)) RPAREN [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## ID LPAREN
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>55
+
+prog: FUNC ID LPAREN RPAREN LBRACE ID WHILE
+##
+## Ends in an error in state: 54.
 ##
 ## assignment -> ID . EQUALS expr [ SEMICOLON ]
+## stmt -> ID . LPAREN loption(separated_nonempty_list(COMMA,expr)) RPAREN [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## ID
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>54
 
-prog: IF LPAREN INT BEQUALS ID RPAREN LBRACE PASS SEMICOLON EOF
-##
-## Ends in an error in state: 48.
-##
-## stmt -> IF LPAREN condition RPAREN LBRACE list(stmt) . RBRACE ELSE LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
-##
-## The known suffix of the stack is as follows:
-## IF LPAREN condition RPAREN LBRACE list(stmt)
-##
-## WARNING: This example involves spurious reductions.
-## This implies that, although the LR(1) items shown above provide an
-## accurate view of the past (what has been recognized so far), they
-## may provide an INCOMPLETE view of the future (what was expected next).
-## In state 44, spurious reduction of production list(stmt) -> 
-## In state 45, spurious reduction of production list(stmt) -> stmt list(stmt) 
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE ELSE LBRACE PASS SEMICOLON EOF
+prog: FUNC ID LPAREN RPAREN LBRACE IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE ELSE WHILE
 ##
 ## Ends in an error in state: 52.
 ##
-## stmt -> IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE ELSE LBRACE list(stmt) . RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> IF LPAREN condition RPAREN block ELSE . block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
-## IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE ELSE LBRACE list(stmt)
-##
-## WARNING: This example involves spurious reductions.
-## This implies that, although the LR(1) items shown above provide an
-## accurate view of the past (what has been recognized so far), they
-## may provide an INCOMPLETE view of the future (what was expected next).
-## In state 44, spurious reduction of production list(stmt) -> 
-## In state 45, spurious reduction of production list(stmt) -> stmt list(stmt) 
+## IF LPAREN condition RPAREN block ELSE
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>52
 
-prog: IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE ELSE LBRACE TIMES
+prog: FUNC ID LPAREN RPAREN LBRACE IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE WHILE
 ##
 ## Ends in an error in state: 51.
 ##
-## stmt -> IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE ELSE LBRACE . list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> IF LPAREN condition RPAREN block . ELSE block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
-## IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE ELSE LBRACE
+## IF LPAREN condition RPAREN block
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>51
 
-prog: IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE ELSE WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE IF LPAREN INT BEQUALS ID RPAREN WHILE
 ##
 ## Ends in an error in state: 50.
 ##
-## stmt -> IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE ELSE . LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
-##
-## The known suffix of the stack is as follows:
-## IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE ELSE
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE WHILE
-##
-## Ends in an error in state: 49.
-##
-## stmt -> IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE . ELSE LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
-##
-## The known suffix of the stack is as follows:
-## IF LPAREN condition RPAREN LBRACE list(stmt) RBRACE
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: IF LPAREN INT BEQUALS ID RPAREN LBRACE TIMES
-##
-## Ends in an error in state: 40.
-##
-## stmt -> IF LPAREN condition RPAREN LBRACE . list(stmt) RBRACE ELSE LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
-##
-## The known suffix of the stack is as follows:
-## IF LPAREN condition RPAREN LBRACE
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: IF LPAREN INT BEQUALS ID RPAREN WHILE
-##
-## Ends in an error in state: 39.
-##
-## stmt -> IF LPAREN condition RPAREN . LBRACE list(stmt) RBRACE ELSE LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> IF LPAREN condition RPAREN . block ELSE block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF LPAREN condition RPAREN
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>50
 
-prog: IF LPAREN WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE IF LPAREN WHILE
 ##
-## Ends in an error in state: 37.
+## Ends in an error in state: 48.
 ##
-## stmt -> IF LPAREN . condition RPAREN LBRACE list(stmt) RBRACE ELSE LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> IF LPAREN . condition RPAREN block ELSE block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF LPAREN
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>48
 
-prog: IF WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE IF WHILE
 ##
-## Ends in an error in state: 36.
+## Ends in an error in state: 47.
 ##
-## stmt -> IF . LPAREN condition RPAREN LBRACE list(stmt) RBRACE ELSE LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> IF . LPAREN condition RPAREN block ELSE block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>47
 
-prog: PASS SEMICOLON RBRACE
+prog: FUNC ID LPAREN RPAREN LBRACE PASS SEMICOLON TIMES
 ##
-## Ends in an error in state: 57.
+## Ends in an error in state: 68.
 ##
-## prog -> list(stmt) . EOF [ # ]
+## list(line) -> line . list(line) [ RBRACE ]
 ##
 ## The known suffix of the stack is as follows:
-## list(stmt)
-##
-## WARNING: This example involves spurious reductions.
-## This implies that, although the LR(1) items shown above provide an
-## accurate view of the past (what has been recognized so far), they
-## may provide an INCOMPLETE view of the future (what was expected next).
-## In state 44, spurious reduction of production list(stmt) -> 
-## In state 45, spurious reduction of production list(stmt) -> stmt list(stmt) 
+## line
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>68
 
-prog: PASS SEMICOLON TIMES
+prog: FUNC ID LPAREN RPAREN LBRACE PASS WHILE
 ##
-## Ends in an error in state: 44.
+## Ends in an error in state: 64.
 ##
-## list(stmt) -> stmt . list(stmt) [ RBRACE EOF ]
+## line -> stmt . SEMICOLON [ WHILE RBRACE PRINT PASS IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## stmt
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>64
 
-prog: PASS WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT INT DIV WHILE
 ##
-## Ends in an error in state: 34.
+## Ends in an error in state: 28.
 ##
-## stmt -> PASS . SEMICOLON [ WHILE RBRACE PRINT PASS IF ID EOF ]
-##
-## The known suffix of the stack is as follows:
-## PASS
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: PRINT INT DIV WHILE
-##
-## Ends in an error in state: 17.
-##
-## expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## expr DIV
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>28
 
-prog: PRINT INT MINUS WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT INT MINUS WHILE
 ##
-## Ends in an error in state: 12.
+## Ends in an error in state: 30.
 ##
-## expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## expr MINUS
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>30
 
-prog: PRINT INT MOD WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT INT MOD WHILE
 ##
-## Ends in an error in state: 15.
+## Ends in an error in state: 26.
 ##
-## expr -> expr MOD . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## expr -> expr MOD . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## expr MOD
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>26
 
-prog: PRINT INT PLUS WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT INT PLUS WHILE
 ##
-## Ends in an error in state: 10.
+## Ends in an error in state: 24.
 ##
-## expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## expr PLUS
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>24
 
-prog: PRINT INT TIMES WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT INT TIMES WHILE
 ##
-## Ends in an error in state: 8.
+## Ends in an error in state: 21.
 ##
-## expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## expr TIMES
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>21
 
-prog: PRINT INT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT LPAREN INT WHILE
 ##
-## Ends in an error in state: 32.
-##
-## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
-## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
-## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
-## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
-## expr -> expr . MOD expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
-## stmt -> PRINT expr . SEMICOLON [ WHILE RBRACE PRINT PASS IF ID EOF ]
-##
-## The known suffix of the stack is as follows:
-## PRINT expr
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: PRINT LPAREN INT WHILE
-##
-## Ends in an error in state: 7.
+## Ends in an error in state: 20.
 ##
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . MOD expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
-## expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN expr
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>20
 
-prog: PRINT LPAREN WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT LPAREN WHILE
 ##
-## Ends in an error in state: 3.
+## Ends in an error in state: 16.
 ##
-## expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>16
 
-prog: PRINT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE PRINT WHILE
 ##
-## Ends in an error in state: 31.
+## Ends in an error in state: 44.
 ##
-## stmt -> PRINT . expr SEMICOLON [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> PRINT . expr [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## PRINT
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>44
 
-prog: TIMES
+prog: FUNC ID LPAREN RPAREN LBRACE RBRACE WHILE
 ##
-## Ends in an error in state: 0.
+## Ends in an error in state: 75.
 ##
-## prog' -> . prog [ # ]
+## list(func) -> func . list(func) [ EOF ]
 ##
 ## The known suffix of the stack is as follows:
-##
+## func
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>75
 
-prog: WHILE LPAREN INT BEQUALS ID RPAREN LBRACE PASS SEMICOLON EOF
+prog: FUNC ID LPAREN RPAREN LBRACE TIMES
 ##
-## Ends in an error in state: 54.
+## Ends in an error in state: 13.
 ##
-## stmt -> WHILE LPAREN condition RPAREN LBRACE list(stmt) . RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## block -> LBRACE . list(line) RBRACE [ SEMICOLON FUNC EOF ELSE ]
 ##
 ## The known suffix of the stack is as follows:
-## WHILE LPAREN condition RPAREN LBRACE list(stmt)
-##
-## WARNING: This example involves spurious reductions.
-## This implies that, although the LR(1) items shown above provide an
-## accurate view of the past (what has been recognized so far), they
-## may provide an INCOMPLETE view of the future (what was expected next).
-## In state 44, spurious reduction of production list(stmt) -> 
-## In state 45, spurious reduction of production list(stmt) -> stmt list(stmt) 
+## LBRACE
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>13
 
-prog: WHILE LPAREN INT BEQUALS ID RPAREN LBRACE TIMES
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT BEQUALS ID RPAREN WHILE
 ##
-## Ends in an error in state: 30.
+## Ends in an error in state: 42.
 ##
-## stmt -> WHILE LPAREN condition RPAREN LBRACE . list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
-##
-## The known suffix of the stack is as follows:
-## WHILE LPAREN condition RPAREN LBRACE
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: WHILE LPAREN INT BEQUALS ID RPAREN WHILE
-##
-## Ends in an error in state: 29.
-##
-## stmt -> WHILE LPAREN condition RPAREN . LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> WHILE LPAREN condition RPAREN . block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## WHILE LPAREN condition RPAREN
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>42
 
-prog: WHILE LPAREN INT BEQUALS INT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT BEQUALS INT WHILE
 ##
-## Ends in an error in state: 27.
+## Ends in an error in state: 40.
 ##
 ## condition -> expr BEQUALS expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -392,11 +343,11 @@ prog: WHILE LPAREN INT BEQUALS INT WHILE
 ## expr BEQUALS expr
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>40
 
-prog: WHILE LPAREN INT BEQUALS WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT BEQUALS WHILE
 ##
-## Ends in an error in state: 26.
+## Ends in an error in state: 39.
 ##
 ## condition -> expr BEQUALS . expr [ RPAREN ]
 ##
@@ -404,11 +355,11 @@ prog: WHILE LPAREN INT BEQUALS WHILE
 ## expr BEQUALS
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>39
 
-prog: WHILE LPAREN INT BNEQUALS INT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT BNEQUALS INT WHILE
 ##
-## Ends in an error in state: 25.
+## Ends in an error in state: 38.
 ##
 ## condition -> expr BNEQUALS expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -421,11 +372,11 @@ prog: WHILE LPAREN INT BNEQUALS INT WHILE
 ## expr BNEQUALS expr
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>38
 
-prog: WHILE LPAREN INT BNEQUALS WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT BNEQUALS WHILE
 ##
-## Ends in an error in state: 24.
+## Ends in an error in state: 37.
 ##
 ## condition -> expr BNEQUALS . expr [ RPAREN ]
 ##
@@ -433,11 +384,11 @@ prog: WHILE LPAREN INT BNEQUALS WHILE
 ## expr BNEQUALS
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>37
 
-prog: WHILE LPAREN INT GT INT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT GT INT WHILE
 ##
-## Ends in an error in state: 23.
+## Ends in an error in state: 36.
 ##
 ## condition -> expr GT expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -450,11 +401,11 @@ prog: WHILE LPAREN INT GT INT WHILE
 ## expr GT expr
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>36
 
-prog: WHILE LPAREN INT GT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT GT WHILE
 ##
-## Ends in an error in state: 22.
+## Ends in an error in state: 35.
 ##
 ## condition -> expr GT . expr [ RPAREN ]
 ##
@@ -462,11 +413,11 @@ prog: WHILE LPAREN INT GT WHILE
 ## expr GT
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>35
 
-prog: WHILE LPAREN INT LT INT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT LT INT WHILE
 ##
-## Ends in an error in state: 21.
+## Ends in an error in state: 34.
 ##
 ## condition -> expr LT expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -479,11 +430,11 @@ prog: WHILE LPAREN INT LT INT WHILE
 ## expr LT expr
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>34
 
-prog: WHILE LPAREN INT LT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT LT WHILE
 ##
-## Ends in an error in state: 20.
+## Ends in an error in state: 33.
 ##
 ## condition -> expr LT . expr [ RPAREN ]
 ##
@@ -491,11 +442,11 @@ prog: WHILE LPAREN INT LT WHILE
 ## expr LT
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>33
 
-prog: WHILE LPAREN INT WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN INT WHILE
 ##
-## Ends in an error in state: 19.
+## Ends in an error in state: 32.
 ##
 ## condition -> expr . BEQUALS expr [ RPAREN ]
 ## condition -> expr . BNEQUALS expr [ RPAREN ]
@@ -511,29 +462,88 @@ prog: WHILE LPAREN INT WHILE
 ## expr
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>32
 
-prog: WHILE LPAREN WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE LPAREN WHILE
 ##
-## Ends in an error in state: 2.
+## Ends in an error in state: 15.
 ##
-## stmt -> WHILE LPAREN . condition RPAREN LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> WHILE LPAREN . condition RPAREN block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## WHILE LPAREN
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>15
 
-prog: WHILE WHILE
+prog: FUNC ID LPAREN RPAREN LBRACE WHILE WHILE
 ##
-## Ends in an error in state: 1.
+## Ends in an error in state: 14.
 ##
-## stmt -> WHILE . LPAREN condition RPAREN LBRACE list(stmt) RBRACE [ WHILE RBRACE PRINT PASS IF ID EOF ]
+## stmt -> WHILE . LPAREN condition RPAREN block [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## WHILE
 ##
 
-<YOUR SYNTAX ERROR MESSAGE HERE>
+<YOUR SYNTAX ERROR MESSAGE HERE>14
 
+prog: FUNC ID LPAREN RPAREN WHILE
+##
+## Ends in an error in state: 12.
+##
+## func -> FUNC ID params . block [ FUNC EOF ]
+##
+## The known suffix of the stack is as follows:
+## FUNC ID params
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>12
+
+prog: FUNC ID LPAREN WHILE
+##
+## Ends in an error in state: 3.
+##
+## params -> LPAREN . param_list RPAREN [ LBRACE ]
+##
+## The known suffix of the stack is as follows:
+## LPAREN
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>3
+
+prog: FUNC ID WHILE
+##
+## Ends in an error in state: 2.
+##
+## func -> FUNC ID . params block [ FUNC EOF ]
+##
+## The known suffix of the stack is as follows:
+## FUNC ID
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>2
+
+prog: FUNC WHILE
+##
+## Ends in an error in state: 1.
+##
+## func -> FUNC . ID params block [ FUNC EOF ]
+##
+## The known suffix of the stack is as follows:
+## FUNC
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>1
+
+prog: WHILE
+##
+## Ends in an error in state: 0.
+##
+## prog' -> . prog [ # ]
+##
+## The known suffix of the stack is as follows:
+##
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>0

@@ -16,6 +16,9 @@ type instruction =
   | CMPLT of int
   | CMPGT of int
   | JUMP of int
+  | CALL of int
+  | MAKE_FUNCTION of int
+  | RETURN
   | PASS
 
 type bytecode = instruction list
@@ -36,4 +39,7 @@ let as_string = function
   | CMPLT i -> sprintf "12 %d" i
   | CMPGT i -> sprintf "13 %d" i
   | JUMP i -> sprintf "14 %d" i
-  | PASS -> "15"
+  | CALL i -> sprintf "15 %d" i
+  | MAKE_FUNCTION i -> sprintf "16 %d" i
+  | RETURN -> "17"
+  | PASS -> "18"

@@ -1,6 +1,6 @@
-class Stack:
-    def __init__(self):
-        self.items = [0] * 1024
+class Stack(object):
+    def __init__(self, size=1024):
+        self.items = [0] * size
         self.top = 0
 
     def isEmpty(self):

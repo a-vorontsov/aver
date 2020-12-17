@@ -1,10 +1,12 @@
-n = 30;
-minus1 = 0;
-minus2 = 1;
-while (n != 0) {
-    temp = minus2;
-    minus2 = minus1 + minus2;
-    minus1 = temp;
-    n = n - 1;
+func main() {
+    n = 30;
+    minus1 = 0;
+    minus2 = 1;
+    while (n != 0) {
+        temp = minus2;
+        minus2 = minus1 + minus2;
+        minus1 = temp;
+        n = n - 1;
+    }
+    print minus2;
 }
-print minus2;
