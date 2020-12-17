@@ -46,6 +46,7 @@ rule token =
   | "else" { ELSE }
   | "pass" { PASS }
   | "func" { FUNC }
+  | "return" { RETURN }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | id { ID (Lexing.lexeme lexbuf) }
   | eof { EOF }

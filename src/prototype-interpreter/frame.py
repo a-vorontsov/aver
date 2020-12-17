@@ -42,6 +42,3 @@ class Frame(object):
     def local_get(self, name):
         assert name >= 0 and name < len(self.locals)
         return self.locals[name]
-
-    def is_root_frame(self):
-        return self.get_parent() is None

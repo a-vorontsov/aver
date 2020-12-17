@@ -14,7 +14,7 @@
 %token IF ELSE
 %token PASS
 %token WHILE
-%token FUNC
+%token FUNC RETURN
 %token EOF
 
 %left PLUS MINUS
@@ -42,7 +42,6 @@
 
 prog:
   | f = func* EOF { f }
-  // | s = stmt* EOF { s }
 
 func:
   | FUNC x = ID ps = params b = block { Func (x, Params ps, b) }
@@ -68,7 +67,8 @@ stmt:
   | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If (c, s1, s2) }
   | WHILE LPAREN c = condition RPAREN s = block { While (c, s) }
   | PASS SEMICOLON { Pass }
-  | x = ID LPAREN p = separated_list(COMMA, expr) RPAREN SEMICOLON { Call (x, p) }
+  | RETURN e = expr SEMICOLON { Return e }
+  | f = function_call SEMICOLON { Call f }
 
 condition:
   | e1 = expr o = bop e2 = expr { Bincond (o, e1, e2) }
@@ -80,5 +80,9 @@ expr:
   | i = INT { Int i }
   | x = ID { Var x }
   | INPUT { Input }
+  | f = function_call { AssignCall f }
   | e1 = expr o = op e2 = expr { Binop (o, e1, e2) }
   | LPAREN e = expr RPAREN { e }
+
+function_call:
+ | x = ID LPAREN p = separated_list(COMMA, expr) RPAREN { x, p }

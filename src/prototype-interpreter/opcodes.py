@@ -19,8 +19,9 @@ class OpCode():
     JMP = 14
     CALL = 15
     MAKE_FUNCTION = 16
-    RETURN = 17
-    PASS = 18
+    HALT = 17
+    RETURN = 18
+    PASS = 19
 
 
 _stack_effects = [
@@ -41,7 +42,8 @@ _stack_effects = [
     0,  # JMP
     0,  # CALL
     0,  # MAKE_FUNCTION
-    0,  # RETURN
+    0,  # HALT
+    -1,  # RETURN
     0,  # PASS
 ]
 

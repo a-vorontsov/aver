@@ -32,7 +32,7 @@ def make_function(name, program, pc):
 
         if opcode == OpCode.STORE_VAR:
             num_locals += 1
-        elif opcode == OpCode.RETURN:
+        elif opcode == OpCode.HALT:
             function_end = True
 
         pc += 1

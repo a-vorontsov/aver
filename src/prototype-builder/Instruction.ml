@@ -18,6 +18,7 @@ type instruction =
   | JUMP of int
   | CALL of int
   | MAKE_FUNCTION of int
+  | HALT
   | RETURN
   | PASS
 
@@ -41,5 +42,6 @@ let as_string = function
   | JUMP i -> sprintf "14 %d" i
   | CALL i -> sprintf "15 %d" i
   | MAKE_FUNCTION i -> sprintf "16 %d" i
-  | RETURN -> "17"
-  | PASS -> "18"
+  | HALT -> "17"
+  | RETURN -> "18"
+  | PASS -> "19"

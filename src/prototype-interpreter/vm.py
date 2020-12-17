@@ -120,8 +120,14 @@ class VM(object):
                 new_frame = Frame(
                     frame, new_func, new_func.num_locals, new_func.stack_size)
                 self.invoke_call(new_frame)
+            elif opcode == OpCode.HALT:
+                self.call_stack_size -= 1
+                return 0
             elif opcode == OpCode.RETURN:
                 self.call_stack_size -= 1
+                parent = frame.parent
+                if parent is not None:
+                    parent.stack_push(frame.stack_pop())
                 return 0
             elif opcode == OpCode.PASS:
                 pass

@@ -32,4 +32,3 @@ class Symbol(object):
 
 class SymbolType(object):
     INT = 0
-    FUNCTION = 1

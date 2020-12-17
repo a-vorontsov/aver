@@ -1,27 +1,35 @@
 type bop = Add | Mult | Div | Sub | Mod
 
-type expr = Input | Int of int | Var of string | Binop of bop * expr * expr
+and expr =
+  | Input
+  | Int of int
+  | Var of string
+  | Binop of bop * expr * expr
+  | AssignCall of function_call
 
-type booleanop = BEquals | BNequals | GreaterThan | LessThan
+and booleanop = BEquals | BNequals | GreaterThan | LessThan
 
-type condition = Bincond of booleanop * expr * expr
+and condition = Bincond of booleanop * expr * expr
 
-type params = Params of string list
+and params = Params of string list
 
-type assignment = string * expr
+and assignment = string * expr
 
-type stmt =
+and function_call = string * expr list
+
+and stmt =
   | Assign of assignment
   | Print of expr
   | If of condition * block * block
   | While of condition * block
-  | Call of string * expr list
+  | Call of function_call
+  | Return of expr
   | Pass
 
 and block = stmt list
 
-type func = Func of string * params * block
+and func = Func of string * params * block
 
-type funcs = func list
+and funcs = func list
 
-type prog = funcs
+and prog = funcs
