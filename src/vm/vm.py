@@ -1,6 +1,6 @@
 import os
 
-from opcodes import OpCode
+from opcodes import OpCode, bytecode_names
 from symboltable import Symbol, SymbolType
 from frame import Frame
 from function import Function
@@ -10,10 +10,17 @@ from rpython.rlib import jit
 MAX_CALL_STACK_SIZE = 1024
 
 
+def get_printable_location(pc, func, self):
+    ops = func.bytecode[pc]
+    op = bytecode_names[ops[0]]
+    return "pc: %s | bytecode name: %s | bytecode: %s" % (str(pc), op, ops)
+
+
 jitdriver = jit.JitDriver(
     greens=["pc", "func", "self"],
     reds=["frame"],
-    virtualizables=["frame"]
+    virtualizables=["frame"],
+    get_printable_location=get_printable_location
 )
 
 

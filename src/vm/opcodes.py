@@ -1,7 +1,7 @@
 from rpython.rlib import jit
 
 
-class OpCode():
+class OpCode(object):
     LOAD_CONST = 0
     LOAD_VAR = 1
     ADD = 2
@@ -52,3 +52,16 @@ _stack_effects = [
 def stack_effect(opcode):
     assert opcode >= 0 and opcode < len(_stack_effects)
     return _stack_effects[opcode]
+
+
+def _bytecode_names(cls):
+    names = [attr for attr in dir(cls) if not callable(
+        attr) and not attr.startswith("__")]
+    values = {}
+    for name in names:
+        values[getattr(cls, name)] = name
+
+    return values
+
+
+bytecode_names = _bytecode_names(OpCode)
