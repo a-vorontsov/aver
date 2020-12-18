@@ -1,19 +1,35 @@
-type bop = Add | Mult | Leq
+type bop = Add | Mult | Div | Sub | Mod
 
-type expr =
-  | Var of string
+and expr =
+  | Input
   | Int of int
-  | Bool of bool
+  | Var of string
   | Binop of bop * expr * expr
-  | Let of string * expr
-  | If of expr * expr * expr
+  | AssignCall of function_call
 
-type exprs = Exprs of expr list
+and booleanop = BEquals | BNequals | GreaterThan | LessThan
 
-type params = Params of string list
+and condition = Bincond of booleanop * expr * expr
 
-type func = Func of string * params * exprs
+and params = Params of string list
 
-type funcs = func list
+and assignment = string * expr
 
-type prog = funcs
+and function_call = string * expr list
+
+and stmt =
+  | Assign of assignment
+  | Print of expr
+  | If of condition * block * block
+  | While of condition * block
+  | Call of function_call
+  | Return of expr
+  | Pass
+
+and block = stmt list
+
+and func = Func of string * params * block
+
+and funcs = func list
+
+and prog = funcs

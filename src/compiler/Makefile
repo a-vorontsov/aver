@@ -1,8 +1,10 @@
-default: build
-	utop
+default: clean build
+
+run:
+	dune exec ./main.exe
 
 build:
-	ocamlbuild -use-ocamlfind main.byte
+	dune build
 
 clean:
-	ocamlbuild -clean
+	dune clean

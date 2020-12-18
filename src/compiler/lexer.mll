@@ -2,6 +2,8 @@
   open Lexing
   open Parser
 
+  exception Error of string
+
   let next_line lexbuf =
     let pos = lexbuf.lex_curr_p in
       lexbuf.lex_curr_p <-
@@ -17,27 +19,35 @@ let int = '-'? digit+
 let letter = ['a'-'z' 'A'-'Z']
 let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
-rule read =
+rule token =
   parse
-  | white { read lexbuf }
-  | newline { next_line lexbuf; read lexbuf }
-  | "true" { TRUE }
-  | "false" { FALSE }
-  | "<=" { LEQ }
+  | white { token lexbuf }
+  | newline { next_line lexbuf; token lexbuf }
+  | "/" { DIV }
+  | "-" { MINUS }
   | "*" { TIMES }
   | "+" { PLUS }
+  | "%" { MOD }
   | "(" { LPAREN }
   | ")" { RPAREN }
   | "{" { LBRACE }
   | "}" { RBRACE }
-  | "let" { LET }
   | "=" { EQUALS }
-  | "if" { IF }
-  | "then" { THEN }
-  | "else" { ELSE }
-  | "func" { FUNC }
-  | "," { COMMA }
+  | "==" { BEQUALS }
+  | "!=" { BNEQUALS }
+  | "<" { LT }
+  | ">" { GT }
   | ";" { SEMICOLON }
-  | id { ID (Lexing.lexeme lexbuf) }
+  | "," { COMMA }
+  | "print" { PRINT }
+  | "input" { INPUT }
+  | "while" { WHILE }
+  | "if" { IF }
+  | "else" { ELSE }
+  | "pass" { PASS }
+  | "func" { FUNC }
+  | "return" { RETURN }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | id { ID (Lexing.lexeme lexbuf) }
   | eof { EOF }
+  | _ { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }

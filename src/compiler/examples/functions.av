@@ -1,19 +1,21 @@
-func test () {
+func test() {
     return 2;
 }
 
-func hello () {
+func hello() {
     print 1+2;
     print test() * 100;
 }
 
-func main () {
+func main() {
     x = 32;
+
     if (x == 2) {
         print x;
     } else {
         print 2;
     }
+
     test();
     hello();
 }
