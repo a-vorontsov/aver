@@ -1,11 +1,10 @@
-from symboltable import SymbolTable
 from rpython.rlib import jit
 
 
 class Frame(object):
     __slots__ = ("parent", "stack", "stacktop", "func", "pc", "locals")
     _immutable_fields_ = ("parent", "stack", "func", "pc", "locals")
-    _virtualizable_ = ("parent", "stack[*]", "stacktop", "locals[*]")
+    _virtualizable_ = ("stack[*]", "stacktop", "locals[*]")
 
     def __init__(self, parent, func, local_vars, stack_size):
         self = jit.hint(self, access_directly=True, fresh_virtualizable=True)

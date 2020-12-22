@@ -1,0 +1,19 @@
+func fib(n) {
+    if (n == 0) {
+        return 0;
+    } else {
+        if (n == 1) {
+            return 1;
+        } else {
+            return fib(n - 2) + fib(n - 1);
+        }
+    }
+}
+
+func main() {
+    i = 0;
+    while (i < 31) {
+        print fib(i);
+        i = i + 1;
+    }
+}

@@ -40,7 +40,7 @@ _stack_effects = [
     -2,  # CMPLT
     -2,  # CMPGT
     0,  # JMP
-    0,  # CALL
+    1,  # CALL - stack effect depends on arguments
     0,  # MAKE_FUNCTION
     0,  # HALT
     -1,  # RETURN
@@ -49,7 +49,7 @@ _stack_effects = [
 
 
 @jit.elidable
-def stack_effect(opcode):
+def stack_effect(opcode, param_length=0):
     assert opcode >= 0 and opcode < len(_stack_effects)
     return _stack_effects[opcode]
 

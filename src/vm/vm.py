@@ -43,10 +43,12 @@ class VM(object):
             ops = func.bytecode[pc]
             opcode = ops[0]
 
+            # print get_printable_location(pc, func, self)
+
             if opcode == OpCode.LOAD_CONST:
                 frame.stack_push(ops[1])
             elif opcode == OpCode.LOAD_VAR:
-                x = ops[1]-1
+                x = ops[1]
                 symbol = frame.local_get(x)
 
                 if symbol is None:
@@ -58,7 +60,7 @@ class VM(object):
 
                 frame.stack_push(int(symbol.get_value()))
             elif opcode == OpCode.STORE_VAR:
-                x = ops[1]-1
+                x = ops[1]
                 symbol = frame.local_get(x)
 
                 if symbol is not None:
@@ -114,6 +116,8 @@ class VM(object):
                     jump_to = ops[1]
                     pc = pc + jump_to
             elif opcode == OpCode.JMP:
+                jitdriver.can_enter_jit(
+                    pc=pc, func=func, self=self, frame=frame)
                 jump_to = ops[1]
                 pc = pc + jump_to
             elif opcode == OpCode.PRINT:
@@ -123,9 +127,20 @@ class VM(object):
                 frame.stack_push(int(line))
             elif opcode == OpCode.CALL:
                 name = ops[1]
+                params = ops[2]
                 new_func = self.functions[name]
                 new_frame = Frame(
                     frame, new_func, new_func.num_locals, new_func.stack_size)
+                for i in range(params):
+                    val = frame.stack_pop()
+                    if val is None:
+                        print "Error"
+                        print self.call_stack_size
+                        print func.print_func()
+                        print ops
+                        assert False
+                    new_symbol = Symbol(SymbolType.INT, val)
+                    new_frame.local_set(i, new_symbol)
                 self.invoke_call(new_frame)
             elif opcode == OpCode.HALT:
                 self.call_stack_size -= 1

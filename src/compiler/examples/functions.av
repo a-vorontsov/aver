@@ -1,10 +1,6 @@
-func test() {
-    return 2;
-}
-
-func hello() {
-    print 1+2;
-    print test() * 100;
+func test(b) {
+    a = b + b;
+    return a;
 }
 
 func main() {
@@ -16,6 +12,7 @@ func main() {
         print 2;
     }
 
-    test();
-    hello();
+    a = 4;
+    print a;
+    print test(a);
 }

@@ -11,7 +11,7 @@ and booleanop = BEquals | BNequals | GreaterThan | LessThan
 
 and condition = Bincond of booleanop * expr * expr
 
-and params = Params of string list
+and params = string list
 
 and assignment = string * expr
 

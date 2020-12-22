@@ -16,8 +16,8 @@ type instruction =
   | CMPLT of int
   | CMPGT of int
   | JUMP of int
-  | CALL of int
-  | MAKE_FUNCTION of int
+  | CALL of int * int
+  | MAKE_FUNCTION of int * int
   | HALT
   | RETURN
   | PASS
@@ -40,8 +40,8 @@ let as_string = function
   | CMPLT i -> sprintf "12 %d" i
   | CMPGT i -> sprintf "13 %d" i
   | JUMP i -> sprintf "14 %d" i
-  | CALL i -> sprintf "15 %d" i
-  | MAKE_FUNCTION i -> sprintf "16 %d" i
+  | CALL (i, i') -> sprintf "15 %d %d" i i'
+  | MAKE_FUNCTION (i, i') -> sprintf "16 %d %d" i i'
   | HALT -> "17"
   | RETURN -> "18"
   | PASS -> "19"

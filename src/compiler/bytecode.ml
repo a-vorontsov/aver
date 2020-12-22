@@ -1,13 +1,6 @@
 open Ast
 open Instruction
-
-let vars_table = Hashtbl.create 32
-
-let var_counter = ref 0
-
-let new_var () =
-  incr var_counter;
-  !var_counter
+open Table
 
 let functions_table = Hashtbl.create 32
 
@@ -17,38 +10,34 @@ let new_function () =
   incr functions_counter;
   !functions_counter
 
-let insert_var name =
-  let var = Hashtbl.find_opt vars_table name in
-  match var with
-  | Some var' -> var'
-  | None ->
-      let var' = new_var () in
-      Hashtbl.add vars_table name var';
-      var'
-
-let insert_function f =
+let insert_function f p =
   if f = "main" then 0
   else
-    let func = Hashtbl.find_opt functions_table f in
+    let func = Hashtbl.find_opt functions_table (f, p) in
     match func with
     | Some func' -> func'
     | None ->
         let func' = new_function () in
-        Hashtbl.add functions_table f func';
+        Hashtbl.add functions_table (f, p) func';
         func'
+
+let confirm_function f p =
+  let func = Hashtbl.find_opt functions_table (f, p) in
+  match func with Some func' -> func' | None -> assert false
 
 let rec append_bc code bytecode =
   match bytecode with [] -> [ code ] | h :: t -> h :: append_bc code t
 
-let rec gen_expr_bytecode expression bytecode =
+let rec gen_expr_bytecode expression vars_table bytecode =
   match expression with
   | Input -> append_bc INPUT bytecode
   | Int i -> append_bc (LOAD_CONST i) bytecode
-  | Var v -> append_bc (LOAD_VAR (insert_var v)) bytecode
-  | AssignCall (name, _) -> gen_call_bytecode name bytecode
+  | Var v -> append_bc (LOAD_VAR (vars_table#insert_var v)) bytecode
+  | AssignCall (name, params) ->
+      gen_call_bytecode name params vars_table bytecode
   | Binop (op, x, y) ->
-      gen_expr_bytecode x bytecode
-      @ gen_expr_bytecode y bytecode
+      gen_expr_bytecode x vars_table bytecode
+      @ gen_expr_bytecode y vars_table bytecode
       @ append_bc
           ( match op with
           | Add -> ADD
@@ -58,17 +47,17 @@ let rec gen_expr_bytecode expression bytecode =
           | Sub -> SUBTRACT )
           bytecode
 
-and gen_assign_bytecode assignment bytecode =
+and gen_assign_bytecode assignment vars_table bytecode =
   match assignment with
   | name, expression ->
-      gen_expr_bytecode expression bytecode
-      @ append_bc (STORE_VAR (insert_var name)) bytecode
+      gen_expr_bytecode expression vars_table bytecode
+      @ append_bc (STORE_VAR (vars_table#insert_var name)) bytecode
 
-and gen_condition_bytecode condition jump_to bytecode =
+and gen_condition_bytecode condition jump_to vars_table bytecode =
   match condition with
   | Bincond (op, expression, expression') ->
-      gen_expr_bytecode expression bytecode
-      @ gen_expr_bytecode expression' bytecode
+      gen_expr_bytecode expression vars_table bytecode
+      @ gen_expr_bytecode expression' vars_table bytecode
       @ append_bc
           ( match op with
           | BEquals -> CMPEQ jump_to
@@ -77,65 +66,79 @@ and gen_condition_bytecode condition jump_to bytecode =
           | LessThan -> CMPLT jump_to )
           bytecode
 
-and gen_while_bytecode condition statement_list bytecode =
+and gen_while_bytecode condition statement_list vars_table bytecode =
   let stmts =
     List.fold_left
-      (fun acc stmt -> acc @ gen_stmt_bytecode stmt [])
+      (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
       bytecode statement_list
   in
   let condition =
-    gen_condition_bytecode condition (List.length stmts + 1) bytecode
+    gen_condition_bytecode condition (List.length stmts + 1) vars_table bytecode
   in
   condition @ stmts
   @ append_bc (JUMP (-(List.length stmts + List.length condition + 1))) bytecode
 
-and gen_if_bytecode condition statements statements' bytecode =
+and gen_if_bytecode condition statements statements' vars_table bytecode =
   let stmts_if =
     List.fold_left
-      (fun acc stmt -> acc @ gen_stmt_bytecode stmt [])
+      (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
       bytecode statements
   in
   let stmts_else =
     List.fold_left
-      (fun acc stmt -> acc @ gen_stmt_bytecode stmt [])
+      (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
       bytecode statements'
   in
   let condition =
-    gen_condition_bytecode condition (List.length stmts_if + 1) bytecode
+    gen_condition_bytecode condition
+      (List.length stmts_if + 1)
+      vars_table bytecode
   in
   condition @ stmts_if
   @ append_bc (JUMP (List.length stmts_else)) bytecode
   @ stmts_else
 
-and gen_call_bytecode name bytecode =
-  append_bc (CALL (insert_function name)) bytecode
+and gen_call_bytecode name params vars_table bytecode =
+  List.fold_left
+    (fun acc expr -> acc @ gen_expr_bytecode expr vars_table [])
+    bytecode params
+  @ append_bc
+      (CALL (confirm_function name (List.length params), List.length params))
+      bytecode
 
-and gen_stmt_bytecode statement bytecode =
+and gen_stmt_bytecode statement vars_table bytecode =
   match statement with
-  | Assign assignment -> gen_assign_bytecode assignment bytecode
+  | Assign assignment -> gen_assign_bytecode assignment vars_table bytecode
   | Print expression ->
-      gen_expr_bytecode expression bytecode @ append_bc PRINT bytecode
+      gen_expr_bytecode expression vars_table bytecode
+      @ append_bc PRINT bytecode
   | If (condition, statements, statements') ->
-      gen_if_bytecode condition statements statements' bytecode
+      gen_if_bytecode condition statements statements' vars_table bytecode
   | While (condition, statements) ->
-      gen_while_bytecode condition statements bytecode
-  | Call (name, _) -> gen_call_bytecode name bytecode
+      gen_while_bytecode condition statements vars_table bytecode
+  | Call (name, params) -> gen_call_bytecode name params vars_table bytecode
   | Return expression ->
-      gen_expr_bytecode expression bytecode @ append_bc RETURN bytecode
+      gen_expr_bytecode expression vars_table bytecode
+      @ append_bc RETURN bytecode
   | Pass -> append_bc PASS bytecode
 
-and gen_func_bytecode func bytecode =
+and gen_func_bytecode func vars_table bytecode =
   match func with
-  | Func (name, _, block) ->
-      append_bc (MAKE_FUNCTION (insert_function name)) bytecode
+  | Func (name, params, block) ->
+      List.iter (fun param -> ignore (vars_table#insert_var param)) params;
+      let function_name = insert_function name (List.length params) in
+      append_bc
+        (MAKE_FUNCTION
+           (function_name, List.length params))
+        bytecode
       @ List.fold_left
-          (fun acc stmt -> acc @ gen_stmt_bytecode stmt [])
+          (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
           bytecode block
       @ append_bc HALT bytecode
 
 and gen_functions ast bytecode =
   List.fold_left
-    (fun acc funcs -> acc @ gen_func_bytecode funcs [])
+    (fun acc funcs -> acc @ gen_func_bytecode funcs (new table) [])
     bytecode ast
 
-and gen_bytecode ast = gen_functions ast [] @ [ CALL 0 ]
+and gen_bytecode ast = gen_functions ast [] @ [ CALL (0, 0) ]

@@ -44,7 +44,7 @@ prog:
   | f = func* EOF { f }
 
 func:
-  | FUNC x = ID ps = params b = block { Func (x, Params ps, b) }
+  | FUNC x = ID ps = params b = block { Func (x, ps, b) }
 
 block:
   | LBRACE ls = line* RBRACE { ls }

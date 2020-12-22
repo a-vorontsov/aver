@@ -3,18 +3,17 @@ import os
 import array
 
 from opcodes import OpCode, stack_effect
-from symboltable import SymbolTable, Symbol, SymbolType
+from symboltable import Symbol, SymbolType
 from frame import Frame
 from function import Function
 
 from vm import VM
 
-from rpython.rlib import rfile
-from rpython.rlib import jit
+from rpython.rlib import rfile, jit
 
 
-def make_function(name, program, pc):
-    num_locals = 0
+def make_function(name, params, program, pc):
+    num_locals = params
     stack_size = 0
     max_stack_size = 0
     bytecodes = []
@@ -66,8 +65,8 @@ def run(fp):
         opcode = ops[0]
         if opcode == OpCode.MAKE_FUNCTION:
             name = ops[1]
-            func, bytecodes_length = make_function(name,
-                                                   program, i+1)
+            params = ops[2]
+            func, bytecodes_length = make_function(name, params, program, i+1)
             functions[name] = func
             i += bytecodes_length
         i += 1

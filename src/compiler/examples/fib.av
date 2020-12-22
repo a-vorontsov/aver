@@ -1,12 +1,23 @@
-func main() {
-    n = input;
-    minus1 = 0;
-    minus2 = 1;
-    while (n > 0) {
-        temp = minus2;
-        minus2 = minus1 + minus2;
-        minus1 = temp;
-        n = n - 1;
+func fib(n) {
+    i = 0;
+    nextterm = 1;
+    present = 1;
+    previous = 0;
+
+    while (i < n) {
+        nextterm = present + previous;
+        present = previous;
+        previous = nextterm;
+        i = i + 1;
     }
-    print minus2;
+
+    return nextterm;
+}
+
+func main() {
+    i = 0;
+    while (i < 31) {
+        print fib(i);
+        i = i + 1;
+    }
 }
