@@ -9,13 +9,15 @@
 %token BEQUALS BNEQUALS GT LT
 %token LPAREN RPAREN
 %token LBRACE RBRACE
-%token SEMICOLON COMMA
+%token COLON SEMICOLON COMMA
+%token LET
 %token PRINT INPUT
 %token IF ELSE
 %token PASS
 %token WHILE
 %token FUNC RETURN
 %token EOF
+%token T_INT T_BOOL T_CHAR T_STRING T_VOID
 
 %left PLUS MINUS
 %left DIV TIMES MOD
@@ -40,11 +42,18 @@
   | MINUS { Sub }
   | MOD { Mod }
 
+%inline prim_type:
+  | T_INT { T_int }
+  | T_BOOL { T_bool }
+  | T_CHAR  { T_char }
+  | T_STRING { T_string }
+  | T_VOID { T_void }
+
 prog:
   | f = func* EOF { f }
 
 func:
-  | FUNC x = ID ps = params b = block { Func (x, ps, b) }
+  | FUNC x = ID ps = params COLON prim_type b = block { Func (x, ps, b) }
 
 block:
   | LBRACE ls = line* RBRACE { ls }
@@ -59,10 +68,11 @@ param_list:
   | ps = separated_list(COMMA, param) { ps }
 
 param:
-  | x = ID { x }
+  | x = ID COLON t = prim_type { x, t }
 
 stmt:
-  | s = assignment SEMICOLON { Assign s }
+  | LET d = declaration SEMICOLON { Declare d }
+  | a = assignment SEMICOLON { Assign a }
   | PRINT e = expr SEMICOLON { Print e }
   | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If (c, s1, s2) }
   | WHILE LPAREN c = condition RPAREN s = block { While (c, s) }
@@ -73,11 +83,15 @@ stmt:
 condition:
   | e1 = expr o = bop e2 = expr { Bincond (o, e1, e2) }
 
+declaration:
+  | x = ID COLON t = prim_type EQUALS e = expr {x, t, Some e }
+  | x = ID COLON t = prim_type { x, t, None }
+
 assignment:
   | x = ID EQUALS e = expr { x, e }
 
 expr:
-  | i = INT { Int i }
+  | i = INT { Num i }
   | x = ID { Var x }
   | INPUT { Input }
   | f = function_call { AssignCall f }

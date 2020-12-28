@@ -1,24 +1,24 @@
-func main() {
-    x = 1010 * 15;
+func main() : void {
+    let x : int = 1010 * 15;
     print x;
 
-    y = x + x;
+    let y : int = x + x;
     print y;
 
     y = y + x;
     print y;
 
-    z = y * x;
+    let z : int = y * x;
     print z;
 
-    a = input * 4;
+    let a : int = input * 4;
     print a;
 
     print 1 + 2;
-    b = -1 + -2;
+    let b : int = -1 + -2;
     print b;
 
-    hello = 3+4;
+    let hello : int = 3+4;
     print hello;
 
     print 1%5;

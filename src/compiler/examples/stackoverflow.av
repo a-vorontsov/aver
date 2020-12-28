@@ -1,7 +1,7 @@
-func a() {
+func a() : void {
     a();
 }
 
-func main() {
+func main() : void {
     a();
 }

@@ -31,8 +31,8 @@ let rec append_bc code bytecode =
 let rec gen_expr_bytecode expression vars_table bytecode =
   match expression with
   | Input -> append_bc INPUT bytecode
-  | Int i -> append_bc (LOAD_CONST i) bytecode
-  | Var v -> append_bc (LOAD_VAR (vars_table#insert_var v)) bytecode
+  | Num i -> append_bc (LOAD_CONST i) bytecode
+  | Var v -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
   | AssignCall (name, params) ->
       gen_call_bytecode name params vars_table bytecode
   | Binop (op, x, y) ->
@@ -50,8 +50,21 @@ let rec gen_expr_bytecode expression vars_table bytecode =
 and gen_assign_bytecode assignment vars_table bytecode =
   match assignment with
   | name, expression ->
-      gen_expr_bytecode expression vars_table bytecode
-      @ append_bc (STORE_VAR (vars_table#insert_var name)) bytecode
+      if vars_table#exists name then
+        gen_expr_bytecode expression vars_table bytecode
+        @ append_bc (STORE_VAR (vars_table#get name)) bytecode
+      else assert false
+
+and gen_declare_bytecode declaration vars_table bytecode =
+  match declaration with
+  | name, _, expression -> (
+      match expression with
+      | None ->
+          append_bc (LOAD_CONST 0) bytecode
+          @ append_bc (STORE_VAR (vars_table#insert name)) bytecode
+      | Some e ->
+          gen_expr_bytecode e vars_table bytecode
+          @ append_bc (STORE_VAR (vars_table#insert name)) bytecode )
 
 and gen_condition_bytecode condition jump_to vars_table bytecode =
   match condition with
@@ -108,6 +121,7 @@ and gen_call_bytecode name params vars_table bytecode =
 
 and gen_stmt_bytecode statement vars_table bytecode =
   match statement with
+  | Declare declaration -> gen_declare_bytecode declaration vars_table bytecode
   | Assign assignment -> gen_assign_bytecode assignment vars_table bytecode
   | Print expression ->
       gen_expr_bytecode expression vars_table bytecode
@@ -125,12 +139,9 @@ and gen_stmt_bytecode statement vars_table bytecode =
 and gen_func_bytecode func vars_table bytecode =
   match func with
   | Func (name, params, block) ->
-      List.iter (fun param -> ignore (vars_table#insert_var param)) params;
+      List.iter (fun (param, _) -> ignore (vars_table#insert param)) params;
       let function_name = insert_function name (List.length params) in
-      append_bc
-        (MAKE_FUNCTION
-           (function_name, List.length params))
-        bytecode
+      append_bc (MAKE_FUNCTION (function_name, List.length params)) bytecode
       @ List.fold_left
           (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
           bytecode block

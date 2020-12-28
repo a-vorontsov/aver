@@ -1,4 +1,4 @@
-func fib(n) {
+func fib(n : int) : int {
     if (n == 0) {
         return 0;
     } else {
@@ -10,8 +10,8 @@ func fib(n) {
     }
 }
 
-func main() {
-    i = 0;
+func main() : void {
+    let i : int = 0;
     while (i < 31) {
         print fib(i);
         i = i + 1;

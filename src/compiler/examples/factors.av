@@ -1,6 +1,6 @@
-func main() {
-    n = 12;
-    f = 2;
+func main() : void {
+    let n : int = 12;
+    let f : int = 2;
     while (f < n / 2 + 1) {
         if (n % f == 0) {
             print f;

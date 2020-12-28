@@ -1,16 +1,21 @@
-func main() {
+func main() : void {
+    let start : int;
     start = 1000;
-    x = start;
-    y = start;
-    z = start;
+
+    let x : int = start;
+    let y : int = start;
+    let z : int = start;
+
     while (x > 0) {
         while (y > 0) {
             while (z > 0) {
                 z = z - 1;
             }
+
             z = start;
             y = y - 1;
         }
+
         y = start;
         x = x - 1;
     }

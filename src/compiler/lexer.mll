@@ -37,8 +37,10 @@ rule token =
   | "!=" { BNEQUALS }
   | "<" { LT }
   | ">" { GT }
+  | ":" { COLON }
   | ";" { SEMICOLON }
   | "," { COMMA }
+  | "let" { LET }
   | "print" { PRINT }
   | "input" { INPUT }
   | "while" { WHILE }
@@ -47,6 +49,11 @@ rule token =
   | "pass" { PASS }
   | "func" { FUNC }
   | "return" { RETURN }
+  | "int" { T_INT }
+  | "bool" { T_BOOL }
+  | "char" { T_CHAR }
+  | "string" { T_STRING }
+  | "void" { T_VOID }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | id { ID (Lexing.lexeme lexbuf) }
   | eof { EOF }
