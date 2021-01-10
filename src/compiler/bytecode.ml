@@ -114,7 +114,7 @@ and gen_if_bytecode condition statements statements' vars_table bytecode =
 and gen_call_bytecode name params vars_table bytecode =
   List.fold_left
     (fun acc expr -> acc @ gen_expr_bytecode expr vars_table [])
-    bytecode params
+    bytecode (List.rev params)
   @ append_bc
       (CALL (confirm_function name (List.length params), List.length params))
       bytecode

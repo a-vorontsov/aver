@@ -1,0 +1,17 @@
+func sqr(x: int) : int {
+    return x * x;
+}
+
+func all(n: int) : void {
+  if (n < 1001) {
+    print sqr(n);
+    all(n + 1);
+  }
+  else {
+    pass;
+  }
+}
+
+func main() : void {
+    all(0);
+}
