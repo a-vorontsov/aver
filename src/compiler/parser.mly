@@ -1,23 +1,26 @@
 %{
   open Ast
+  open Types
 %}
 
 %token <int> INT
 %token <string> ID
+%token <float> FLOAT
+%token <string> STRING
 %token TIMES PLUS DIV MINUS MOD
 %token EQUALS
-%token BEQUALS BNEQUALS GT LT
+%token BEQUALS BNEQUALS GT GE LT LE
 %token LPAREN RPAREN
 %token LBRACE RBRACE
-%token COLON SEMICOLON COMMA
+%token SEMICOLON COMMA
 %token LET
-%token PRINT INPUT
+%token PRINT PRINTLN INPUT
 %token IF ELSE
 %token PASS
 %token WHILE
 %token FUNC RETURN
 %token EOF
-%token T_INT T_BOOL T_CHAR T_STRING T_VOID
+%token T_INT T_FLOAT T_BOOL T_CHAR T_STRING T_VOID
 
 %left PLUS MINUS
 %left DIV TIMES MOD
@@ -33,7 +36,9 @@
   | BEQUALS { BEquals }
   | BNEQUALS { BNequals }
   | GT { GreaterThan }
+  | GE { GreaterThanEq }
   | LT { LessThan }
+  | LE { LessThanEq }
 
 %inline op:
   | DIV { Div }
@@ -44,6 +49,7 @@
 
 %inline prim_type:
   | T_INT { T_int }
+  | T_FLOAT { T_float }
   | T_BOOL { T_bool }
   | T_CHAR  { T_char }
   | T_STRING { T_string }
@@ -53,7 +59,7 @@ prog:
   | f = func* EOF { f }
 
 func:
-  | FUNC x = ID ps = params COLON prim_type b = block { Func (x, ps, b) }
+  | FUNC x = ID ps = params t = prim_type b = block { Func (x, t, ps, b) }
 
 block:
   | LBRACE ls = line* RBRACE { ls }
@@ -68,12 +74,13 @@ param_list:
   | ps = separated_list(COMMA, param) { ps }
 
 param:
-  | x = ID COLON t = prim_type { x, t }
+  | x = ID t = prim_type { x, t }
 
 stmt:
   | LET d = declaration SEMICOLON { Declare d }
   | a = assignment SEMICOLON { Assign a }
   | PRINT e = expr SEMICOLON { Print e }
+  | PRINTLN e = expr SEMICOLON { Println e }
   | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If (c, s1, s2) }
   | WHILE LPAREN c = condition RPAREN s = block { While (c, s) }
   | PASS SEMICOLON { Pass }
@@ -84,14 +91,16 @@ condition:
   | e1 = expr o = bop e2 = expr { Bincond (o, e1, e2) }
 
 declaration:
-  | x = ID COLON t = prim_type EQUALS e = expr {x, t, Some e }
-  | x = ID COLON t = prim_type { x, t, None }
+  | x = ID EQUALS e = expr {x, None, Some e }
+  | x = ID t = prim_type { x, Some t, None }
 
 assignment:
   | x = ID EQUALS e = expr { x, e }
 
 expr:
   | i = INT { Num i }
+  | f = FLOAT { FNum f }
+  | s = STRING { Str s }
   | x = ID { Var x }
   | INPUT { Input }
   | f = function_call { AssignCall f }

@@ -1,18 +1,18 @@
-func test(b : int) : int {
-    let a : int = b + b;
+func test(b int) int {
+    let a = b + b;
     return a;
 }
 
-func main() : void {
-    let x : int = 32;
+func main() void {
+    let x = 32;
 
     if (x == 2) {
-        print x;
+        println x;
     } else {
-        print 2;
+        println 2;
     }
 
-    let a : int = 4;
-    print a;
-    print test(a);
+    let a = 4;
+    println a;
+    println test(a);
 }

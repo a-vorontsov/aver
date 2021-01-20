@@ -13,3 +13,7 @@ class Symbol(object):
 
 class SymbolType(object):
     INT = 0
+    FLOAT = 1
+    BOOL = 2
+    CHAR = 3
+    STRING = 4

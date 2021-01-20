@@ -1,8 +1,8 @@
-func fib(n : int) : int {
-    let i : int = 0;
-    let nextterm : int = 1;
-    let present : int = 1;
-    let previous : int = 0;
+func fib(n int) int {
+    let i = 0;
+    let nextterm = 1;
+    let present = 1;
+    let previous = 0;
 
     while (i < n) {
         nextterm = present + previous;
@@ -14,10 +14,10 @@ func fib(n : int) : int {
     return nextterm;
 }
 
-func main() : void {
-    let i : int = 0;
-    while (i < 31) {
-        print fib(i);
+func main() void {
+    let i = 0;
+    while (i <= 30) {
+        println fib(i);
         i = i + 1;
     }
 }

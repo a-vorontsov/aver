@@ -1,10 +1,10 @@
-func sqr(x: int) : int {
+func sqr(x int) int {
     return x * x;
 }
 
-func all(n: int) : void {
-  if (n < 1001) {
-    print sqr(n);
+func all(n int) void {
+  if (n <= 1000) {
+    println sqr(n);
     all(n + 1);
   }
   else {
@@ -12,6 +12,6 @@ func all(n: int) : void {
   }
 }
 
-func main() : void {
+func main() void {
     all(0);
 }

@@ -1,10 +1,10 @@
-func main() : void {
-    let start : int;
-    start = 1000;
+func main() void {
+    let start int;
+    start = 200;
 
-    let x : int = start;
-    let y : int = start;
-    let z : int = start;
+    let x = start;
+    let y = start;
+    let z = start;
 
     while (x > 0) {
         while (y > 0) {

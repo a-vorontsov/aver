@@ -1,27 +1,27 @@
-func main() : void {
-    let x : int = 1010 * 15;
-    print x;
+func main() void {
+    let x = 1010 * 15;
+    println x;
 
-    let y : int = x + x;
-    print y;
+    let y = x + x;
+    println y;
 
     y = y + x;
-    print y;
+    println y;
 
-    let z : int = y * x;
-    print z;
+    let z = y * x;
+    println z;
 
-    let a : int = input * 4;
-    print a;
+    let a = input * 4;
+    println a;
 
-    print 1 + 2;
-    let b : int = -1 + -2;
-    print b;
+    println 1 + 2;
+    let b = -1 + -2;
+    println b;
 
-    let hello : int = 3+4;
-    print hello;
+    let hello = 3+4;
+    println hello;
 
-    print 1%5;
-    print 2%5;
-    print 9%5;
+    println 1%5;
+    println 2%5;
+    println 9%5;
 }

@@ -1,4 +1,4 @@
-func fibT(n : int, a : int, b : int) : int {
+func fibT(n int, a int, b int) int {
     if (n == 0) {
         return a;
     } else {
@@ -10,7 +10,7 @@ func fibT(n : int, a : int, b : int) : int {
     }
 }
 
-func fib(n : int) : int {
+func fib(n int) int {
     if (n == 0) {
         return 0;
     } else {
@@ -22,16 +22,10 @@ func fib(n : int) : int {
     }
 }
 
-func main() : void {
-    let i : int = 0;
-    while (i < 31) {
-        print fib(i);
-        i = i + 1;
-    }
-
-    i = 0;
-    while (i < 31) {
-        print fibT(i, 0, 1);
+func main() void {
+    let i = 0;
+    while (i <= 30) {
+        println fibT(i, 0, 1);
         i = i + 1;
     }
 }

@@ -1,9 +1,15 @@
 import os
 
 from opcodes import OpCode, bytecode_names
-from symboltable import Symbol, SymbolType
 from frame import Frame
 from function import Function
+
+from objects.primitive_object import PrimitiveObject
+from objects.boolean import Boolean
+from objects.char import Char
+from objects.float import Float
+from objects.integer import Integer
+from objects.string import String
 
 from rpython.rlib import jit
 
@@ -12,7 +18,7 @@ MAX_CALL_STACK_SIZE = 1024
 
 def get_printable_location(pc, func, self):
     ops = func.bytecode[pc]
-    op = bytecode_names[ops[0]]
+    op = bytecode_names[int(ops[0])]
     return "pc: %s | bytecode name: %s | bytecode: %s" % (str(pc), op, ops)
 
 
@@ -41,93 +47,109 @@ class VM(object):
             jitdriver.jit_merge_point(pc=pc, func=func, self=self, frame=frame)
 
             ops = func.bytecode[pc]
-            opcode = ops[0]
+            opcode = int(ops[0])
 
+            # frame.stack_print()
             # print get_printable_location(pc, func, self)
 
-            if opcode == OpCode.LOAD_CONST:
-                frame.stack_push(ops[1])
+            if opcode == OpCode.LOAD_CONST_I:
+                frame.stack_push(Integer(int(ops[1])))
+            elif opcode == OpCode.LOAD_CONST_F:
+                frame.stack_push(Float(float(ops[1])))
+            elif opcode == OpCode.LOAD_CONST_B:
+                frame.stack_push(Boolean(bool(ops[1])))
+            # elif opcode == OpCode.LOAD_CONST_C:
+                # frame.stack_push(Char(chr(ord(ops[1]))))
+            elif opcode == OpCode.LOAD_CONST_S:
+                frame.stack_push(String(str(ops[1])))
             elif opcode == OpCode.LOAD_VAR:
-                x = ops[1]
-                symbol = frame.local_get(x)
+                x = int(ops[1])
+                value = frame.local_get(x)
 
-                if symbol is None:
+                if value is None:
                     print "Error"
                     print self.call_stack_size
                     print func.print_func()
                     print ops
                     assert False
 
-                frame.stack_push(int(symbol.get_value()))
+                frame.stack_push(value)
             elif opcode == OpCode.STORE_VAR:
-                x = ops[1]
-                symbol = frame.local_get(x)
-
-                if symbol is not None:
-                    val = frame.stack_pop()
-                    new_symbol = symbol.set_value(val)
-                    frame.local_set(x, new_symbol)
-                else:
-                    new_symbol = Symbol(SymbolType.INT, frame.stack_pop())
-                    frame.local_set(x, new_symbol)
+                x = int(ops[1])
+                new_value = frame.stack_pop()
+                frame.local_set(x, new_value)
 
             elif opcode == OpCode.ADD:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                frame.stack_push(x + y)
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                value.add(frame)
             elif opcode == OpCode.SUBTRACT:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                frame.stack_push(x - y)
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                value.sub(frame)
             elif opcode == OpCode.DIVIDE:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                frame.stack_push(x / y)
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                value.div(frame)
             elif opcode == OpCode.MULTIPLY:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                frame.stack_push(x * y)
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                value.mul(frame)
             elif opcode == OpCode.MOD:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                frame.stack_push(x % y)
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                value.mod(frame)
             elif opcode == OpCode.CMPNEQ:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                if x == y:
-                    jump_to = ops[1]
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                if value.eq(frame):
+                    jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPEQ:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                if x != y:
-                    jump_to = ops[1]
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                if value.neq(frame):
+                    jump_to = int(ops[1])
+                    pc = pc + jump_to
+            elif opcode == OpCode.CMPGE:
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                if value.lt(frame):
+                    jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPGT:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                if x <= y:
-                    jump_to = ops[1]
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                if value.le(frame):
+                    jump_to = int(ops[1])
+                    pc = pc + jump_to
+            elif opcode == OpCode.CMPLE:
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                if value.gt(frame):
+                    jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPLT:
-                y = frame.stack_pop()
-                x = frame.stack_pop()
-                if x >= y:
-                    jump_to = ops[1]
+                value = frame.stack_peek()
+                assert isinstance(value, PrimitiveObject)
+                if value.ge(frame):
+                    jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.JMP:
                 jitdriver.can_enter_jit(
                     pc=pc, func=func, self=self, frame=frame)
-                jump_to = ops[1]
+                jump_to = int(ops[1])
                 pc = pc + jump_to
             elif opcode == OpCode.PRINT:
-                print frame.stack_pop()
+                os.write(0, frame.stack_pop().get_string())
+            elif opcode == OpCode.PRINTLN:
+                print frame.stack_pop().get_string()
             elif opcode == OpCode.INPUT:
                 line = self.readline()
-                frame.stack_push(int(line))
+                frame.stack_push(Integer(int(line)))
             elif opcode == OpCode.CALL:
-                name = ops[1]
-                params = ops[2]
+                name = int(ops[1])
+                params = int(ops[2])
                 new_func = self.functions[name]
                 new_frame = Frame(
                     frame, new_func, new_func.num_locals, new_func.stack_size)
@@ -139,8 +161,7 @@ class VM(object):
                         print func.print_func()
                         print ops
                         assert False
-                    new_symbol = Symbol(SymbolType.INT, val)
-                    new_frame.local_set(i, new_symbol)
+                    new_frame.local_set(i, val)
                 self.invoke_call(new_frame)
             elif opcode == OpCode.HALT:
                 self.call_stack_size -= 1

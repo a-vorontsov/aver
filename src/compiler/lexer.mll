@@ -16,6 +16,7 @@ let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 let digit = ['0'-'9']
 let int = '-'? digit+
+let float = '-'? digit+ '.' digit+
 let letter = ['a'-'z' 'A'-'Z']
 let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
@@ -36,12 +37,15 @@ rule token =
   | "==" { BEQUALS }
   | "!=" { BNEQUALS }
   | "<" { LT }
+  | "<=" { LE }
   | ">" { GT }
-  | ":" { COLON }
+  | ">=" { LE }
+  (* | ":" { COLON } *)
   | ";" { SEMICOLON }
   | "," { COMMA }
   | "let" { LET }
   | "print" { PRINT }
+  | "println" { PRINTLN }
   | "input" { INPUT }
   | "while" { WHILE }
   | "if" { IF }
@@ -50,11 +54,30 @@ rule token =
   | "func" { FUNC }
   | "return" { RETURN }
   | "int" { T_INT }
+  | "float" { T_FLOAT }
   | "bool" { T_BOOL }
   | "char" { T_CHAR }
   | "string" { T_STRING }
   | "void" { T_VOID }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | float { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
   | id { ID (Lexing.lexeme lexbuf) }
+  | '"' { read_string (Buffer.create 16) lexbuf }
   | eof { EOF }
   | _ { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }
+
+and read_string buf = parse
+  | '"'       { STRING (Buffer.contents buf) }
+  | '\\' '/'  { Buffer.add_char buf '/'; read_string buf lexbuf }
+  | '\\' '\\' { Buffer.add_char buf '\\'; read_string buf lexbuf }
+  | '\\' 'b'  { Buffer.add_char buf '\b'; read_string buf lexbuf }
+  | '\\' 'f'  { Buffer.add_char buf '\012'; read_string buf lexbuf }
+  | '\\' 'n'  { Buffer.add_char buf '\n'; read_string buf lexbuf }
+  | '\\' 'r'  { Buffer.add_char buf '\r'; read_string buf lexbuf }
+  | '\\' 't'  { Buffer.add_char buf '\t'; read_string buf lexbuf }
+  | [^ '"' '\\']+
+    { Buffer.add_string buf (Lexing.lexeme lexbuf);
+      read_string buf lexbuf
+    }
+  | eof { raise (Error ("String is not terminated")) }
+  | _ { raise (Error (Printf.sprintf "Illegal string character: at %d\n" (Lexing.lexeme_start lexbuf))) }

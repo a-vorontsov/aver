@@ -10,7 +10,7 @@ class Frame(object):
         self = jit.hint(self, access_directly=True, fresh_virtualizable=True)
         self.parent = parent
         self.locals = [None] * local_vars
-        self.stack = [0] * stack_size
+        self.stack = [None] * stack_size
         self.stacktop = 0
         self.func = func
         self.pc = 0
@@ -31,8 +31,20 @@ class Frame(object):
         assert self.stacktop > 0
         self.stacktop -= 1
         item = self.stack_get(self.stacktop)
-        self.stack_set(self.stacktop, 0)
+        self.stack_set(self.stacktop, None)
         return item
+
+    def stack_peek(self):
+        assert self.stacktop > 0
+        item = self.stack_get(self.stacktop-1)
+        return item
+
+    def stack_print(self):
+        result = ""
+        for item in self.stack:
+            if item is not None:
+                result += "| %s |" % (item.get_string())
+        print result
 
     def local_set(self, name, value):
         assert name >= 0 and name < len(self.locals)

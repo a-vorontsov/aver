@@ -1,6 +1,7 @@
-open Ast
+open Tast
 open Instruction
 open Table
+open Types
 
 let functions_table = Hashtbl.create 32
 
@@ -30,26 +31,36 @@ let rec append_bc code bytecode =
 
 let rec gen_expr_bytecode expression vars_table bytecode =
   match expression with
-  | Input -> append_bc INPUT bytecode
-  | Num i -> append_bc (LOAD_CONST i) bytecode
-  | Var v -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
-  | AssignCall (name, params) ->
+  | TInput -> append_bc INPUT bytecode
+  | TNum i -> append_bc (LOAD_CONST_I i) bytecode
+  | TFNum f -> append_bc (LOAD_CONST_F f) bytecode
+  | TBool b -> append_bc (LOAD_CONST_B b) bytecode
+  | TStr s -> append_bc (LOAD_CONST_S s) bytecode
+  | TVar (v, _) -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
+  | TAssignCall (name, _, params) ->
       gen_call_bytecode name params vars_table bytecode
-  | Binop (op, x, y) ->
+  | TBinop (t, op, x, y) ->
       gen_expr_bytecode x vars_table bytecode
       @ gen_expr_bytecode y vars_table bytecode
       @ append_bc
           ( match op with
-          | Add -> ADD
-          | Mult -> MULTIPLY
-          | Div -> DIVIDE
-          | Mod -> MOD
-          | Sub -> SUBTRACT )
+          | TAdd -> (
+              match t with
+              | T_int | T_float | T_string -> ADD
+              | _ -> assert false )
+          | TMult -> (
+              match t with T_int | T_float -> MULTIPLY | _ -> assert false )
+          | TDiv -> (
+              match t with T_int | T_float -> DIVIDE | _ -> assert false )
+          | TMod -> (
+              match t with T_int | T_float -> MOD | _ -> assert false )
+          | TSub -> (
+              match t with T_int | T_float -> SUBTRACT | _ -> assert false ) )
           bytecode
 
 and gen_assign_bytecode assignment vars_table bytecode =
   match assignment with
-  | name, expression ->
+  | name, _, expression ->
       if vars_table#exists name then
         gen_expr_bytecode expression vars_table bytecode
         @ append_bc (STORE_VAR (vars_table#get name)) bytecode
@@ -57,10 +68,20 @@ and gen_assign_bytecode assignment vars_table bytecode =
 
 and gen_declare_bytecode declaration vars_table bytecode =
   match declaration with
-  | name, _, expression -> (
+  | name, t, expression -> (
       match expression with
       | None ->
-          append_bc (LOAD_CONST 0) bytecode
+          append_bc
+            ( match t with
+            | T_int -> LOAD_CONST_I 0
+            | T_float -> LOAD_CONST_F 0.0
+            | T_bool -> LOAD_CONST_B false
+            | T_char -> LOAD_CONST_C '0'
+            | T_string -> LOAD_CONST_S ""
+            | T_void ->
+                print_endline "Unable to assign void";
+                assert false )
+            bytecode
           @ append_bc (STORE_VAR (vars_table#insert name)) bytecode
       | Some e ->
           gen_expr_bytecode e vars_table bytecode
@@ -68,15 +89,47 @@ and gen_declare_bytecode declaration vars_table bytecode =
 
 and gen_condition_bytecode condition jump_to vars_table bytecode =
   match condition with
-  | Bincond (op, expression, expression') ->
+  | TBincond (op, t, expression, expression') ->
       gen_expr_bytecode expression vars_table bytecode
       @ gen_expr_bytecode expression' vars_table bytecode
       @ append_bc
           ( match op with
-          | BEquals -> CMPEQ jump_to
-          | BNequals -> CMPNEQ jump_to
-          | GreaterThan -> CMPGT jump_to
-          | LessThan -> CMPLT jump_to )
+          | TBEquals -> (
+              match t with
+              | T_int | T_float | T_bool | T_char | T_string -> CMPEQ jump_to
+              | _ ->
+                  print_endline "boolean operation not supported for types";
+                  assert false )
+          | TBNequals -> (
+              match t with
+              | T_int | T_float | T_bool | T_char | T_string -> CMPNEQ jump_to
+              | _ ->
+                  print_endline "boolean operation not supported for types";
+                  assert false )
+          | TGreaterThan -> (
+              match t with
+              | T_int | T_float -> CMPGT jump_to
+              | _ ->
+                  print_endline "boolean operation not supported for types";
+                  assert false )
+          | TGreaterThanEq -> (
+              match t with
+              | T_int | T_float -> CMPGE jump_to
+              | _ ->
+                  print_endline "boolean operation not supported for types";
+                  assert false )
+          | TLessThan -> (
+              match t with
+              | T_int | T_float -> CMPLT jump_to
+              | _ ->
+                  print_endline "boolean operation not supported for types";
+                  assert false )
+          | TLessThanEq -> (
+              match t with
+              | T_int | T_float -> CMPLE jump_to
+              | _ ->
+                  print_endline "boolean operation not supported for types";
+                  assert false ) )
           bytecode
 
 and gen_while_bytecode condition statement_list vars_table bytecode =
@@ -114,31 +167,34 @@ and gen_if_bytecode condition statements statements' vars_table bytecode =
 and gen_call_bytecode name params vars_table bytecode =
   List.fold_left
     (fun acc expr -> acc @ gen_expr_bytecode expr vars_table [])
-    bytecode (List.rev params)
+    bytecode params
   @ append_bc
       (CALL (confirm_function name (List.length params), List.length params))
       bytecode
 
 and gen_stmt_bytecode statement vars_table bytecode =
   match statement with
-  | Declare declaration -> gen_declare_bytecode declaration vars_table bytecode
-  | Assign assignment -> gen_assign_bytecode assignment vars_table bytecode
-  | Print expression ->
+  | TDeclare declaration -> gen_declare_bytecode declaration vars_table bytecode
+  | TAssign assignment -> gen_assign_bytecode assignment vars_table bytecode
+  | TPrint expression ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc PRINT bytecode
-  | If (condition, statements, statements') ->
+  | TPrintln expression ->
+      gen_expr_bytecode expression vars_table bytecode
+      @ append_bc PRINTLN bytecode
+  | TIf (condition, _, statements, statements') ->
       gen_if_bytecode condition statements statements' vars_table bytecode
-  | While (condition, statements) ->
+  | TWhile (condition, _, statements) ->
       gen_while_bytecode condition statements vars_table bytecode
-  | Call (name, params) -> gen_call_bytecode name params vars_table bytecode
-  | Return expression ->
+  | TCall (name, _, params) -> gen_call_bytecode name params vars_table bytecode
+  | TReturn (expression, _) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc RETURN bytecode
-  | Pass -> append_bc PASS bytecode
+  | TPass -> append_bc PASS bytecode
 
 and gen_func_bytecode func vars_table bytecode =
   match func with
-  | Func (name, params, block) ->
+  | TFunc (name, _, params, block) ->
       List.iter (fun (param, _) -> ignore (vars_table#insert param)) params;
       let function_name = insert_function name (List.length params) in
       append_bc (MAKE_FUNCTION (function_name, List.length params)) bytecode

@@ -1,8 +1,8 @@
-func main() : void {
-    let x : int = input;
+func main() void {
+    let x = input;
     if (x > 0) {
-        print 1;
+        println 1;
     } else {
-        print 2;
+        println 2;
     }
 }

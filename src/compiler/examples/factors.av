@@ -1,9 +1,9 @@
-func main() : void {
-    let n : int = 12;
-    let f : int = 2;
+func main() void {
+    let n = 12;
+    let f = 2;
     while (f < n / 2 + 1) {
         if (n % f == 0) {
-            print f;
+            println f;
         } else {
             pass;
         }

@@ -1,21 +1,28 @@
 type bop = Add | Mult | Div | Sub | Mod
 
-and prim_type = T_int | T_bool | T_char | T_string | T_void
-
 and expr =
   | Input
   | Num of int
+  | FNum of float
+  | Bool of bool
+  | Str of string
   | Var of string
   | Binop of bop * expr * expr
   | AssignCall of function_call
 
-and booleanop = BEquals | BNequals | GreaterThan | LessThan
+and booleanop =
+  | BEquals
+  | BNequals
+  | GreaterThan
+  | LessThan
+  | GreaterThanEq
+  | LessThanEq
 
 and condition = Bincond of booleanop * expr * expr
 
-and params = (string * prim_type) list
+and params = (string * Types.prim_type) list
 
-and declaration = string * prim_type * expr option
+and declaration = string * Types.prim_type option * expr option
 
 and assignment = string * expr
 
@@ -25,6 +32,7 @@ and stmt =
   | Declare of declaration
   | Assign of assignment
   | Print of expr
+  | Println of expr
   | If of condition * block * block
   | While of condition * block
   | Call of function_call
@@ -33,7 +41,7 @@ and stmt =
 
 and block = stmt list
 
-and func = Func of string * params * block
+and func = Func of string * Types.prim_type * params * block
 
 and funcs = func list
 

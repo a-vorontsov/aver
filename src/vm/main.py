@@ -22,7 +22,7 @@ def make_function(name, params, program, pc):
     while not function_end:
         bytecodes.append(program[pc])
         ops = program[pc]
-        opcode = ops[0]
+        opcode = int(ops[0])
 
         stack_size += stack_effect(opcode)
 
@@ -44,7 +44,7 @@ def parse(program):
     lines = program.split("\n")
     for line in lines:
         if line != "":
-            parsed.append([int(x) for x in line.rstrip("\n").split(' ')])
+            parsed.append([x for x in line.rstrip("\n").split("\t")])
     return parsed
 
 
@@ -62,10 +62,10 @@ def run(fp):
     functions = [None] * 1024
     while i < len(program):
         ops = program[i]
-        opcode = ops[0]
+        opcode = int(ops[0])
         if opcode == OpCode.MAKE_FUNCTION:
-            name = ops[1]
-            params = ops[2]
+            name = int(ops[1])
+            params = int(ops[2])
             func, bytecodes_length = make_function(name, params, program, i+1)
             functions[name] = func
             i += bytecodes_length

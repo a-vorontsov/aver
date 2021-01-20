@@ -1,13 +1,9 @@
 open Printf
 open Instruction
 open Bytecode
+open Typing
 
 let emit b = String.concat "\n" (List.map as_string b)
-
-let parse s =
-  let lexbuf = Lexing.from_string s in
-  let ast = Parser.prog Lexer.token lexbuf in
-  ast
 
 let parse_file f =
   let input = open_in f in
@@ -16,7 +12,9 @@ let parse_file f =
     Ok
       (emit
          (gen_bytecode
-            (Parse.parse filebuf (Parser.Incremental.prog filebuf.lex_curr_p))))
+            (type_program
+               (Parse.parse filebuf
+                  (Parser.Incremental.prog filebuf.lex_curr_p)))))
   with
   | Lexer.Error msg -> Error (sprintf "%s!" msg)
   | Parser.Error ->
