@@ -34,7 +34,9 @@ let get_func_type_from_defs func_name func_defs =
       print_endline "Unable to get type of undefined function";
       assert false
 
-let rec type_program program = type_funcs program (init_func_defs program)
+let rec type_program program =
+  (* Pprint.pprint_prog program; *)
+  type_funcs program (init_func_defs program)
 
 and type_funcs funcs func_defs = List.map (fun f -> type_func f func_defs) funcs
 
@@ -59,9 +61,9 @@ and type_block ~func_body ?(block_type = T_void) ~func_defs ~type_env =
           ([ TReturn (t_expr, return_type) ], stmt_type)
       | t_stmt, stmt_type -> ([ t_stmt ], stmt_type) )
   | stmt :: stmts ->
-      let t_stmt, _ = type_stmt stmt func_defs type_env in
+      let t_stmt, stmt_type = type_stmt stmt func_defs type_env in
       let env' =
-        match type_stmt stmt func_defs type_env with
+        match (t_stmt, stmt_type) with
         | t_stmt', _ -> (
             match t_stmt' with
             | TDeclare (var_name, var_type, _) ->

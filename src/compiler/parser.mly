@@ -91,6 +91,7 @@ condition:
   | e1 = expr o = bop e2 = expr { Bincond (o, e1, e2) }
 
 declaration:
+  | x = ID t = prim_type EQUALS e = expr {x, Some t, Some e }
   | x = ID EQUALS e = expr {x, None, Some e }
   | x = ID t = prim_type { x, Some t, None }
 
