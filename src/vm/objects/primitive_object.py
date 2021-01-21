@@ -1,34 +1,36 @@
 class PrimitiveObject(object):
+    __slots__ = ("value",)
+    _immutable_fields_ = ("value",)
 
-    def pprint(self, frame):
+    def pprint(self):
         raise NotImplementedError()
 
-    def add(self, frame):
+    def add(self, rhs):
         raise NotImplementedError()
 
-    def sub(self, frame):
+    def sub(self, rhs):
         raise NotImplementedError()
 
-    def mul(self, frame):
+    def mul(self, rhs):
         raise NotImplementedError()
 
-    def div(self, frame):
+    def div(self, rhs):
         raise NotImplementedError()
 
-    def mod(self, frame):
+    def mod(self, rhs):
         raise NotImplementedError()
 
-    def eq(self, frame):
+    def eq(self, rhs):
         raise NotImplementedError()
 
-    def eq(self, frame):
+    def eq(self, rhs):
         raise NotImplementedError()
 
-    def neq(self, frame):
+    def neq(self, rhs):
         raise NotImplementedError()
 
-    def lt(self, frame):
+    def lt(self, rhs):
         raise NotImplementedError()
 
-    def gt(self, frame):
+    def gt(self, rhs):
         raise NotImplementedError()

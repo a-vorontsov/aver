@@ -58,8 +58,8 @@ class VM(object):
                 frame.stack_push(Float(float(ops[1])))
             elif opcode == OpCode.LOAD_CONST_B:
                 frame.stack_push(Boolean(bool(ops[1])))
-            # elif opcode == OpCode.LOAD_CONST_C:
-                # frame.stack_push(Char(chr(ord(ops[1]))))
+            elif opcode == OpCode.LOAD_CONST_C:
+                frame.stack_push(Char(str(ops[1])[0]))
             elif opcode == OpCode.LOAD_CONST_S:
                 frame.stack_push(String(str(ops[1])))
             elif opcode == OpCode.LOAD_VAR:
@@ -80,59 +80,75 @@ class VM(object):
                 frame.local_set(x, new_value)
 
             elif opcode == OpCode.ADD:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                value.add(frame)
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                result = lhs.add(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.SUBTRACT:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                value.sub(frame)
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                result = lhs.sub(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.DIVIDE:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                value.div(frame)
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                result = lhs.div(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.MULTIPLY:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                value.mul(frame)
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                result = lhs.mul(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.MOD:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                value.mod(frame)
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                result = lhs.mod(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.CMPNEQ:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                if value.eq(frame):
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                if lhs.eq(rhs):
                     jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPEQ:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                if value.neq(frame):
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                if lhs.neq(rhs):
                     jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPGE:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                if value.lt(frame):
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                if lhs.lt(rhs):
                     jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPGT:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                if value.le(frame):
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                if lhs.le(rhs):
                     jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPLE:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                if value.gt(frame):
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                if lhs.gt(rhs):
                     jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.CMPLT:
-                value = frame.stack_peek()
-                assert isinstance(value, PrimitiveObject)
-                if value.ge(frame):
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                if lhs.ge(rhs):
                     jump_to = int(ops[1])
                     pc = pc + jump_to
             elif opcode == OpCode.JMP:

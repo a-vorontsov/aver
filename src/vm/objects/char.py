@@ -2,7 +2,8 @@ from primitive_object import PrimitiveObject
 
 
 class Char(PrimitiveObject):
-    _immutable_fields_ = ["value"]
+    __slots__ = ("value",)
+    _immutable_fields_ = ("value",)
 
     def __init__(self, value):
         self.value = value
@@ -13,20 +14,15 @@ class Char(PrimitiveObject):
     def get_string(self):
         return str(self.value)
 
-    def pprint(self, frame):
-        val = frame.stack_pop()
-        print val
+    def pprint(self):
+        print self.get_string()
 
-    def eq(self, frame):
-        y = frame.stack_pop()
-        x = frame.stack_pop()
-        assert isinstance(x, Char) and isinstance(y, Char)
-        result = x.get_value() == y.get_value()
+    def eq(self, rhs):
+        assert isinstance(rhs, Char)
+        result = self.value == rhs.value
         return result
 
-    def neq(self, frame):
-        y = frame.stack_pop()
-        x = frame.stack_pop()
-        assert isinstance(x, Char) and isinstance(y, Char)
-        result = x.get_value() != y.get_value()
+    def neq(self, rhs):
+        assert isinstance(rhs, Char)
+        result = self.value != rhs.value
         return result

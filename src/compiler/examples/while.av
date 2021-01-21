@@ -1,6 +1,6 @@
 func main() void {
     let start int;
-    start = 200;
+    start = 500;
 
     let x = start;
     let y = start;
