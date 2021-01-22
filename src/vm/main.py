@@ -7,6 +7,13 @@ from symboltable import Symbol, SymbolType
 from frame import Frame
 from function import Function
 
+from objects.primitive_object import PrimitiveObject
+from objects.boolean import Boolean
+from objects.char import Char
+from objects.float import Float
+from objects.integer import Integer
+from objects.string import String
+
 from vm import VM
 
 from rpython.rlib import rfile, jit
@@ -17,10 +24,12 @@ def make_function(name, params, program, pc):
     stack_size = 0
     max_stack_size = 0
     bytecodes = []
+    literals = []
+    literal_vars = []
 
     function_end = False
     while not function_end:
-        bytecodes.append(program[pc])
+
         ops = program[pc]
         opcode = int(ops[0])
 
@@ -31,12 +40,64 @@ def make_function(name, params, program, pc):
 
         if opcode == OpCode.STORE_VAR:
             num_locals += 1
+        elif opcode == OpCode.LOAD_CONST_I:
+            if ops[1] in literal_vars:
+                program[pc] = [str(OpCode.LOAD_CONST), str(
+                    literal_vars.index(ops[1]))]
+            else:
+                literals.append(Integer(int(ops[1])))
+                literal_vars.append(ops[1])
+                program[pc] = [str(OpCode.LOAD_CONST),
+                               str(len(literal_vars) - 1)]
+
+        elif opcode == OpCode.LOAD_CONST_F:
+            if ops[1] in literal_vars:
+                program[pc] = [str(OpCode.LOAD_CONST), str(
+                    literal_vars.index(ops[1]))]
+            else:
+                literals.append(Float(float(ops[1])))
+                literal_vars.append(ops[1])
+                program[pc] = [str(OpCode.LOAD_CONST),
+                               str(len(literal_vars) - 1)]
+
+        elif opcode == OpCode.LOAD_CONST_B:
+            if ops[1] in literal_vars:
+                program[pc] = [str(OpCode.LOAD_CONST), str(
+                    literal_vars.index(ops[1]))]
+            else:
+                literals.append(Boolean(bool(ops[1])))
+                literal_vars.append(ops[1])
+                program[pc] = [str(OpCode.LOAD_CONST),
+                               str(len(literal_vars) - 1)]
+
+        elif opcode == OpCode.LOAD_CONST_C:
+            if ops[1] in literal_vars:
+                program[pc] = [str(OpCode.LOAD_CONST), str(
+                    literal_vars.index(ops[1]))]
+            else:
+                literals.append(Char(str(ops[1])[0]))
+                literal_vars.append(ops[1])
+                program[pc] = [str(OpCode.LOAD_CONST),
+                               str(len(literal_vars) - 1)]
+
+        elif opcode == OpCode.LOAD_CONST_S:
+            if ops[1] in literal_vars:
+                program[pc] = [str(OpCode.LOAD_CONST), str(
+                    literal_vars.index(ops[1]))]
+            else:
+                literals.append(String(str(ops[1])))
+                literal_vars.append(ops[1])
+                program[pc] = [str(OpCode.LOAD_CONST),
+                               str(len(literal_vars) - 1)]
+
         elif opcode == OpCode.HALT:
             function_end = True
 
+        int_ops = [int(op) for op in program[pc]]
+        bytecodes.append(int_ops)
         pc += 1
 
-    return Function(name, bytecodes, num_locals, max_stack_size), len(bytecodes)
+    return Function(name, bytecodes, num_locals, literals, max_stack_size), len(bytecodes)
 
 
 def parse(program):
@@ -74,7 +135,7 @@ def run(fp):
     functions = [func for func in functions if func is not None]
 
     main_func = functions[0]
-    init_frame = Frame(None, main_func, main_func.num_locals,
+    init_frame = Frame(None, main_func, main_func.num_locals, main_func.literals,
                        main_func.stack_size)
     vm = VM(functions)
     vm.run(init_frame)

@@ -1,16 +1,20 @@
+from rpython.rlib.debug import make_sure_not_resized
 from rpython.rlib import jit
 
 
 class Frame(object):
-    __slots__ = ("parent", "stack", "stacktop", "func", "pc", "locals")
-    _immutable_fields_ = ("parent", "stack", "func", "pc", "locals")
-    _virtualizable_ = ("stack[*]", "stacktop", "locals[*]")
+    __slots__ = ("parent", "stack", "stacktop",
+                 "func", "pc", "locals", "literals")
+    _immutable_fields_ = ("parent", "stack", "func",
+                          "pc", "locals", "literals")
+    _virtualizable_ = ("stack[*]", "stacktop", "locals[*]", "literals")
 
-    def __init__(self, parent, func, local_vars, stack_size):
+    def __init__(self, parent, func, local_vars, literal_vars, stack_size):
         self = jit.hint(self, access_directly=True, fresh_virtualizable=True)
         self.parent = parent
         self.locals = [None] * local_vars
         self.stack = [None] * stack_size
+        self.literals = literal_vars
         self.stacktop = 0
         self.func = func
         self.pc = 0
@@ -53,3 +57,7 @@ class Frame(object):
     def local_get(self, name):
         assert name >= 0 and name < len(self.locals)
         return self.locals[name]
+
+    def literal_get(self, index):
+        assert index >= 0 and index < len(self.literals)
+        return self.literals[index]

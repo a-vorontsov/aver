@@ -13,8 +13,6 @@ from objects.string import String
 
 from rpython.rlib import jit
 
-MAX_CALL_STACK_SIZE = 1024
-
 
 def get_printable_location(pc, func, self):
     ops = func.bytecode[pc]
@@ -52,7 +50,10 @@ class VM(object):
             # frame.stack_print()
             # print get_printable_location(pc, func, self)
 
-            if opcode == OpCode.LOAD_CONST_I:
+            if opcode == OpCode.LOAD_CONST:
+                literal = frame.literal_get(int(ops[1]))
+                frame.stack_push(literal)
+            elif opcode == OpCode.LOAD_CONST_I:
                 frame.stack_push(Integer(int(ops[1])))
             elif opcode == OpCode.LOAD_CONST_F:
                 frame.stack_push(Float(float(ops[1])))
@@ -168,7 +169,7 @@ class VM(object):
                 params = int(ops[2])
                 new_func = self.functions[name]
                 new_frame = Frame(
-                    frame, new_func, new_func.num_locals, new_func.stack_size)
+                    frame, new_func, new_func.num_locals, new_func.literals, new_func.stack_size)
                 for i in range(params):
                     val = frame.stack_pop()
                     if val is None:
