@@ -40,52 +40,21 @@ def make_function(name, params, program, pc):
 
         if opcode == OpCode.STORE_VAR:
             num_locals += 1
-        elif opcode == OpCode.LOAD_CONST_I:
+        elif OpCode.LOAD_CONST_I <= opcode and opcode <= OpCode.LOAD_CONST_S:
             if ops[1] in literal_vars:
                 program[pc] = [str(OpCode.LOAD_CONST), str(
                     literal_vars.index(ops[1]))]
             else:
-                literals.append(Integer(int(ops[1])))
-                literal_vars.append(ops[1])
-                program[pc] = [str(OpCode.LOAD_CONST),
-                               str(len(literal_vars) - 1)]
-
-        elif opcode == OpCode.LOAD_CONST_F:
-            if ops[1] in literal_vars:
-                program[pc] = [str(OpCode.LOAD_CONST), str(
-                    literal_vars.index(ops[1]))]
-            else:
-                literals.append(Float(float(ops[1])))
-                literal_vars.append(ops[1])
-                program[pc] = [str(OpCode.LOAD_CONST),
-                               str(len(literal_vars) - 1)]
-
-        elif opcode == OpCode.LOAD_CONST_B:
-            if ops[1] in literal_vars:
-                program[pc] = [str(OpCode.LOAD_CONST), str(
-                    literal_vars.index(ops[1]))]
-            else:
-                literals.append(Boolean(bool(ops[1])))
-                literal_vars.append(ops[1])
-                program[pc] = [str(OpCode.LOAD_CONST),
-                               str(len(literal_vars) - 1)]
-
-        elif opcode == OpCode.LOAD_CONST_C:
-            if ops[1] in literal_vars:
-                program[pc] = [str(OpCode.LOAD_CONST), str(
-                    literal_vars.index(ops[1]))]
-            else:
-                literals.append(Char(str(ops[1])[0]))
-                literal_vars.append(ops[1])
-                program[pc] = [str(OpCode.LOAD_CONST),
-                               str(len(literal_vars) - 1)]
-
-        elif opcode == OpCode.LOAD_CONST_S:
-            if ops[1] in literal_vars:
-                program[pc] = [str(OpCode.LOAD_CONST), str(
-                    literal_vars.index(ops[1]))]
-            else:
-                literals.append(String(str(ops[1])))
+                if opcode == OpCode.LOAD_CONST_I:
+                    literals.append(Integer(int(ops[1])))
+                elif opcode == OpCode.LOAD_CONST_F:
+                    literals.append(Float(float(ops[1])))
+                elif opcode == OpCode.LOAD_CONST_B:
+                    literals.append(Boolean(bool(ops[1])))
+                elif opcode == OpCode.LOAD_CONST_C:
+                    literals.append(Char(str(ops[1])[0]))
+                elif opcode == OpCode.LOAD_CONST_S:
+                    literals.append(String(str(ops[1])))
                 literal_vars.append(ops[1])
                 program[pc] = [str(OpCode.LOAD_CONST),
                                str(len(literal_vars) - 1)]

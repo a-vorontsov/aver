@@ -2,7 +2,6 @@ from rpython.rlib import jit
 
 
 class OpCode(object):
-    LOAD_CONST = -1
     LOAD_CONST_I = 0
     LOAD_CONST_F = 1
     LOAD_CONST_B = 2
@@ -30,10 +29,10 @@ class OpCode(object):
     HALT = 24
     RETURN = 25
     PASS = 26
+    LOAD_CONST = 27
 
 
 _stack_effects = [
-    1,  # LOAD_CONST
     1,  # LOAD_CONST_I
     1,  # LOAD_CONST_F
     1,  # LOAD_CONST_B
@@ -61,6 +60,7 @@ _stack_effects = [
     0,  # HALT
     -1,  # RETURN
     0,  # PASS
+    1,  # LOAD_CONST
 ]
 
 

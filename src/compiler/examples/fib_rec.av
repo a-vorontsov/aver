@@ -1,31 +1,15 @@
-func fibT(n int, a int, b int) int {
-    if (n == 0) {
-        return a;
-    } else {
-        if (n == 1) {
-            return b;
-        } else {
-            return fibT(n - 1, b, a + b);
-        }
-    }
-}
-
 func fib(n int) int {
-    if (n == 0) {
-        return 0;
+    if (n <= 1) {
+        return n;
     } else {
-        if (n == 1) {
-            return 1;
-        } else {
-            return fib(n - 2) + fib(n - 1);
-        }
+        return fib(n - 1) + fib(n - 2);
     }
 }
 
 func main() void {
     let i = 0;
     while (i <= 30) {
-        println fibT(i, 0, 1);
+        println fib(i);
         i = i + 1;
     }
 }

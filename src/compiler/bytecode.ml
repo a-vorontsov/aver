@@ -208,4 +208,6 @@ and gen_functions ast bytecode =
     (fun acc funcs -> acc @ gen_func_bytecode funcs (new table) [])
     bytecode ast
 
-and gen_bytecode ast = gen_functions ast [] @ [ CALL (0, 0) ]
+and gen_bytecode ast =
+  (* Tpprint.pprint_prog ast; *)
+  gen_functions ast [] @ [ CALL (0, 0) ]
