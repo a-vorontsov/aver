@@ -59,7 +59,7 @@ prog:
   | f = func* EOF { f }
 
 func:
-  | FUNC x = ID ps = params t = prim_type b = block { Func (x, t, ps, b) }
+  | FUNC x = ID ps = params t = prim_type b = block { Func ($startpos, x, t, ps, b) }
 
 block:
   | LBRACE ls = line* RBRACE { ls }
@@ -74,38 +74,38 @@ param_list:
   | ps = separated_list(COMMA, param) { ps }
 
 param:
-  | x = ID t = prim_type { x, t }
+  | x = ID t = prim_type { $startpos, x, t }
 
 stmt:
-  | LET d = declaration SEMICOLON { Declare d }
-  | a = assignment SEMICOLON { Assign a }
-  | PRINT e = expr SEMICOLON { Print e }
-  | PRINTLN e = expr SEMICOLON { Println e }
-  | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If (c, s1, s2) }
-  | WHILE LPAREN c = condition RPAREN s = block { While (c, s) }
-  | PASS SEMICOLON { Pass }
-  | RETURN e = expr SEMICOLON { Return e }
-  | f = function_call SEMICOLON { Call f }
+  | LET d = declaration SEMICOLON { Declare ($startpos, d) }
+  | a = assignment SEMICOLON { Assign ($startpos, a) }
+  | PRINT e = expr SEMICOLON { Print ($startpos, e) }
+  | PRINTLN e = expr SEMICOLON { Println ($startpos, e) }
+  | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If ($startpos, c, s1, s2) }
+  | WHILE LPAREN c = condition RPAREN s = block { While ($startpos, c, s) }
+  | PASS SEMICOLON { Pass $startpos }
+  | RETURN e = expr SEMICOLON { Return ($startpos, e) }
+  | f = function_call SEMICOLON { Call ($startpos, f) }
 
 condition:
-  | e1 = expr o = bop e2 = expr { Bincond (o, e1, e2) }
+  | e1 = expr o = bop e2 = expr { Bincond ($startpos, o, e1, e2) }
 
 declaration:
-  | x = ID t = prim_type EQUALS e = expr {x, Some t, Some e }
-  | x = ID EQUALS e = expr {x, None, Some e }
+  | x = ID t = prim_type EQUALS e = expr { x, Some t, Some e }
+  | x = ID EQUALS e = expr { x, None, Some e }
   | x = ID t = prim_type { x, Some t, None }
 
 assignment:
   | x = ID EQUALS e = expr { x, e }
 
 expr:
-  | i = INT { Num i }
-  | f = FLOAT { FNum f }
-  | s = STRING { Str s }
-  | x = ID { Var x }
-  | INPUT { Input }
-  | f = function_call { AssignCall f }
-  | e1 = expr o = op e2 = expr { Binop (o, e1, e2) }
+  | i = INT { Num ($startpos, i) }
+  | f = FLOAT { FNum ($startpos, f) }
+  | s = STRING { Str ($startpos, s) }
+  | x = ID { Var ($startpos, x) }
+  | INPUT { Input $startpos }
+  | f = function_call { AssignCall ($startpos, f) }
+  | e1 = expr o = op e2 = expr { Binop ($startpos, o, e1, e2) }
   | LPAREN e = expr RPAREN { e }
 
 function_call:

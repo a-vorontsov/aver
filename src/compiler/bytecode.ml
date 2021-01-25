@@ -31,15 +31,15 @@ let rec append_bc code bytecode =
 
 let rec gen_expr_bytecode expression vars_table bytecode =
   match expression with
-  | TInput -> append_bc INPUT bytecode
-  | TNum i -> append_bc (LOAD_CONST_I i) bytecode
-  | TFNum f -> append_bc (LOAD_CONST_F f) bytecode
-  | TBool b -> append_bc (LOAD_CONST_B b) bytecode
-  | TStr s -> append_bc (LOAD_CONST_S s) bytecode
-  | TVar (v, _) -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
-  | TAssignCall (name, _, params) ->
+  | TInput _ -> append_bc INPUT bytecode
+  | TNum (_, i) -> append_bc (LOAD_CONST_I i) bytecode
+  | TFNum (_, f) -> append_bc (LOAD_CONST_F f) bytecode
+  | TBool (_, b) -> append_bc (LOAD_CONST_B b) bytecode
+  | TStr (_, s) -> append_bc (LOAD_CONST_S s) bytecode
+  | TVar (_, v, _) -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
+  | TAssignCall (_, (name, _, params)) ->
       gen_call_bytecode name params vars_table bytecode
-  | TBinop (t, op, x, y) ->
+  | TBinop (_, t, op, x, y) ->
       gen_expr_bytecode x vars_table bytecode
       @ gen_expr_bytecode y vars_table bytecode
       @ append_bc
@@ -89,7 +89,7 @@ and gen_declare_bytecode declaration vars_table bytecode =
 
 and gen_condition_bytecode condition jump_to vars_table bytecode =
   match condition with
-  | TBincond (op, t, expression, expression') ->
+  | TBincond (_, op, t, expression, expression') ->
       gen_expr_bytecode expression vars_table bytecode
       @ gen_expr_bytecode expression' vars_table bytecode
       @ append_bc
@@ -174,28 +174,31 @@ and gen_call_bytecode name params vars_table bytecode =
 
 and gen_stmt_bytecode statement vars_table bytecode =
   match statement with
-  | TDeclare declaration -> gen_declare_bytecode declaration vars_table bytecode
-  | TAssign assignment -> gen_assign_bytecode assignment vars_table bytecode
-  | TPrint expression ->
+  | TDeclare (_, declaration) ->
+      gen_declare_bytecode declaration vars_table bytecode
+  | TAssign (_, assignment) ->
+      gen_assign_bytecode assignment vars_table bytecode
+  | TPrint (_, expression) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc PRINT bytecode
-  | TPrintln expression ->
+  | TPrintln (_, expression) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc PRINTLN bytecode
-  | TIf (condition, _, statements, statements') ->
+  | TIf (_, condition, _, statements, statements') ->
       gen_if_bytecode condition statements statements' vars_table bytecode
-  | TWhile (condition, _, statements) ->
+  | TWhile (_, condition, _, statements) ->
       gen_while_bytecode condition statements vars_table bytecode
-  | TCall (name, _, params) -> gen_call_bytecode name params vars_table bytecode
-  | TReturn (expression, _) ->
+  | TCall (_, (name, _, params)) ->
+      gen_call_bytecode name params vars_table bytecode
+  | TReturn (_, expression, _) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc RETURN bytecode
-  | TPass -> append_bc PASS bytecode
+  | TPass _ -> append_bc PASS bytecode
 
 and gen_func_bytecode func vars_table bytecode =
   match func with
-  | TFunc (name, _, params, block) ->
-      List.iter (fun (param, _) -> ignore (vars_table#insert param)) params;
+  | TFunc (_, name, _, params, block) ->
+      List.iter (fun (_, param, _) -> ignore (vars_table#insert param)) params;
       let function_name = insert_function name (List.length params) in
       append_bc (MAKE_FUNCTION (function_name, List.length params)) bytecode
       @ List.fold_left
