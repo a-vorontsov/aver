@@ -24,7 +24,7 @@ let insert_function f p =
 
 let confirm_function f p =
   let func = Hashtbl.find_opt functions_table (f, p) in
-  match func with Some func' -> func' | None -> assert false
+  match func with Some func' -> func' | None -> exit (-1)
 
 let rec append_bc code bytecode =
   match bytecode with [] -> [ code ] | h :: t -> h :: append_bc code t
@@ -45,17 +45,14 @@ let rec gen_expr_bytecode expression vars_table bytecode =
       @ append_bc
           ( match op with
           | TAdd -> (
-              match t with
-              | T_int | T_float | T_string -> ADD
-              | _ -> assert false )
+              match t with T_int | T_float | T_string -> ADD | _ -> exit (-1) )
           | TMult -> (
-              match t with T_int | T_float -> MULTIPLY | _ -> assert false )
+              match t with T_int | T_float -> MULTIPLY | _ -> exit (-1) )
           | TDiv -> (
-              match t with T_int | T_float -> DIVIDE | _ -> assert false )
-          | TMod -> (
-              match t with T_int | T_float -> MOD | _ -> assert false )
+              match t with T_int | T_float -> DIVIDE | _ -> exit (-1) )
+          | TMod -> ( match t with T_int | T_float -> MOD | _ -> exit (-1) )
           | TSub -> (
-              match t with T_int | T_float -> SUBTRACT | _ -> assert false ) )
+              match t with T_int | T_float -> SUBTRACT | _ -> exit (-1) ) )
           bytecode
 
 and gen_assign_bytecode assignment vars_table bytecode =
@@ -64,7 +61,7 @@ and gen_assign_bytecode assignment vars_table bytecode =
       if vars_table#exists name then
         gen_expr_bytecode expression vars_table bytecode
         @ append_bc (STORE_VAR (vars_table#get name)) bytecode
-      else assert false
+      else exit (-1)
 
 and gen_declare_bytecode declaration vars_table bytecode =
   match declaration with
@@ -80,7 +77,7 @@ and gen_declare_bytecode declaration vars_table bytecode =
             | T_string -> LOAD_CONST_S ""
             | T_void ->
                 print_endline "Unable to assign void";
-                assert false )
+                exit (-1) )
             bytecode
           @ append_bc (STORE_VAR (vars_table#insert name)) bytecode
       | Some e ->
@@ -99,37 +96,37 @@ and gen_condition_bytecode condition jump_to vars_table bytecode =
               | T_int | T_float | T_bool | T_char | T_string -> CMPEQ jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
-                  assert false )
+                  exit (-1) )
           | TBNequals -> (
               match t with
               | T_int | T_float | T_bool | T_char | T_string -> CMPNEQ jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
-                  assert false )
+                  exit (-1) )
           | TGreaterThan -> (
               match t with
               | T_int | T_float -> CMPGT jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
-                  assert false )
+                  exit (-1) )
           | TGreaterThanEq -> (
               match t with
               | T_int | T_float -> CMPGE jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
-                  assert false )
+                  exit (-1) )
           | TLessThan -> (
               match t with
               | T_int | T_float -> CMPLT jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
-                  assert false )
+                  exit (-1) )
           | TLessThanEq -> (
               match t with
               | T_int | T_float -> CMPLE jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
-                  assert false ) )
+                  exit (-1) ) )
           bytecode
 
 and gen_while_bytecode condition statement_list vars_table bytecode =

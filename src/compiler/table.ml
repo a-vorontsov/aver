@@ -8,7 +8,7 @@ class table =
 
     method insert (name : string) : int =
       match Hashtbl.find_opt tbl name with
-      | Some _ -> assert false
+      | Some _ -> exit (-1)
       | None ->
           let var' = counter in
           Hashtbl.add tbl name var';

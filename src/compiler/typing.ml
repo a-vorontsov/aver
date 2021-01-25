@@ -14,7 +14,7 @@ let init_env_with_params params =
       if Hashtbl.mem env param_name then (
         Printf.eprintf "%s\nFunction parameter declared twice\n"
           (string_of_loc loc);
-        assert false )
+        exit (-1) )
       else Hashtbl.add env param_name param_type)
     params;
   env
@@ -34,7 +34,7 @@ let get_func_type_from_defs func_name func_defs =
   | Some (name, func_type, func_params) -> (name, func_type, func_params)
   | None ->
       Printf.eprintf "Unable to get type of undefined function\n";
-      assert false
+      exit (-1)
 
 let rec type_program program =
   (* Pprint.pprint_prog program; *)
@@ -54,7 +54,7 @@ and type_func (Ast.Func (loc, func_name, func_type, func_params, func_body))
     Printf.eprintf
       "%s\nFunction body return type doesn't match declared return type\n"
       (string_of_loc loc);
-    assert false )
+    exit (-1) )
 
 and type_block ~func_body ?(block_type = T_void) ~func_defs ~type_env =
   match func_body with
@@ -90,7 +90,7 @@ and type_stmt stmt func_defs type_env =
             if type_annotation = expr_type then
               ( TDeclare (loc, (var_name, type_annotation, Some typed_expr)),
                 T_void )
-            else assert false
+            else exit (-1)
         | Some type_annotation, None ->
             (TDeclare (loc, (var_name, type_annotation, None)), T_void)
         | None, Some expr ->
@@ -102,10 +102,10 @@ and type_stmt stmt func_defs type_env =
                Variable declaration without explicit type or inferrable \
                expression not valid\n"
               (string_of_loc loc);
-            assert false )
+            exit (-1) )
       else (
         Printf.eprintf "%s\nVariable declared twice\n" (string_of_loc loc);
-        assert false )
+        exit (-1) )
   | Ast.Assign (loc, (var_name, var_expr)) ->
       if var_exists_in_env var_name type_env then
         let typed_expr, expr_type = type_expr var_expr func_defs type_env in
@@ -113,7 +113,7 @@ and type_stmt stmt func_defs type_env =
       else (
         Printf.eprintf "%s\nUnable to assign to undeclared variable\n"
           (string_of_loc loc);
-        assert false )
+        exit (-1) )
   | Ast.Print (loc, expr) ->
       let typed_expr, _ = type_expr expr func_defs type_env in
       (TPrint (loc, typed_expr), T_void)
@@ -134,7 +134,7 @@ and type_stmt stmt func_defs type_env =
       else (
         Printf.eprintf "%s\nIf/Then statement blocks are not of the same type\n"
           (string_of_loc loc);
-        assert false )
+        exit (-1) )
   | Ast.While (loc, condition, block) ->
       let typed_condition, _ = type_bexpr condition func_defs type_env in
       let typed_block, block_type =
@@ -154,7 +154,7 @@ and type_stmt stmt func_defs type_env =
         Printf.eprintf
           "%s\nFunction call parameter types do not match defined types\n"
           (string_of_loc loc);
-        assert false )
+        exit (-1) )
   | Ast.Return (loc, expr) ->
       let typed_expr, expr_type = type_expr expr func_defs type_env in
       (TReturn (loc, typed_expr, expr_type), expr_type)
@@ -189,7 +189,7 @@ and type_bexpr (Ast.Bincond (loc, booleanop, expr, expr')) func_defs type_env =
   else (
     Printf.eprintf "%s\nLHS and RHS of boolean condition do not match\n"
       (string_of_loc loc);
-    assert false )
+    exit (-1) )
 
 and type_expr expr func_defs type_env =
   match expr with
@@ -249,16 +249,16 @@ and type_expr expr func_defs type_env =
                 Printf.eprintf
                   "%s\nUnable to perform binary operation on given type\n"
                   (string_of_loc loc);
-                assert false )
+                exit (-1) )
         | _ ->
             Printf.eprintf
               "%s\nUnable to perform binary operation on given type\n"
               (string_of_loc loc);
-            assert false )
+            exit (-1) )
       else (
         Printf.eprintf "%s\nLHS and RHS of binary operation do not match\n"
           (string_of_loc loc);
-        assert false )
+        exit (-1) )
   | Ast.AssignCall (loc, (func_name, func_params)) ->
       let typed_params, param_types =
         type_call_params func_params func_defs type_env
@@ -272,4 +272,4 @@ and type_expr expr func_defs type_env =
         Printf.eprintf
           "%s\nFunction call parameter types do not match defined types\n"
           (string_of_loc loc);
-        assert false )
+        exit (-1) )
