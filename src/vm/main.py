@@ -33,7 +33,11 @@ def make_function(name, params, program, pc):
         ops = program[pc]
         opcode = int(ops[0])
 
-        stack_size += stack_effect(opcode)
+        if opcode == OpCode.CALL:
+            params = int(ops[2])
+            stack_size += stack_effect(opcode, params)
+        else:
+            stack_size += stack_effect(opcode)
 
         if stack_size > max_stack_size:
             max_stack_size = stack_size

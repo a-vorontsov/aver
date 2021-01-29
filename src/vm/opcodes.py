@@ -2,37 +2,42 @@ from rpython.rlib import jit
 
 
 class OpCode(object):
-    LOAD_CONST_I = 0
-    LOAD_CONST_F = 1
-    LOAD_CONST_B = 2
-    LOAD_CONST_C = 3
-    LOAD_CONST_S = 4
-    LOAD_VAR = 5
-    ADD = 6
-    MULTIPLY = 7
-    DIVIDE = 8
-    SUBTRACT = 9
-    MOD = 10
-    STORE_VAR = 11
-    PRINT = 12
-    PRINTLN = 13
-    INPUT = 14
-    CMPNEQ = 15
-    CMPEQ = 16
-    CMPLT = 17
-    CMPLE = 18
-    CMPGT = 19
-    CMPGE = 20
-    JMP = 21
-    CALL = 22
-    MAKE_FUNCTION = 23
-    HALT = 24
-    RETURN = 25
-    PASS = 26
-    LOAD_CONST = 27
+    LOAD_CONST = 0
+    LOAD_CONST_I = 1
+    LOAD_CONST_F = 2
+    LOAD_CONST_B = 3
+    LOAD_CONST_C = 4
+    LOAD_CONST_S = 5
+    LOAD_VAR = 6
+    ADD = 7
+    MULTIPLY = 8
+    DIVIDE = 9
+    SUBTRACT = 10
+    MOD = 11
+    STORE_VAR = 12
+    PRINT = 13
+    PRINTLN = 14
+    INPUT = 15
+    CMPNEQ = 16
+    CMPEQ = 17
+    CMPLT = 18
+    CMPLE = 19
+    CMPGT = 20
+    CMPGE = 21
+    JMP = 22
+    MAKE_ARRAY = 23
+    MAKE_EMPTY_ARRAY = 24
+    LOAD_FROM_ARRAY = 25
+    STORE_TO_ARRAY = 26
+    CALL = 27
+    MAKE_FUNCTION = 28
+    HALT = 29
+    RETURN = 30
+    PASS = 31
 
 
 _stack_effects = [
+    1,  # LOAD_CONST
     1,  # LOAD_CONST_I
     1,  # LOAD_CONST_F
     1,  # LOAD_CONST_B
@@ -55,19 +60,22 @@ _stack_effects = [
     -2,  # CMPGT
     -2,  # CMPGE
     0,  # JMP
+    1,  # MAKE_ARRAY
+    0,  # MAKE_EMPTY_ARRAY
+    -1,  # LOAD_FROM_ARRAY
+    -2,  # STORE_TO_ARRAY
     1,  # CALL
     0,  # MAKE_FUNCTION
     0,  # HALT
     -1,  # RETURN
     0,  # PASS
-    1,  # LOAD_CONST
 ]
 
 
 @jit.elidable
 def stack_effect(opcode, param_length=0):
     assert opcode >= 0 and opcode < len(_stack_effects)
-    return _stack_effects[opcode]
+    return _stack_effects[opcode] + -param_length + 1
 
 
 def _bytecode_names(cls):

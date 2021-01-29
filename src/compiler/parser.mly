@@ -12,6 +12,7 @@
 %token BEQUALS BNEQUALS GT GE LT LE
 %token LPAREN RPAREN
 %token LBRACE RBRACE
+%token LSQUARE RSQUARE
 %token SEMICOLON COMMA
 %token LET
 %token PRINT PRINTLN INPUT
@@ -55,6 +56,14 @@
   | T_STRING { T_string }
   | T_VOID { T_void }
 
+any_type:
+  | t = prim_type { t }
+  | a = array_type { a }
+
+array_type:
+  | a = array_type LSQUARE RSQUARE { T_array(a) }
+  | t = prim_type LSQUARE RSQUARE { T_array(t) }
+
 prog:
   | f = func* EOF { f }
 
@@ -79,6 +88,7 @@ param:
 stmt:
   | LET d = declaration SEMICOLON { Declare ($startpos, d) }
   | a = assignment SEMICOLON { Assign ($startpos, a) }
+  | a = array_assign SEMICOLON { ArrayAssign ($startpos, a) }
   | PRINT e = expr SEMICOLON { Print ($startpos, e) }
   | PRINTLN e = expr SEMICOLON { Println ($startpos, e) }
   | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If ($startpos, c, s1, s2) }
@@ -91,9 +101,9 @@ condition:
   | e1 = expr o = bop e2 = expr { Bincond ($startpos, o, e1, e2) }
 
 declaration:
-  | x = ID t = prim_type EQUALS e = expr { x, Some t, Some e }
+  | x = ID t = any_type EQUALS e = expr { x, Some t, Some e }
   | x = ID EQUALS e = expr { x, None, Some e }
-  | x = ID t = prim_type { x, Some t, None }
+  | x = ID t = any_type { x, Some t, None }
 
 assignment:
   | x = ID EQUALS e = expr { x, e }
@@ -103,10 +113,23 @@ expr:
   | f = FLOAT { FNum ($startpos, f) }
   | s = STRING { Str ($startpos, s) }
   | x = ID { Var ($startpos, x) }
+  | LSQUARE a = separated_list(COMMA, expr) RSQUARE { Array ($startpos, a) }
+  | a = array_dec { ArrayDec($startpos, a) }
+  | a = array_access { ArrayAccess ($startpos, a) }
   | INPUT { Input $startpos }
   | f = function_call { AssignCall ($startpos, f) }
   | e1 = expr o = op e2 = expr { Binop ($startpos, o, e1, e2) }
   | LPAREN e = expr RPAREN { e }
+
+array_access:
+  | x = ID LSQUARE e = expr RSQUARE { x, e }
+
+array_assign:
+  | a = array_access EQUALS e = expr { a, e }
+
+array_dec:
+  | a = array_dec LSQUARE i = INT RSQUARE { MultiDim(a, i) }
+  | t = prim_type LSQUARE i = INT RSQUARE { SingleDim(t, i) }
 
 function_call:
  | x = ID LPAREN p = separated_list(COMMA, expr) RPAREN { x, p }

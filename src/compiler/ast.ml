@@ -13,8 +13,17 @@ and expr =
   | Bool of loc * bool
   | Str of loc * string
   | Var of loc * string
+  | Array of loc * expr list
+  | ArrayAccess of loc * array_access
+  | ArrayDec of loc * array_dec
   | Binop of loc * bop * expr * expr
   | AssignCall of loc * function_call
+
+and array_dec =
+  | SingleDim of Types.type_expr * int
+  | MultiDim of array_dec * int
+
+and array_access = string * expr
 
 and booleanop =
   | BEquals
@@ -26,17 +35,20 @@ and booleanop =
 
 and condition = Bincond of loc * booleanop * expr * expr
 
-and params = (loc * string * Types.prim_type) list
+and params = (loc * string * Types.type_expr) list
 
-and declaration = string * Types.prim_type option * expr option
+and declaration = string * Types.type_expr option * expr option
 
 and assignment = string * expr
+
+and array_assignment = array_access * expr
 
 and function_call = string * expr list
 
 and stmt =
   | Declare of loc * declaration
   | Assign of loc * assignment
+  | ArrayAssign of loc * array_assignment
   | Print of loc * expr
   | Println of loc * expr
   | If of loc * condition * block * block
@@ -47,7 +59,7 @@ and stmt =
 
 and block = stmt list
 
-and func = Func of loc * string * Types.prim_type * params * block
+and func = Func of loc * string * Types.type_expr * params * block
 
 and funcs = func list
 

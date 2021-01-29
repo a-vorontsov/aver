@@ -37,6 +37,16 @@ let rec gen_expr_bytecode expression vars_table bytecode =
   | TBool (_, b) -> append_bc (LOAD_CONST_B b) bytecode
   | TStr (_, s) -> append_bc (LOAD_CONST_S s) bytecode
   | TVar (_, v, _) -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
+  | TArray (_, _, elements) ->
+      List.fold_left
+        (fun acc elem -> acc @ gen_expr_bytecode elem vars_table [])
+        bytecode (List.rev elements)
+      @ append_bc (MAKE_ARRAY (List.length elements)) bytecode
+  | TArrayAccess (_, _, (v, i)) ->
+      gen_expr_bytecode i vars_table bytecode
+      @ append_bc (LOAD_VAR (vars_table#get v)) bytecode
+      @ append_bc LOAD_FROM_ARRAY bytecode
+  | TArrayDec (_, _, dec) -> gen_arr_dec_bytecode dec bytecode
   | TAssignCall (_, (name, _, params)) ->
       gen_call_bytecode name params vars_table bytecode
   | TBinop (_, t, op, x, y) ->
@@ -55,6 +65,14 @@ let rec gen_expr_bytecode expression vars_table bytecode =
               match t with T_int | T_float -> SUBTRACT | _ -> exit (-1) ) )
           bytecode
 
+and gen_arr_dec_bytecode dec bytecode =
+  match dec with
+  | TMultiDim (d, i) ->
+      gen_arr_dec_bytecode d bytecode @ append_bc (MAKE_EMPTY_ARRAY i) bytecode
+  | TSingleDim (t, i) ->
+      append_bc (gen_default_val t) bytecode
+      @ append_bc (MAKE_EMPTY_ARRAY i) bytecode
+
 and gen_assign_bytecode assignment vars_table bytecode =
   match assignment with
   | name, _, expression ->
@@ -63,22 +81,24 @@ and gen_assign_bytecode assignment vars_table bytecode =
         @ append_bc (STORE_VAR (vars_table#get name)) bytecode
       else exit (-1)
 
+and gen_default_val t =
+  match t with
+  | T_int -> LOAD_CONST_I 0
+  | T_float -> LOAD_CONST_F 0.0
+  | T_bool -> LOAD_CONST_B false
+  | T_char -> LOAD_CONST_C '0'
+  | T_string -> LOAD_CONST_S ""
+  | T_array _ -> MAKE_ARRAY 0
+  | T_void ->
+      print_endline "Unable to assign void";
+      exit (-1)
+
 and gen_declare_bytecode declaration vars_table bytecode =
   match declaration with
   | name, t, expression -> (
       match expression with
       | None ->
-          append_bc
-            ( match t with
-            | T_int -> LOAD_CONST_I 0
-            | T_float -> LOAD_CONST_F 0.0
-            | T_bool -> LOAD_CONST_B false
-            | T_char -> LOAD_CONST_C '0'
-            | T_string -> LOAD_CONST_S ""
-            | T_void ->
-                print_endline "Unable to assign void";
-                exit (-1) )
-            bytecode
+          append_bc (gen_default_val t) bytecode
           @ append_bc (STORE_VAR (vars_table#insert name)) bytecode
       | Some e ->
           gen_expr_bytecode e vars_table bytecode
@@ -175,6 +195,14 @@ and gen_stmt_bytecode statement vars_table bytecode =
       gen_declare_bytecode declaration vars_table bytecode
   | TAssign (_, assignment) ->
       gen_assign_bytecode assignment vars_table bytecode
+  | TArrayAssign (_, ((v, i), expression)) ->
+      if vars_table#exists v then
+        gen_expr_bytecode expression vars_table bytecode
+        @ gen_expr_bytecode i vars_table bytecode
+        @ append_bc (LOAD_VAR (vars_table#get v)) bytecode
+        @ append_bc STORE_TO_ARRAY bytecode
+        @ append_bc (STORE_VAR (vars_table#get v)) bytecode
+      else exit (-1)
   | TPrint (_, expression) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc PRINT bytecode

@@ -114,6 +114,30 @@ and type_stmt stmt func_defs type_env =
         Printf.eprintf "%s\nUnable to assign to undeclared variable\n"
           (string_of_loc loc);
         exit (-1) )
+  | Ast.ArrayAssign (loc, ((arr_name, idx_expr), expr)) ->
+      let var_type =
+        match get_var_in_env arr_name type_env with
+        | T_array t -> t
+        | _ ->
+            Printf.eprintf "%s\nUnable to assign to undeclared variable\n"
+              (string_of_loc loc);
+            exit (-1)
+      in
+      let idx_typed_expr, idx_expr_type =
+        type_expr idx_expr func_defs type_env
+      in
+      if idx_expr_type = T_int then
+        let typed_expr, expr_type = type_expr expr func_defs type_env in
+        if var_type = expr_type then
+          (TArrayAssign (loc, ((arr_name, idx_typed_expr), typed_expr)), T_void)
+        else (
+          Printf.eprintf "%s\nUnable to assign to undeclared variable\n"
+            (string_of_loc loc);
+          exit (-1) )
+      else (
+        Printf.eprintf "%s\nUnable to assign to undeclared variable\n"
+          (string_of_loc loc);
+        exit (-1) )
   | Ast.Print (loc, expr) ->
       let typed_expr, _ = type_expr expr func_defs type_env in
       (TPrint (loc, typed_expr), T_void)
@@ -191,6 +215,33 @@ and type_bexpr (Ast.Bincond (loc, booleanop, expr, expr')) func_defs type_env =
       (string_of_loc loc);
     exit (-1) )
 
+and type_array arr func_defs type_env =
+  let open List in
+  let typed_exprs =
+    map
+      (fun e ->
+        match type_expr e func_defs type_env with
+        | typed_expr, expr_type -> (typed_expr, expr_type))
+      arr
+  in
+  let e, t = split typed_exprs in
+  let types =
+    filter (fun t -> get_array_base_type t <> T_void) (sort_uniq compare t)
+  in
+  match length types with
+  | 1 -> (e, types)
+  | 0 -> (e, [ T_void ])
+  | _ ->
+      Printf.eprintf "Array contains values of more than one type\n";
+      exit (-1)
+
+and type_arr_dec dec =
+  match dec with
+  | Ast.SingleDim (t, s) -> (TSingleDim (t, s), T_array t)
+  | Ast.MultiDim (a, s) ->
+      let arr_dec, t = type_arr_dec a in
+      (TMultiDim (arr_dec, s), T_array t)
+
 and type_expr expr func_defs type_env =
   match expr with
   | Ast.Input loc -> (TInput loc, T_int)
@@ -201,45 +252,60 @@ and type_expr expr func_defs type_env =
   | Ast.Var (loc, s) ->
       let var_type = get_var_in_env s type_env in
       (TVar (loc, s, var_type), var_type)
+  | Ast.Array (loc, exprs) ->
+      let typed_exprs, arr_types = type_array exprs func_defs type_env in
+      let arr_type = T_array (List.hd arr_types) in
+      (TArray (loc, arr_type, typed_exprs), arr_type)
+  | Ast.ArrayAccess (loc, (v, e)) ->
+      let var_type = get_var_in_env v type_env in
+      let typed_expr, expr_type = type_expr e func_defs type_env in
+      if expr_type = T_int then (
+        match var_type with
+        | T_array t -> (TArrayAccess (loc, var_type, (v, typed_expr)), t)
+        | _ ->
+            Printf.eprintf "Invalid type\n";
+            exit (-1) )
+      else (
+        Printf.eprintf "Arrays must be indexed using integers\n";
+        exit (-1) )
+  | Ast.ArrayDec (loc, a) ->
+      let arr_dec, t = type_arr_dec a in
+      (TArrayDec (loc, t, arr_dec), t)
   | Ast.Binop (loc, b, e, e') ->
       let typed_expr, expr_type = type_expr e func_defs type_env in
       let typed_expr', expr_type' = type_expr e' func_defs type_env in
       if expr_type = expr_type' then (
         match expr_type with
-        | T_int -> (
-            match b with
-            | Add ->
-                ( TBinop (loc, expr_type, TAdd, typed_expr, typed_expr'),
-                  expr_type )
-            | Mult ->
-                ( TBinop (loc, expr_type, TMult, typed_expr, typed_expr'),
-                  expr_type )
-            | Div ->
-                ( TBinop (loc, expr_type, TDiv, typed_expr, typed_expr'),
-                  expr_type )
-            | Sub ->
-                ( TBinop (loc, expr_type, TSub, typed_expr, typed_expr'),
-                  expr_type )
-            | Mod ->
-                ( TBinop (loc, expr_type, TMod, typed_expr, typed_expr'),
-                  expr_type ) )
-        | T_float -> (
-            match b with
-            | Add ->
-                ( TBinop (loc, expr_type, TAdd, typed_expr, typed_expr'),
-                  expr_type )
-            | Mult ->
-                ( TBinop (loc, expr_type, TMult, typed_expr, typed_expr'),
-                  expr_type )
-            | Div ->
-                ( TBinop (loc, expr_type, TDiv, typed_expr, typed_expr'),
-                  expr_type )
-            | Sub ->
-                ( TBinop (loc, expr_type, TSub, typed_expr, typed_expr'),
-                  expr_type )
-            | Mod ->
-                ( TBinop (loc, expr_type, TMod, typed_expr, typed_expr'),
-                  expr_type ) )
+        | T_int ->
+            ( TBinop
+                ( loc,
+                  expr_type,
+                  ( match b with
+                  | Add -> TAdd
+                  | Mult -> TMult
+                  | Div -> TDiv
+                  | Sub -> TSub
+                  | Mod -> TMod ),
+                  typed_expr,
+                  typed_expr' ),
+              expr_type )
+        | T_float ->
+            ( TBinop
+                ( loc,
+                  expr_type,
+                  ( match b with
+                  | Add -> TAdd
+                  | Mult -> TMult
+                  | Div -> TDiv
+                  | Sub -> TSub
+                  | _ ->
+                      Printf.eprintf
+                        "%s\nUnable to perform binary operation on given type\n"
+                        (string_of_loc loc);
+                      exit (-1) ),
+                  typed_expr,
+                  typed_expr' ),
+              expr_type )
         | T_string -> (
             match b with
             | Add ->

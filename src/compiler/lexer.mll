@@ -24,6 +24,7 @@ rule token =
   parse
   | white { token lexbuf }
   | newline { next_line lexbuf; token lexbuf }
+  | "//" { read_single_line_comment lexbuf }
   | "/" { DIV }
   | "-" { MINUS }
   | "*" { TIMES }
@@ -33,6 +34,8 @@ rule token =
   | ")" { RPAREN }
   | "{" { LBRACE }
   | "}" { RBRACE }
+  | "[" { LSQUARE }
+  | "]" { RSQUARE }
   | "=" { EQUALS }
   | "==" { BEQUALS }
   | "!=" { BNEQUALS }
@@ -65,6 +68,11 @@ rule token =
   | '"' { read_string (Buffer.create 16) lexbuf }
   | eof { EOF }
   | _ { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }
+
+and read_single_line_comment = parse
+  | newline { next_line lexbuf; token lexbuf }
+  | eof { EOF }
+  | _ { read_single_line_comment lexbuf }
 
 and read_string buf = parse
   | '"'       { STRING (Buffer.contents buf) }

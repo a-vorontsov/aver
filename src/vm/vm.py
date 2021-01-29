@@ -10,6 +10,7 @@ from objects.char import Char
 from objects.float import Float
 from objects.integer import Integer
 from objects.string import String
+from objects.array import Array
 
 from rpython.rlib import jit
 
@@ -35,10 +36,13 @@ class VM(object):
 
     def run(self, frame):
         self.call_stack_size += 1
+        last_pc = 0
+        last_func = None
+
         pc = frame.pc
         func = frame.func
         while True:
-            if pc != -1:
+            if pc < last_pc and func is last_func:
                 jitdriver.can_enter_jit(
                     pc=pc, func=func, self=self, frame=frame)
 
@@ -164,6 +168,35 @@ class VM(object):
             elif opcode == OpCode.INPUT:
                 line = self.readline()
                 frame.stack_push(Integer(int(line)))
+            elif opcode == OpCode.MAKE_ARRAY:
+                n_elems = ops[1]
+                value = Array(n_elems)
+                for i in range(n_elems):
+                    elem = frame.stack_pop()
+                    value.set_value_at(i, elem)
+                frame.stack_push(value)
+            elif opcode == OpCode.MAKE_EMPTY_ARRAY:
+                n_elems = ops[1]
+                value = Array(n_elems)
+                elem = frame.stack_pop()
+                for i in range(n_elems):
+                    value.set_value_at(i, elem)
+                frame.stack_push(value)
+            elif opcode == OpCode.LOAD_FROM_ARRAY:
+                var = frame.stack_pop()
+                assert isinstance(var, Array)
+                idx = frame.stack_pop()
+                assert isinstance(idx, Integer)
+                tmp = var.get_value_at(idx.value)
+                frame.stack_push(tmp)
+            elif opcode == OpCode.STORE_TO_ARRAY:
+                var = frame.stack_pop()
+                assert isinstance(var, Array)
+                idx = frame.stack_pop()
+                assert isinstance(idx, Integer)
+                val = frame.stack_pop()
+                var.set_value_at(idx.value, val)
+                frame.stack_push(var)
             elif opcode == OpCode.CALL:
                 name = ops[1]
                 params = ops[2]
@@ -192,6 +225,8 @@ class VM(object):
             elif opcode == OpCode.PASS:
                 pass
 
+            last_pc = pc
+            last_func = frame.func
             pc += 1
 
     def invoke_call(self, frame):
