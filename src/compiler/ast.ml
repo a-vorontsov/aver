@@ -6,13 +6,15 @@ let string_of_loc loc =
 
 type bop = Add | Mult | Div | Sub | Mod
 
+type identifier = Var of string | ObjField of string * string
+
 and expr =
   | Input of loc
   | Num of loc * int
   | FNum of loc * float
   | Bool of loc * bool
   | Str of loc * string
-  | Var of loc * string
+  | Identifier of loc * identifier
   | Array of loc * expr list
   | ArrayAccess of loc * array_access
   | ArrayDec of loc * array_dec

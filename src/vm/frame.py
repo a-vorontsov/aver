@@ -9,6 +9,7 @@ class Frame(object):
                           "pc", "locals", "literals")
     _virtualizable_ = ("stack[*]", "stacktop", "locals[*]", "literals[*]")
 
+    @jit.unroll_safe
     def __init__(self, parent, func, local_vars, literal_vars, stack_size):
         self = jit.hint(self, access_directly=True, fresh_virtualizable=True)
         self.parent = parent

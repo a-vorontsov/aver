@@ -1,31 +1,46 @@
 func main() void {
     let a int[];
+    print "a int[]: ";
+    println a;
     let b = int[10];
+    print "b int[10]: ";
     println b;
     let c int[] = int[10];
+    print "c int[] = int[10]: ";
     println c;
     let d int[][];
+    print "d int[][]: ";
+    println d;
     let e = [1,2,3];
+    print "e = [1,2,3]: ";
     println e;
     let f int[] = [1,2,3];
+    print "f int[] = [1,2,3]: ";
     println f;
     let g = f;
+    print "g = f: ";
     println g;
-    let h int[][] = [[1,2],[3], []];
+    let h int[][] = [[1,2], [3], []];
+    print "h int[][] = [[1,2], [3], []]: ";
     println h;
     let i = int[10][10];
+    print "i = int[10][10]: ";
     println i;
     e[0] = 2;
+    print "e[0] = 2: ";
     println e;
     let x = e;
+    print "x = e: ";
     println x;
     x[1] = x[0];
+    print "x[1] = x[0]: ";
     println x;
 
     let test = ["this", "is", "a", "test"];
     let it = 0;
     while (it < 4) {
-        println test[it];
+        print test[it] + " ";
+        println " ";
         it = it + 1;
     }
 }

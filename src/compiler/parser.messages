@@ -1,6 +1,131 @@
-prog: FUNC ID LPAREN ID T_BOOL COMMA WHILE
+prog: FUNC ID LPAREN ID T_BOOL LSQUARE WHILE
+##
+## Ends in an error in state: 21.
+##
+## array_type -> T_BOOL LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_BOOL LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_BOOL WHILE
+##
+## Ends in an error in state: 20.
+##
+## any_type -> T_BOOL . [ SEMICOLON RPAREN EQUALS COMMA ]
+## array_type -> T_BOOL . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_BOOL
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_CHAR LSQUARE WHILE
+##
+## Ends in an error in state: 18.
+##
+## array_type -> T_CHAR LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_CHAR LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_CHAR WHILE
+##
+## Ends in an error in state: 17.
+##
+## any_type -> T_CHAR . [ SEMICOLON RPAREN EQUALS COMMA ]
+## array_type -> T_CHAR . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_CHAR
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_FLOAT LSQUARE WHILE
+##
+## Ends in an error in state: 15.
+##
+## array_type -> T_FLOAT LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_FLOAT LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_FLOAT WHILE
 ##
 ## Ends in an error in state: 14.
+##
+## any_type -> T_FLOAT . [ SEMICOLON RPAREN EQUALS COMMA ]
+## array_type -> T_FLOAT . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_FLOAT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_INT LSQUARE WHILE
+##
+## Ends in an error in state: 12.
+##
+## array_type -> T_INT LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_INT LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_INT WHILE
+##
+## Ends in an error in state: 11.
+##
+## any_type -> T_INT . [ SEMICOLON RPAREN EQUALS COMMA ]
+## array_type -> T_INT . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_STRING LSQUARE WHILE
+##
+## Ends in an error in state: 9.
+##
+## array_type -> T_STRING LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_STRING LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_STRING WHILE
+##
+## Ends in an error in state: 8.
+##
+## any_type -> T_STRING . [ SEMICOLON RPAREN EQUALS COMMA ]
+## array_type -> T_STRING . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_STRING
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_VOID COMMA WHILE
+##
+## Ends in an error in state: 31.
 ##
 ## separated_nonempty_list(COMMA,param) -> param COMMA . separated_nonempty_list(COMMA,param) [ RPAREN ]
 ##
@@ -10,15 +135,72 @@ prog: FUNC ID LPAREN ID T_BOOL COMMA WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN ID T_BOOL WHILE
+prog: FUNC ID LPAREN ID T_VOID LSQUARE RSQUARE LSQUARE WHILE
 ##
-## Ends in an error in state: 13.
+## Ends in an error in state: 24.
+##
+## array_type -> array_type LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## array_type LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_VOID LSQUARE RSQUARE WHILE
+##
+## Ends in an error in state: 23.
+##
+## any_type -> array_type . [ SEMICOLON RPAREN EQUALS COMMA ]
+## array_type -> array_type . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## array_type
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_VOID LSQUARE WHILE
+##
+## Ends in an error in state: 6.
+##
+## array_type -> T_VOID LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_VOID LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_VOID SEMICOLON
+##
+## Ends in an error in state: 30.
 ##
 ## separated_nonempty_list(COMMA,param) -> param . [ RPAREN ]
 ## separated_nonempty_list(COMMA,param) -> param . COMMA separated_nonempty_list(COMMA,param) [ RPAREN ]
 ##
 ## The known suffix of the stack is as follows:
 ## param
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 5, spurious reduction of production any_type -> T_VOID 
+## In state 26, spurious reduction of production param -> ID any_type 
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN ID T_VOID WHILE
+##
+## Ends in an error in state: 5.
+##
+## any_type -> T_VOID . [ SEMICOLON RPAREN EQUALS COMMA ]
+## array_type -> T_VOID . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## T_VOID
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
@@ -27,11 +209,7 @@ prog: FUNC ID LPAREN ID WHILE
 ##
 ## Ends in an error in state: 4.
 ##
-## param -> ID . T_INT [ RPAREN COMMA ]
-## param -> ID . T_BOOL [ RPAREN COMMA ]
-## param -> ID . T_CHAR [ RPAREN COMMA ]
-## param -> ID . T_STRING [ RPAREN COMMA ]
-## param -> ID . T_VOID [ RPAREN COMMA ]
+## param -> ID . any_type [ RPAREN COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## ID
@@ -41,7 +219,7 @@ prog: FUNC ID LPAREN ID WHILE
 
 prog: FUNC ID LPAREN RPAREN T_BOOL LBRACE RBRACE WHILE
 ##
-## Ends in an error in state: 108.
+## Ends in an error in state: 174.
 ##
 ## list(func) -> func . list(func) [ EOF ]
 ##
@@ -53,7 +231,7 @@ prog: FUNC ID LPAREN RPAREN T_BOOL LBRACE RBRACE WHILE
 
 prog: FUNC ID LPAREN RPAREN T_BOOL WHILE
 ##
-## Ends in an error in state: 103.
+## Ends in an error in state: 169.
 ##
 ## func -> FUNC ID params T_BOOL . block [ FUNC EOF ]
 ##
@@ -65,7 +243,7 @@ prog: FUNC ID LPAREN RPAREN T_BOOL WHILE
 
 prog: FUNC ID LPAREN RPAREN T_CHAR WHILE
 ##
-## Ends in an error in state: 101.
+## Ends in an error in state: 167.
 ##
 ## func -> FUNC ID params T_CHAR . block [ FUNC EOF ]
 ##
@@ -75,9 +253,21 @@ prog: FUNC ID LPAREN RPAREN T_CHAR WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
+prog: FUNC ID LPAREN RPAREN T_FLOAT WHILE
+##
+## Ends in an error in state: 165.
+##
+## func -> FUNC ID params T_FLOAT . block [ FUNC EOF ]
+##
+## The known suffix of the stack is as follows:
+## FUNC ID params T_FLOAT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
 prog: FUNC ID LPAREN RPAREN T_INT WHILE
 ##
-## Ends in an error in state: 99.
+## Ends in an error in state: 163.
 ##
 ## func -> FUNC ID params T_INT . block [ FUNC EOF ]
 ##
@@ -89,7 +279,7 @@ prog: FUNC ID LPAREN RPAREN T_INT WHILE
 
 prog: FUNC ID LPAREN RPAREN T_STRING WHILE
 ##
-## Ends in an error in state: 97.
+## Ends in an error in state: 161.
 ##
 ## func -> FUNC ID params T_STRING . block [ FUNC EOF ]
 ##
@@ -99,9 +289,9 @@ prog: FUNC ID LPAREN RPAREN T_STRING WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID EQUALS INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID EQUALS STRING WHILE
 ##
-## Ends in an error in state: 86.
+## Ends in an error in state: 145.
 ##
 ## assignment -> ID EQUALS expr . [ SEMICOLON ]
 ## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
@@ -118,7 +308,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID EQUALS INT WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID EQUALS WHILE
 ##
-## Ends in an error in state: 85.
+## Ends in an error in state: 144.
 ##
 ## assignment -> ID EQUALS . expr [ SEMICOLON ]
 ##
@@ -128,41 +318,11 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID EQUALS WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LPAREN INT COMMA WHILE
-##
-## Ends in an error in state: 42.
-##
-## separated_nonempty_list(COMMA,expr) -> expr COMMA . separated_nonempty_list(COMMA,expr) [ RPAREN ]
-##
-## The known suffix of the stack is as follows:
-## expr COMMA
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LPAREN INT WHILE
-##
-## Ends in an error in state: 31.
-##
-## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
-## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
-## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
-## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
-## expr -> expr . MOD expr [ TIMES RPAREN PLUS MOD MINUS DIV COMMA ]
-## separated_nonempty_list(COMMA,expr) -> expr . [ RPAREN ]
-## separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ RPAREN ]
-##
-## The known suffix of the stack is as follows:
-## expr
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LPAREN RPAREN WHILE
 ##
-## Ends in an error in state: 92.
+## Ends in an error in state: 151.
 ##
-## stmt -> function_call . SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> function_call . SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## function_call
@@ -170,11 +330,30 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LPAREN RPAREN WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LPAREN STRING RSQUARE
+##
+## Ends in an error in state: 91.
+##
+## function_call -> ID LPAREN loption(separated_nonempty_list(COMMA,expr)) . RPAREN [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## ID LPAREN loption(separated_nonempty_list(COMMA,expr))
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 93, spurious reduction of production separated_nonempty_list(COMMA,expr) -> expr 
+## In state 90, spurious reduction of production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) 
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LPAREN WHILE
 ##
-## Ends in an error in state: 26.
+## Ends in an error in state: 89.
 ##
-## function_call -> ID LPAREN . loption(separated_nonempty_list(COMMA,expr)) RPAREN [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
+## function_call -> ID LPAREN . loption(separated_nonempty_list(COMMA,expr)) RPAREN [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## ID LPAREN
@@ -182,10 +361,81 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LPAREN WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LSQUARE FLOAT RSQUARE EQUALS STRING WHILE
+##
+## Ends in an error in state: 159.
+##
+## array_assign -> array_access EQUALS expr . [ SEMICOLON ]
+## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . MOD expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## array_access EQUALS expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LSQUARE FLOAT RSQUARE EQUALS WHILE
+##
+## Ends in an error in state: 158.
+##
+## array_assign -> array_access EQUALS . expr [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## array_access EQUALS
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LSQUARE FLOAT RSQUARE WHILE
+##
+## Ends in an error in state: 157.
+##
+## array_assign -> array_access . EQUALS expr [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## array_access
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LSQUARE STRING WHILE
+##
+## Ends in an error in state: 72.
+##
+## array_access -> ID LSQUARE expr . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE EQUALS DIV COMMA BNEQUALS BEQUALS ]
+## expr -> expr . DIV expr [ TIMES RSQUARE PLUS MOD MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES RSQUARE PLUS MOD MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES RSQUARE PLUS MOD MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES RSQUARE PLUS MOD MINUS DIV ]
+## expr -> expr . MOD expr [ TIMES RSQUARE PLUS MOD MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## ID LSQUARE expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LSQUARE WHILE
+##
+## Ends in an error in state: 69.
+##
+## array_access -> ID LSQUARE . expr RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE EQUALS DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## ID LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID WHILE
 ##
-## Ends in an error in state: 84.
+## Ends in an error in state: 143.
 ##
+## array_access -> ID . LSQUARE expr RSQUARE [ EQUALS ]
 ## assignment -> ID . EQUALS expr [ SEMICOLON ]
 ## function_call -> ID . LPAREN loption(separated_nonempty_list(COMMA,expr)) RPAREN [ SEMICOLON ]
 ##
@@ -195,11 +445,11 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE ELSE WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN STRING BEQUALS FLOAT RPAREN LBRACE RBRACE ELSE WHILE
 ##
-## Ends in an error in state: 82.
+## Ends in an error in state: 141.
 ##
-## stmt -> IF LPAREN condition RPAREN block ELSE . block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> IF LPAREN condition RPAREN block ELSE . block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF LPAREN condition RPAREN block ELSE
@@ -207,11 +457,11 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN INT BEQUALS ID RPAREN LBRACE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN INT BEQUALS ID RPAREN LBRACE RBRACE WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN STRING BEQUALS FLOAT RPAREN LBRACE RBRACE WHILE
 ##
-## Ends in an error in state: 81.
+## Ends in an error in state: 140.
 ##
-## stmt -> IF LPAREN condition RPAREN block . ELSE block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> IF LPAREN condition RPAREN block . ELSE block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF LPAREN condition RPAREN block
@@ -219,11 +469,11 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN INT BEQUALS ID RPAREN LBRACE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN INT BEQUALS ID RPAREN WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN STRING BEQUALS FLOAT RPAREN WHILE
 ##
-## Ends in an error in state: 80.
+## Ends in an error in state: 139.
 ##
-## stmt -> IF LPAREN condition RPAREN . block ELSE block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> IF LPAREN condition RPAREN . block ELSE block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF LPAREN condition RPAREN
@@ -233,9 +483,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN INT BEQUALS ID RPAREN WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN WHILE
 ##
-## Ends in an error in state: 78.
+## Ends in an error in state: 137.
 ##
-## stmt -> IF LPAREN . condition RPAREN block ELSE block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> IF LPAREN . condition RPAREN block ELSE block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF LPAREN
@@ -245,9 +495,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF LPAREN WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF WHILE
 ##
-## Ends in an error in state: 77.
+## Ends in an error in state: 136.
 ##
-## stmt -> IF . LPAREN condition RPAREN block ELSE block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> IF . LPAREN condition RPAREN block ELSE block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF
@@ -255,9 +505,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE IF WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID EQUALS INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID EQUALS STRING WHILE
 ##
-## Ends in an error in state: 74.
+## Ends in an error in state: 130.
 ##
 ## declaration -> ID EQUALS expr . [ SEMICOLON ]
 ## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
@@ -274,7 +524,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID EQUALS INT WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID EQUALS WHILE
 ##
-## Ends in an error in state: 73.
+## Ends in an error in state: 129.
 ##
 ## declaration -> ID EQUALS . expr [ SEMICOLON ]
 ##
@@ -284,28 +534,61 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID EQUALS WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID T_BOOL WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID T_VOID EQUALS STRING WHILE
 ##
-## Ends in an error in state: 75.
+## Ends in an error in state: 133.
 ##
-## stmt -> LET declaration . SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## declaration -> ID any_type EQUALS expr . [ SEMICOLON ]
+## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . MOD expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ##
 ## The known suffix of the stack is as follows:
-## LET declaration
+## ID any_type EQUALS expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID T_VOID EQUALS WHILE
+##
+## Ends in an error in state: 132.
+##
+## declaration -> ID any_type EQUALS . expr [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## ID any_type EQUALS
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID T_VOID RPAREN
+##
+## Ends in an error in state: 131.
+##
+## declaration -> ID any_type . EQUALS expr [ SEMICOLON ]
+## declaration -> ID any_type . [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## ID any_type
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 5, spurious reduction of production any_type -> T_VOID 
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID WHILE
 ##
-## Ends in an error in state: 67.
+## Ends in an error in state: 128.
 ##
+## declaration -> ID . any_type EQUALS expr [ SEMICOLON ]
 ## declaration -> ID . EQUALS expr [ SEMICOLON ]
-## declaration -> ID . T_INT [ SEMICOLON ]
-## declaration -> ID . T_BOOL [ SEMICOLON ]
-## declaration -> ID . T_CHAR [ SEMICOLON ]
-## declaration -> ID . T_STRING [ SEMICOLON ]
-## declaration -> ID . T_VOID [ SEMICOLON ]
+## declaration -> ID . any_type [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
 ## ID
@@ -315,9 +598,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET WHILE
 ##
-## Ends in an error in state: 66.
+## Ends in an error in state: 127.
 ##
-## stmt -> LET . declaration SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> LET . declaration SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## LET
@@ -327,7 +610,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PASS SEMICOLON T_VOID
 ##
-## Ends in an error in state: 90.
+## Ends in an error in state: 149.
 ##
 ## list(line) -> line . list(line) [ RBRACE ]
 ##
@@ -339,9 +622,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PASS SEMICOLON T_VOID
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PASS WHILE
 ##
-## Ends in an error in state: 64.
+## Ends in an error in state: 125.
 ##
-## stmt -> PASS . SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> PASS . SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## PASS
@@ -349,16 +632,16 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PASS WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PRINT INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PRINT STRING WHILE
 ##
-## Ends in an error in state: 62.
+## Ends in an error in state: 123.
 ##
 ## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . MOD expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
-## stmt -> PRINT expr . SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> PRINT expr . SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## PRINT expr
@@ -368,9 +651,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PRINT INT WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PRINT WHILE
 ##
-## Ends in an error in state: 61.
+## Ends in an error in state: 122.
 ##
-## stmt -> PRINT . expr SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> PRINT . expr SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## PRINT
@@ -378,93 +661,45 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PRINT WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN INT DIV WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PRINTLN STRING WHILE
 ##
-## Ends in an error in state: 38.
-##
-## expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
-##
-## The known suffix of the stack is as follows:
-## expr DIV
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN INT MINUS WHILE
-##
-## Ends in an error in state: 40.
-##
-## expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
-##
-## The known suffix of the stack is as follows:
-## expr MINUS
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN INT MOD WHILE
-##
-## Ends in an error in state: 36.
-##
-## expr -> expr MOD . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
-##
-## The known suffix of the stack is as follows:
-## expr MOD
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN INT PLUS WHILE
-##
-## Ends in an error in state: 34.
-##
-## expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
-##
-## The known suffix of the stack is as follows:
-## expr PLUS
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN INT TIMES WHILE
-##
-## Ends in an error in state: 32.
-##
-## expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
-##
-## The known suffix of the stack is as follows:
-## expr TIMES
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN INT WHILE
-##
-## Ends in an error in state: 59.
+## Ends in an error in state: 120.
 ##
 ## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
 ## expr -> expr . MOD expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
-## stmt -> RETURN expr . SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> PRINTLN expr . SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
-## RETURN expr
+## PRINTLN expr
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LPAREN INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE PRINTLN WHILE
 ##
-## Ends in an error in state: 44.
+## Ends in an error in state: 119.
+##
+## stmt -> PRINTLN . expr SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
+##
+## The known suffix of the stack is as follows:
+## PRINTLN
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LPAREN STRING WHILE
+##
+## Ends in an error in state: 96.
 ##
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . MOD expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
-## expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
+## expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN expr
@@ -474,9 +709,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LPAREN INT WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LPAREN WHILE
 ##
-## Ends in an error in state: 22.
+## Ends in an error in state: 65.
 ##
-## expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN PLUS MOD MINUS LT GT DIV COMMA BNEQUALS BEQUALS ]
+## expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN
@@ -484,11 +719,389 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LPAREN WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LSQUARE STRING COMMA WHILE
+##
+## Ends in an error in state: 94.
+##
+## separated_nonempty_list(COMMA,expr) -> expr COMMA . separated_nonempty_list(COMMA,expr) [ RSQUARE RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## expr COMMA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LSQUARE STRING RPAREN
+##
+## Ends in an error in state: 98.
+##
+## expr -> LSQUARE loption(separated_nonempty_list(COMMA,expr)) . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## LSQUARE loption(separated_nonempty_list(COMMA,expr))
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 93, spurious reduction of production separated_nonempty_list(COMMA,expr) -> expr 
+## In state 90, spurious reduction of production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) 
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LSQUARE STRING WHILE
+##
+## Ends in an error in state: 93.
+##
+## expr -> expr . DIV expr [ TIMES RSQUARE RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . TIMES expr [ TIMES RSQUARE RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . PLUS expr [ TIMES RSQUARE RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . MINUS expr [ TIMES RSQUARE RPAREN PLUS MOD MINUS DIV COMMA ]
+## expr -> expr . MOD expr [ TIMES RSQUARE RPAREN PLUS MOD MINUS DIV COMMA ]
+## separated_nonempty_list(COMMA,expr) -> expr . [ RSQUARE RPAREN ]
+## separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ RSQUARE RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LSQUARE WHILE
+##
+## Ends in an error in state: 64.
+##
+## expr -> LSQUARE . loption(separated_nonempty_list(COMMA,expr)) RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRING DIV WHILE
+##
+## Ends in an error in state: 85.
+##
+## expr -> expr DIV . expr [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## expr DIV
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRING MINUS WHILE
+##
+## Ends in an error in state: 87.
+##
+## expr -> expr MINUS . expr [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## expr MINUS
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRING MOD WHILE
+##
+## Ends in an error in state: 83.
+##
+## expr -> expr MOD . expr [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## expr MOD
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRING PLUS WHILE
+##
+## Ends in an error in state: 81.
+##
+## expr -> expr PLUS . expr [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## expr PLUS
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRING TIMES WHILE
+##
+## Ends in an error in state: 73.
+##
+## expr -> expr TIMES . expr [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## expr TIMES
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRING WHILE
+##
+## Ends in an error in state: 117.
+##
+## expr -> expr . DIV expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## expr -> expr . MOD expr [ TIMES SEMICOLON PLUS MOD MINUS DIV ]
+## stmt -> RETURN expr . SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
+##
+## The known suffix of the stack is as follows:
+## RETURN expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_BOOL LSQUARE INT WHILE
+##
+## Ends in an error in state: 61.
+##
+## array_dec -> T_BOOL LSQUARE INT . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_BOOL LSQUARE INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_BOOL LSQUARE WHILE
+##
+## Ends in an error in state: 60.
+##
+## array_dec -> T_BOOL LSQUARE . INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_BOOL LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_BOOL WHILE
+##
+## Ends in an error in state: 59.
+##
+## array_dec -> T_BOOL . LSQUARE INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_BOOL
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_CHAR LSQUARE INT WHILE
+##
+## Ends in an error in state: 57.
+##
+## array_dec -> T_CHAR LSQUARE INT . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_CHAR LSQUARE INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_CHAR LSQUARE WHILE
+##
+## Ends in an error in state: 56.
+##
+## array_dec -> T_CHAR LSQUARE . INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_CHAR LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_CHAR WHILE
+##
+## Ends in an error in state: 55.
+##
+## array_dec -> T_CHAR . LSQUARE INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_CHAR
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_FLOAT LSQUARE INT WHILE
+##
+## Ends in an error in state: 53.
+##
+## array_dec -> T_FLOAT LSQUARE INT . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_FLOAT LSQUARE INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_FLOAT LSQUARE WHILE
+##
+## Ends in an error in state: 52.
+##
+## array_dec -> T_FLOAT LSQUARE . INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_FLOAT LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_FLOAT WHILE
+##
+## Ends in an error in state: 51.
+##
+## array_dec -> T_FLOAT . LSQUARE INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_FLOAT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_INT LSQUARE INT WHILE
+##
+## Ends in an error in state: 49.
+##
+## array_dec -> T_INT LSQUARE INT . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_INT LSQUARE INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_INT LSQUARE WHILE
+##
+## Ends in an error in state: 48.
+##
+## array_dec -> T_INT LSQUARE . INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_INT LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_INT WHILE
+##
+## Ends in an error in state: 47.
+##
+## array_dec -> T_INT . LSQUARE INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_STRING LSQUARE INT WHILE
+##
+## Ends in an error in state: 45.
+##
+## array_dec -> T_STRING LSQUARE INT . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_STRING LSQUARE INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_STRING LSQUARE WHILE
+##
+## Ends in an error in state: 44.
+##
+## array_dec -> T_STRING LSQUARE . INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_STRING LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_STRING WHILE
+##
+## Ends in an error in state: 43.
+##
+## array_dec -> T_STRING . LSQUARE INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_STRING
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_VOID LSQUARE INT RSQUARE LSQUARE INT WHILE
+##
+## Ends in an error in state: 77.
+##
+## array_dec -> array_dec LSQUARE INT . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## array_dec LSQUARE INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_VOID LSQUARE INT RSQUARE LSQUARE WHILE
+##
+## Ends in an error in state: 76.
+##
+## array_dec -> array_dec LSQUARE . INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## array_dec LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_VOID LSQUARE INT WHILE
+##
+## Ends in an error in state: 41.
+##
+## array_dec -> T_VOID LSQUARE INT . RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_VOID LSQUARE INT
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_VOID LSQUARE WHILE
+##
+## Ends in an error in state: 40.
+##
+## array_dec -> T_VOID LSQUARE . INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_VOID LSQUARE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN T_VOID WHILE
+##
+## Ends in an error in state: 39.
+##
+## array_dec -> T_VOID . LSQUARE INT RSQUARE [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LSQUARE LE GT GE DIV COMMA BNEQUALS BEQUALS ]
+##
+## The known suffix of the stack is as follows:
+## T_VOID
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN WHILE
 ##
-## Ends in an error in state: 58.
+## Ends in an error in state: 116.
 ##
-## stmt -> RETURN . expr SEMICOLON [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> RETURN . expr SEMICOLON [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## RETURN
@@ -498,9 +1111,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE T_VOID
 ##
-## Ends in an error in state: 19.
+## Ends in an error in state: 36.
 ##
-## block -> LBRACE . list(line) RBRACE [ WHILE RETURN RBRACE PRINT PASS LET IF ID FUNC EOF ELSE ]
+## block -> LBRACE . list(line) RBRACE [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID FUNC EOF ELSE ]
 ##
 ## The known suffix of the stack is as follows:
 ## LBRACE
@@ -508,11 +1121,11 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE T_VOID
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BEQUALS ID RPAREN WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING BEQUALS FLOAT RPAREN WHILE
 ##
-## Ends in an error in state: 56.
+## Ends in an error in state: 114.
 ##
-## stmt -> WHILE LPAREN condition RPAREN . block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> WHILE LPAREN condition RPAREN . block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## WHILE LPAREN condition RPAREN
@@ -520,9 +1133,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BEQUALS ID RPAREN WHI
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BEQUALS INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING BEQUALS STRING WHILE
 ##
-## Ends in an error in state: 54.
+## Ends in an error in state: 112.
 ##
 ## condition -> expr BEQUALS expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -537,9 +1150,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BEQUALS INT WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BEQUALS WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING BEQUALS WHILE
 ##
-## Ends in an error in state: 53.
+## Ends in an error in state: 111.
 ##
 ## condition -> expr BEQUALS . expr [ RPAREN ]
 ##
@@ -549,9 +1162,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BEQUALS WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BNEQUALS INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING BNEQUALS STRING WHILE
 ##
-## Ends in an error in state: 52.
+## Ends in an error in state: 110.
 ##
 ## condition -> expr BNEQUALS expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -566,9 +1179,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BNEQUALS INT WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BNEQUALS WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING BNEQUALS WHILE
 ##
-## Ends in an error in state: 51.
+## Ends in an error in state: 109.
 ##
 ## condition -> expr BNEQUALS . expr [ RPAREN ]
 ##
@@ -578,9 +1191,38 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT BNEQUALS WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT GT INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING GE STRING WHILE
 ##
-## Ends in an error in state: 50.
+## Ends in an error in state: 108.
+##
+## condition -> expr GE expr . [ RPAREN ]
+## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . MOD expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr GE expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING GE WHILE
+##
+## Ends in an error in state: 107.
+##
+## condition -> expr GE . expr [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## expr GE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING GT STRING WHILE
+##
+## Ends in an error in state: 106.
 ##
 ## condition -> expr GT expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -595,9 +1237,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT GT INT WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT GT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING GT WHILE
 ##
-## Ends in an error in state: 49.
+## Ends in an error in state: 105.
 ##
 ## condition -> expr GT . expr [ RPAREN ]
 ##
@@ -607,9 +1249,38 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT GT WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT LT INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING LE STRING WHILE
 ##
-## Ends in an error in state: 48.
+## Ends in an error in state: 104.
+##
+## condition -> expr LE expr . [ RPAREN ]
+## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## expr -> expr . MOD expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+##
+## The known suffix of the stack is as follows:
+## expr LE expr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING LE WHILE
+##
+## Ends in an error in state: 103.
+##
+## condition -> expr LE . expr [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## expr LE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING LT STRING WHILE
+##
+## Ends in an error in state: 102.
 ##
 ## condition -> expr LT expr . [ RPAREN ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
@@ -624,9 +1295,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT LT INT WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT LT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING LT WHILE
 ##
-## Ends in an error in state: 47.
+## Ends in an error in state: 101.
 ##
 ## condition -> expr LT . expr [ RPAREN ]
 ##
@@ -636,19 +1307,21 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT LT WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT WHILE
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN STRING WHILE
 ##
-## Ends in an error in state: 46.
+## Ends in an error in state: 100.
 ##
 ## condition -> expr . BEQUALS expr [ RPAREN ]
 ## condition -> expr . BNEQUALS expr [ RPAREN ]
 ## condition -> expr . GT expr [ RPAREN ]
+## condition -> expr . GE expr [ RPAREN ]
 ## condition -> expr . LT expr [ RPAREN ]
-## expr -> expr . DIV expr [ TIMES PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
-## expr -> expr . TIMES expr [ TIMES PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
-## expr -> expr . PLUS expr [ TIMES PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
-## expr -> expr . MINUS expr [ TIMES PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
-## expr -> expr . MOD expr [ TIMES PLUS MOD MINUS LT GT DIV BNEQUALS BEQUALS ]
+## condition -> expr . LE expr [ RPAREN ]
+## expr -> expr . DIV expr [ TIMES PLUS MOD MINUS LT LE GT GE DIV BNEQUALS BEQUALS ]
+## expr -> expr . TIMES expr [ TIMES PLUS MOD MINUS LT LE GT GE DIV BNEQUALS BEQUALS ]
+## expr -> expr . PLUS expr [ TIMES PLUS MOD MINUS LT LE GT GE DIV BNEQUALS BEQUALS ]
+## expr -> expr . MINUS expr [ TIMES PLUS MOD MINUS LT LE GT GE DIV BNEQUALS BEQUALS ]
+## expr -> expr . MOD expr [ TIMES PLUS MOD MINUS LT LE GT GE DIV BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## expr
@@ -658,9 +1331,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN INT WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN WHILE
 ##
-## Ends in an error in state: 21.
+## Ends in an error in state: 38.
 ##
-## stmt -> WHILE LPAREN . condition RPAREN block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> WHILE LPAREN . condition RPAREN block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## WHILE LPAREN
@@ -670,9 +1343,9 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE LPAREN WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE WHILE
 ##
-## Ends in an error in state: 20.
+## Ends in an error in state: 37.
 ##
-## stmt -> WHILE . LPAREN condition RPAREN block [ WHILE RETURN RBRACE PRINT PASS LET IF ID ]
+## stmt -> WHILE . LPAREN condition RPAREN block [ WHILE RETURN RBRACE PRINTLN PRINT PASS LET IF ID ]
 ##
 ## The known suffix of the stack is as follows:
 ## WHILE
@@ -682,7 +1355,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE WHILE WHILE
 
 prog: FUNC ID LPAREN RPAREN T_VOID WHILE
 ##
-## Ends in an error in state: 18.
+## Ends in an error in state: 35.
 ##
 ## func -> FUNC ID params T_VOID . block [ FUNC EOF ]
 ##
@@ -694,9 +1367,10 @@ prog: FUNC ID LPAREN RPAREN T_VOID WHILE
 
 prog: FUNC ID LPAREN RPAREN WHILE
 ##
-## Ends in an error in state: 17.
+## Ends in an error in state: 34.
 ##
 ## func -> FUNC ID params . T_INT block [ FUNC EOF ]
+## func -> FUNC ID params . T_FLOAT block [ FUNC EOF ]
 ## func -> FUNC ID params . T_BOOL block [ FUNC EOF ]
 ## func -> FUNC ID params . T_CHAR block [ FUNC EOF ]
 ## func -> FUNC ID params . T_STRING block [ FUNC EOF ]
@@ -712,7 +1386,7 @@ prog: FUNC ID LPAREN WHILE
 ##
 ## Ends in an error in state: 3.
 ##
-## params -> LPAREN . param_list RPAREN [ T_VOID T_STRING T_INT T_CHAR T_BOOL ]
+## params -> LPAREN . param_list RPAREN [ T_VOID T_STRING T_INT T_FLOAT T_CHAR T_BOOL ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN
@@ -725,6 +1399,7 @@ prog: FUNC ID WHILE
 ## Ends in an error in state: 2.
 ##
 ## func -> FUNC ID . params T_INT block [ FUNC EOF ]
+## func -> FUNC ID . params T_FLOAT block [ FUNC EOF ]
 ## func -> FUNC ID . params T_BOOL block [ FUNC EOF ]
 ## func -> FUNC ID . params T_CHAR block [ FUNC EOF ]
 ## func -> FUNC ID . params T_STRING block [ FUNC EOF ]
@@ -741,6 +1416,7 @@ prog: FUNC WHILE
 ## Ends in an error in state: 1.
 ##
 ## func -> FUNC . ID params T_INT block [ FUNC EOF ]
+## func -> FUNC . ID params T_FLOAT block [ FUNC EOF ]
 ## func -> FUNC . ID params T_BOOL block [ FUNC EOF ]
 ## func -> FUNC . ID params T_CHAR block [ FUNC EOF ]
 ## func -> FUNC . ID params T_STRING block [ FUNC EOF ]

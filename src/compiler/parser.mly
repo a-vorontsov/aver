@@ -13,7 +13,7 @@
 %token LPAREN RPAREN
 %token LBRACE RBRACE
 %token LSQUARE RSQUARE
-%token SEMICOLON COMMA
+%token SEMICOLON COMMA DOT
 %token LET
 %token PRINT PRINTLN INPUT
 %token IF ELSE
@@ -83,7 +83,7 @@ param_list:
   | ps = separated_list(COMMA, param) { ps }
 
 param:
-  | x = ID t = prim_type { $startpos, x, t }
+  | x = ID t = any_type { $startpos, x, t }
 
 stmt:
   | LET d = declaration SEMICOLON { Declare ($startpos, d) }
@@ -108,11 +108,15 @@ declaration:
 assignment:
   | x = ID EQUALS e = expr { x, e }
 
+identifier:
+  | x = ID { Var x }
+  | obj = ID DOT field = ID { ObjField(obj, field) }
+
 expr:
   | i = INT { Num ($startpos, i) }
   | f = FLOAT { FNum ($startpos, f) }
   | s = STRING { Str ($startpos, s) }
-  | x = ID { Var ($startpos, x) }
+  | x = identifier { Identifier ($startpos, x) }
   | LSQUARE a = separated_list(COMMA, expr) RSQUARE { Array ($startpos, a) }
   | a = array_dec { ArrayDec($startpos, a) }
   | a = array_access { ArrayAccess ($startpos, a) }

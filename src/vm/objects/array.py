@@ -23,10 +23,8 @@ class Array(PrimitiveObject):
         self.list = new_list
 
     def get_string(self):
-        result = "["
-        for item in self.list:
-            result += item.get_string() + ","
-        result += "]"
+        result = "[" + ",".join([item.get_string()
+                                 for item in self.list]) + "]"
 
         return result
 

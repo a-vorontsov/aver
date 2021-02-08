@@ -46,6 +46,7 @@ rule token =
   (* | ":" { COLON } *)
   | ";" { SEMICOLON }
   | "," { COMMA }
+  | "." { DOT }
   | "let" { LET }
   | "print" { PRINT }
   | "println" { PRINTLN }
