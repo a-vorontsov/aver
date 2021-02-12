@@ -8,6 +8,7 @@ let emit b = String.concat "\n" (List.map as_string b)
 let parse_file f =
   let input = open_in f in
   let filebuf = Lexing.from_channel input in
+  Printexc.record_backtrace true;
   try
     Ok
       (emit
@@ -25,6 +26,9 @@ let parse_file f =
       | Some (line, pos) ->
           Error (sprintf "Syntax error at %d:%d\n%s" line pos msg)
       | None -> Error (sprintf "%s" msg) )
+  | e ->
+      Printexc.print_backtrace stdout;
+      Error (Printexc.to_string e)
 
 let write_file s out =
   let oc = open_out_bin (out ^ ".avb") in

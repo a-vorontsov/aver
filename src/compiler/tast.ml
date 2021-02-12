@@ -6,18 +6,25 @@ let string_of_loc loc =
 
 type t_bop = TAdd | TMult | TDiv | TSub | TMod
 
+and t_identifier =
+  | TVar of string * Types.type_expr
+  | TObjField of string * Types.type_expr * string * Types.type_expr
+
 and t_expr =
   | TInput of loc
+  | TNull of loc
   | TNum of loc * int
   | TFNum of loc * float
   | TBool of loc * bool
   | TStr of loc * string
-  | TVar of loc * string * Types.type_expr
+  | TIdentifier of loc * t_identifier
   | TArray of loc * Types.type_expr * t_expr list
   | TArrayAccess of loc * Types.type_expr * t_array_access
   | TArrayDec of loc * Types.type_expr * t_array_dec
   | TBinop of loc * Types.type_expr * t_bop * t_expr * t_expr
   | TAssignCall of loc * t_function_call
+  | TStructInit of
+      loc * string * Types.type_expr * (string * Types.type_expr * t_expr) list
 
 and t_array_dec =
   | TSingleDim of Types.type_expr * int
@@ -40,7 +47,7 @@ and t_params = (loc * string * Types.type_expr) list
 
 and t_declaration = string * Types.type_expr * t_expr option
 
-and t_assignment = string * Types.type_expr * t_expr
+and t_assignment = t_identifier * Types.type_expr * t_expr
 
 and t_array_assignment = t_array_access * t_expr
 
@@ -64,4 +71,10 @@ and t_func = TFunc of loc * string * Types.type_expr * t_params * t_block
 
 and t_funcs = t_func list
 
-and t_prog = t_funcs
+and t_struct_field = TStructField of loc * string * Types.type_expr
+
+and t_struct = TStruct of loc * string * Types.type_expr * t_struct_field list
+
+and t_structs = t_struct list
+
+and t_prog = t_structs * t_funcs

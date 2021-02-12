@@ -3,6 +3,33 @@ open Instruction
 open Table
 open Types
 
+let rec findi x lst acc =
+  match lst with
+  | [] ->
+      Printf.eprintf "Not found";
+      exit (-1)
+  | h :: t -> if x = h then acc else findi x t (1 + acc)
+
+let structs_table = Hashtbl.create 32
+
+let fields_to_array fields =
+  List.map (fun (TStructField (_, n, t)) -> (n, t)) fields
+
+let insert_struct (TStruct (_, name, _, f)) =
+  Hashtbl.add structs_table name (fields_to_array f)
+
+let get_struct name =
+  let s = Hashtbl.find_opt structs_table name in
+  match s with
+  | Some s' -> s'
+  | None ->
+      Printf.eprintf "Unable to find struct in table";
+      exit (-1)
+
+let get_struct_field name field =
+  let fields = get_struct name in
+  findi field (List.map (fun (f, _) -> f) fields) 0
+
 let functions_table = Hashtbl.create 32
 
 let functions_counter = ref 0
@@ -31,12 +58,23 @@ let rec append_bc code bytecode =
 
 let rec gen_expr_bytecode expression vars_table bytecode =
   match expression with
+  | TNull _ -> append_bc (LOAD_CONST 0) bytecode
   | TInput _ -> append_bc INPUT bytecode
   | TNum (_, i) -> append_bc (LOAD_CONST_I i) bytecode
   | TFNum (_, f) -> append_bc (LOAD_CONST_F f) bytecode
   | TBool (_, b) -> append_bc (LOAD_CONST_B b) bytecode
   | TStr (_, s) -> append_bc (LOAD_CONST_S s) bytecode
-  | TVar (_, v, _) -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
+  | TIdentifier (_, v) -> (
+      match v with
+      | TVar (v', _) -> append_bc (LOAD_VAR (vars_table#get v')) bytecode
+      | TObjField (v', t, field, _) -> (
+          match t with
+          | T_obj name ->
+              append_bc (LOAD_VAR (vars_table#get v')) bytecode
+              @ append_bc (GET_FIELD (get_struct_field name field)) bytecode
+          | _ ->
+              Printf.eprintf "Unable to get field from non-object value";
+              exit (-1) ) )
   | TArray (_, _, elements) ->
       List.fold_left
         (fun acc elem -> acc @ gen_expr_bytecode elem vars_table [])
@@ -64,6 +102,15 @@ let rec gen_expr_bytecode expression vars_table bytecode =
           | TSub -> (
               match t with T_int | T_float -> SUBTRACT | _ -> exit (-1) ) )
           bytecode
+  | TStructInit (_, name, _, fields) ->
+      let f = get_struct name in
+      append_bc (MAKE_OBJECT (List.length f)) bytecode
+      @ List.fold_left
+          (fun acc (field, _, expr) ->
+            acc
+            @ gen_expr_bytecode expr vars_table []
+            @ [ SET_FIELD (get_struct_field name field) ])
+          bytecode fields
 
 and gen_arr_dec_bytecode dec bytecode =
   match dec with
@@ -75,21 +122,32 @@ and gen_arr_dec_bytecode dec bytecode =
 
 and gen_assign_bytecode assignment vars_table bytecode =
   match assignment with
-  | name, _, expression ->
-      if vars_table#exists name then
-        gen_expr_bytecode expression vars_table bytecode
-        @ append_bc (STORE_VAR (vars_table#get name)) bytecode
-      else exit (-1)
+  | id, _, expression -> (
+      match id with
+      | TVar (name, _) ->
+          gen_expr_bytecode expression vars_table bytecode
+          @ append_bc (STORE_VAR (vars_table#get name)) bytecode
+      | TObjField (v, t, field, _) -> (
+          match t with
+          | T_obj name ->
+              append_bc (LOAD_VAR (vars_table#get v)) bytecode
+              @ gen_expr_bytecode expression vars_table bytecode
+              @ append_bc (SET_FIELD (get_struct_field name field)) bytecode
+              @ append_bc (STORE_VAR (vars_table#get v)) bytecode
+          | _ ->
+              Printf.eprintf "Unable to get field from non-object value";
+              exit (-1) ) )
 
 and gen_default_val t =
   match t with
+  | T_any -> LOAD_CONST 0
   | T_int -> LOAD_CONST_I 0
   | T_float -> LOAD_CONST_F 0.0
   | T_bool -> LOAD_CONST_B false
   | T_char -> LOAD_CONST_C '0'
   | T_string -> LOAD_CONST_S ""
   | T_array _ -> MAKE_ARRAY 0
-  | T_void ->
+  | T_void | _ ->
       print_endline "Unable to assign void";
       exit (-1)
 
@@ -113,13 +171,17 @@ and gen_condition_bytecode condition jump_to vars_table bytecode =
           ( match op with
           | TBEquals -> (
               match t with
-              | T_int | T_float | T_bool | T_char | T_string -> CMPEQ jump_to
+              | T_any | T_int | T_float | T_bool | T_char | T_string | T_obj _
+                ->
+                  CMPEQ jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
                   exit (-1) )
           | TBNequals -> (
               match t with
-              | T_int | T_float | T_bool | T_char | T_string -> CMPNEQ jump_to
+              | T_any | T_int | T_float | T_bool | T_char | T_string | T_obj _
+                ->
+                  CMPNEQ jump_to
               | _ ->
                   print_endline "boolean operation not supported for types";
                   exit (-1) )
@@ -236,6 +298,6 @@ and gen_functions ast bytecode =
     (fun acc funcs -> acc @ gen_func_bytecode funcs (new table) [])
     bytecode ast
 
-and gen_bytecode ast =
-  (* Tpprint.pprint_prog ast; *)
+and gen_bytecode ((structs, ast) : t_structs * t_funcs) =
+  List.iter insert_struct structs;
   gen_functions ast [] @ [ CALL (0, 0) ]

@@ -1,0 +1,16 @@
+struct Asdf {
+    a : int;
+    b : string;
+}
+
+func main() void {
+    let a = Asdf{
+        a = 1;
+    };
+    println a;
+    if (a.b == null) {
+        println 1;
+    } else {
+        println 2;
+    }
+}

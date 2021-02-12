@@ -1,0 +1,22 @@
+struct Tree {
+    content : string;
+    left : Tree;
+    right : Tree;
+}
+
+func main() void {
+    let root = Tree{
+        content = "root";
+    };
+    let a = Tree{
+        content = "left";
+    };
+    let b = Tree{
+        content = "right";
+    };
+
+    root.left = a;
+    root.right = b;
+
+    println root;
+}

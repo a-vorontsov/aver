@@ -28,6 +28,9 @@ type instruction =
   | MAKE_EMPTY_ARRAY of int
   | LOAD_FROM_ARRAY
   | STORE_TO_ARRAY
+  | MAKE_OBJECT of int
+  | GET_FIELD of int
+  | SET_FIELD of int
   | CALL of int * int
   | MAKE_FUNCTION of int * int
   | HALT
@@ -64,8 +67,11 @@ let as_string = function
   | MAKE_EMPTY_ARRAY i -> sprintf "24\t%d" i
   | LOAD_FROM_ARRAY -> "25"
   | STORE_TO_ARRAY -> "26"
-  | CALL (i, i') -> sprintf "27\t%d\t%d" i i'
-  | MAKE_FUNCTION (i, i') -> sprintf "28\t%d\t%d" i i'
-  | HALT -> "29"
-  | RETURN -> "30"
-  | PASS -> "31"
+  | MAKE_OBJECT i -> sprintf "27\t%d" i
+  | GET_FIELD i -> sprintf "28\t%d" i
+  | SET_FIELD i -> sprintf "29\t%d" i
+  | CALL (i, i') -> sprintf "30\t%d\t%d" i i'
+  | MAKE_FUNCTION (i, i') -> sprintf "31\t%d\t%d" i i'
+  | HALT -> "32"
+  | RETURN -> "33"
+  | PASS -> "34"

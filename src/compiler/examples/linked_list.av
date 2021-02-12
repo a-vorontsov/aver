@@ -1,0 +1,162 @@
+struct Node {
+    data : string;
+    next : Node;
+}
+
+struct LinkedList {
+    head : Node;
+    length : int;
+}
+
+func insert(ll LinkedList, data string) void {
+    let n = Node{
+        data = data;
+        next = ll.head;
+    };
+    ll.head = n;
+    ll.length = ll.length + 1;
+}
+func insert_end(ll LinkedList, data string) void {
+    let n = Node{
+        data = data;
+    };
+    if (ll.head == null) {
+        ll.head = n;
+    } else {
+        let current = ll.head;
+        while (current.next != null) {
+            current = current.next;
+        }
+        current.next = n;
+    }
+    ll.length = ll.length + 1;
+}
+func insert_at(ll LinkedList, data string, idx int) void {
+    if (idx > ll.length) {
+        println "Can't insert data into index";
+    } else {
+        if (idx == 0) {
+            insert(ll, data);
+        } else {
+            let n = Node{
+                data = data;
+            };
+            let current = ll.head;
+            let i = 0;
+            while (i < (idx - 1)) {
+                current = current.next;
+                i = i + 1;
+            }
+            n.next = current.next;
+            current.next = n;
+            ll.length = ll.length + 1;
+        }
+    }
+}
+
+func remove_head(ll LinkedList) Node {
+    if (ll.head != null) {
+        let temp = ll.head;
+        ll.head = temp.next;
+
+        temp.next = null;
+        ll.length = ll.length - 1;
+        return temp;
+    } else {
+        println "Linked List is empty";
+        return null;
+    }
+}
+func remove_tail(ll LinkedList) Node {
+    if (ll.head != null) {
+        let current = ll.head;
+        let next = current.next;
+        ll.length = ll.length - 1;
+        if (next != null) {
+            while (next.next != null) {
+                current = current.next;
+                next = current.next;
+            }
+            current.next = null;
+            return next;
+        } else {
+            ll.head = null;
+            return current;
+        }
+    } else {
+        println "Linked List is empty";
+        return null;
+    }
+}
+func remove_at(ll LinkedList, idx int) void {
+    if (ll.head != null) {
+        if (idx == 0) {
+            return remove_head(ll);
+        } else {
+            if (idx == ll.length) {
+                return remove_tail(ll);
+            } else {
+                let current = ll.head;
+                let i = 0;
+                while (i < idx - 1) {
+                    current = current.next;
+                    i = i + 1;
+                }
+                let temp = current.next;
+                current.next = temp.next;
+                temp.next = null;
+                ll.length = ll.length - 1;
+                return temp;
+            }
+        }
+    } else {
+        println "Linked List is empty";
+        return null;
+    }
+}
+func empty(ll LinkedList) void {
+    while (ll.head != null) {
+        remove_tail(ll);
+    }
+}
+
+func traverse(ll LinkedList) void {
+    if (ll.head != null) {
+        let current = ll.head;
+        while (current.next != null) {
+            print current.data;
+            print " -> ";
+            current = current.next;
+        }
+        println current.data;
+    } else {
+        println "Linked List is empty";
+    }
+}
+
+func main() void {
+    let ll = LinkedList{
+        length = 0;
+    };
+    traverse(ll);
+    insert_end(ll, "a");
+    insert_end(ll, "b");
+    insert_end(ll, "c");
+    insert_end(ll, "d");
+    traverse(ll);
+    insert(ll, "f");
+    traverse(ll);
+    insert_at(ll, "g", ll.length);
+    traverse(ll);
+    println "Remove head";
+    remove_head(ll);
+    traverse(ll);
+    println "Remove at 1";
+    remove_at(ll, 1);
+    traverse(ll);
+    println "Remove all";
+    while (ll.head != null) {
+        println remove_tail(ll);
+        traverse(ll);
+    }
+}

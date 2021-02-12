@@ -13,6 +13,7 @@ from objects.char import Char
 from objects.float import Float
 from objects.integer import Integer
 from objects.string import String
+from objects.null import Null
 
 from vm import VM
 
@@ -24,8 +25,8 @@ def make_function(name, params, program, pc):
     stack_size = 0
     max_stack_size = 0
     bytecodes = []
-    literals = []
-    literal_vars = []
+    literals = [Null()]
+    literal_vars = [None]
 
     function_end = False
     while not function_end:

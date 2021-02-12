@@ -1,5 +1,5 @@
 from primitive_object import PrimitiveObject
-from boolean import Boolean
+from null import Null
 
 
 class Integer(PrimitiveObject):
@@ -44,14 +44,22 @@ class Integer(PrimitiveObject):
         return Integer(int(result))
 
     def eq(self, rhs):
-        assert isinstance(rhs, Integer)
-        result = self.value == rhs.value
-        return result
+        assert isinstance(rhs, PrimitiveObject)
+        if isinstance(rhs, Null):
+            return False
+        else:
+            assert isinstance(rhs, Integer)
+            result = self.value == rhs.value
+            return result
 
     def neq(self, rhs):
-        assert isinstance(rhs, Integer)
-        result = self.value != rhs.value
-        return result
+        assert isinstance(rhs, PrimitiveObject)
+        if isinstance(rhs, Null):
+            return True
+        else:
+            assert isinstance(rhs, Integer)
+            result = self.value != rhs.value
+            return result
 
     def lt(self, rhs):
         assert isinstance(rhs, Integer)

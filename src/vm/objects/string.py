@@ -1,4 +1,5 @@
 from primitive_object import PrimitiveObject
+from null import Null
 
 
 class String(PrimitiveObject):
@@ -23,11 +24,19 @@ class String(PrimitiveObject):
         return String(str(result))
 
     def eq(self, rhs):
-        assert isinstance(rhs, String)
-        result = self.value == rhs.value
-        return result
+        assert isinstance(rhs, PrimitiveObject)
+        if isinstance(rhs, Null):
+            return False
+        else:
+            assert isinstance(rhs, String)
+            result = self.value == rhs.value
+            return result
 
     def neq(self, rhs):
-        assert isinstance(rhs, String)
-        result = self.value != rhs.value
-        return result
+        assert isinstance(rhs, PrimitiveObject)
+        if isinstance(rhs, Null):
+            return True
+        else:
+            assert isinstance(rhs, String)
+            result = self.value != rhs.value
+            return result

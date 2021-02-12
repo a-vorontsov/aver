@@ -11,6 +11,7 @@ from objects.float import Float
 from objects.integer import Integer
 from objects.string import String
 from objects.array import Array
+from objects.complex_object import ComplexObject
 
 from rpython.rlib import jit
 
@@ -51,10 +52,15 @@ class VM(object):
             ops = func.bytecode[pc]
             opcode = ops[0]
 
-            # frame.stack_print()
-            # frame.local_print()
-            # frame.literal_print()
-            # print get_printable_location(pc, func, self)
+            debug = False
+            if debug:
+                print "stack"
+                frame.stack_print()
+                print "locals"
+                frame.local_print()
+                print "literals"
+                frame.literal_print()
+                print get_printable_location(pc, func, self)
 
             if opcode == OpCode.LOAD_CONST:
                 literal = frame.literal_get(ops[1])
@@ -196,6 +202,24 @@ class VM(object):
                 assert isinstance(idx, Integer)
                 val = frame.stack_pop()
                 var.set_value_at(idx.value, val)
+                frame.stack_push(var)
+            elif opcode == OpCode.MAKE_OBJECT:
+                size = ops[1]
+                value = ComplexObject(size)
+                frame.stack_push(value)
+            elif opcode == OpCode.GET_FIELD:
+                idx = ops[1]
+                var = frame.stack_pop()
+                assert isinstance(var, ComplexObject)
+                tmp = var.get_value_at(idx)
+                frame.stack_push(tmp)
+            elif opcode == OpCode.SET_FIELD:
+                idx = ops[1]
+                val = frame.stack_pop()
+                assert isinstance(val, PrimitiveObject)
+                var = frame.stack_pop()
+                assert isinstance(var, ComplexObject)
+                var.set_value_at(idx, val)
                 frame.stack_push(var)
             elif opcode == OpCode.CALL:
                 name = ops[1]

@@ -29,11 +29,14 @@ class OpCode(object):
     MAKE_EMPTY_ARRAY = 24
     LOAD_FROM_ARRAY = 25
     STORE_TO_ARRAY = 26
-    CALL = 27
-    MAKE_FUNCTION = 28
-    HALT = 29
-    RETURN = 30
-    PASS = 31
+    MAKE_OBJECT = 27
+    GET_FIELD = 28
+    SET_FIELD = 29
+    CALL = 30
+    MAKE_FUNCTION = 31
+    HALT = 32
+    RETURN = 33
+    PASS = 34
 
 
 _stack_effects = [
@@ -64,6 +67,9 @@ _stack_effects = [
     0,  # MAKE_EMPTY_ARRAY
     -1,  # LOAD_FROM_ARRAY
     -2,  # STORE_TO_ARRAY
+    1,  # MAKE_OBJECT
+    1,  # GET_FIELD
+    -1,  # SET_FIELD
     1,  # CALL
     0,  # MAKE_FUNCTION
     0,  # HALT

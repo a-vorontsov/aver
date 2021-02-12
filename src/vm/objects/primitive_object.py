@@ -23,9 +23,6 @@ class PrimitiveObject(object):
     def eq(self, rhs):
         raise NotImplementedError()
 
-    def eq(self, rhs):
-        raise NotImplementedError()
-
     def neq(self, rhs):
         raise NotImplementedError()
 

@@ -1,5 +1,6 @@
 from rpython.rlib.debug import make_sure_not_resized
 from rpython.rlib import jit
+from objects.primitive_object import PrimitiveObject
 
 
 class Frame(object):
@@ -57,6 +58,8 @@ class Frame(object):
         for item in self.stack:
             if item is not None:
                 result += "| %s |" % (item.get_string())
+            else:
+                result += "| None |"
         print result
 
     def local_set(self, name, value):
@@ -86,7 +89,9 @@ class Frame(object):
 
     def literal_print(self):
         result = ""
-        for item in self.stack:
+        for item in self.literals:
             if item is not None:
                 result += "[ %s ]" % (item.get_string())
+            else:
+                result += "[ None ]"
         print result

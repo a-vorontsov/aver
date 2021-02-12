@@ -10,6 +10,7 @@ type identifier = Var of string | ObjField of string * string
 
 and expr =
   | Input of loc
+  | Null of loc
   | Num of loc * int
   | FNum of loc * float
   | Bool of loc * bool
@@ -20,6 +21,7 @@ and expr =
   | ArrayDec of loc * array_dec
   | Binop of loc * bop * expr * expr
   | AssignCall of loc * function_call
+  | StructInit of loc * string * (string * expr) list
 
 and array_dec =
   | SingleDim of Types.type_expr * int
@@ -41,7 +43,7 @@ and params = (loc * string * Types.type_expr) list
 
 and declaration = string * Types.type_expr option * expr option
 
-and assignment = string * expr
+and assignment = identifier * expr
 
 and array_assignment = array_access * expr
 
@@ -65,4 +67,10 @@ and func = Func of loc * string * Types.type_expr * params * block
 
 and funcs = func list
 
-and prog = funcs
+and struct_field = StructField of loc * string * Types.type_expr
+
+and _struct = Struct of loc * string * struct_field list
+
+and structs = _struct list
+
+and prog = structs * funcs

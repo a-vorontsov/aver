@@ -1,0 +1,19 @@
+struct Asdf {
+    a : int;
+    b : string;
+}
+
+func main() void {
+    let a = Asdf{
+        a = 1;
+        b = "hello";
+    };
+    println a.a;
+    a.b = "world";
+    let b = [a, a];
+    let i = 0;
+    while (i < 2) {
+        println b[i];
+        i = i + 1;
+    }
+}
