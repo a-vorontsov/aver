@@ -36,6 +36,7 @@ type instruction =
   | HALT
   | RETURN
   | PASS
+  | POP
 
 type bytecode = instruction list
 
@@ -75,3 +76,4 @@ let as_string = function
   | HALT -> "32"
   | RETURN -> "33"
   | PASS -> "34"
+  | POP -> "35"

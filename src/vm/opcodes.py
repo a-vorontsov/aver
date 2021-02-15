@@ -37,6 +37,7 @@ class OpCode(object):
     HALT = 32
     RETURN = 33
     PASS = 34
+    POP = 35
 
 
 _stack_effects = [
@@ -75,6 +76,7 @@ _stack_effects = [
     0,  # HALT
     -1,  # RETURN
     0,  # PASS
+    -1,  # POP
 ]
 
 

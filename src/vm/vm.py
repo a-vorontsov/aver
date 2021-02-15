@@ -248,6 +248,8 @@ class VM(object):
                 return 0
             elif opcode == OpCode.PASS:
                 pass
+            elif opcode == OpCode.POP:
+                frame.stack_pop()
 
             last_pc = pc
             last_func = frame.func

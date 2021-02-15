@@ -1,7 +1,8 @@
-func a() void {
-    a();
+func a(n int) void {
+    println n;
+    a(n + 1);
 }
 
 func main() void {
-    a();
+    a(0);
 }

@@ -275,8 +275,9 @@ and gen_stmt_bytecode statement vars_table bytecode =
       gen_if_bytecode condition statements statements' vars_table bytecode
   | TWhile (_, condition, _, statements) ->
       gen_while_bytecode condition statements vars_table bytecode
-  | TCall (_, (name, _, params)) ->
+  | TCall (_, (name, t, params)) -> (
       gen_call_bytecode name params vars_table bytecode
+      @ match t with T_void -> [] | _ -> append_bc POP bytecode )
   | TReturn (_, expression, _) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc RETURN bytecode
