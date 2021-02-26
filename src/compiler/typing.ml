@@ -373,21 +373,41 @@ and type_arr_dec dec =
       let arr_dec, t = type_arr_dec a in
       (TMultiDim (arr_dec, s), T_array t)
 
+and type_fields fields struct_name struct_defs =
+  match fields with
+  | [] ->
+      Printf.eprintf "Unable to get type of non-existent field";
+      exit 1
+  | [ field ] ->
+      let (Ast.StructField (_, _, field_type)) =
+        get_struct_field struct_name field struct_defs
+      in
+      [ (field, field_type) ]
+  | field :: fields -> (
+      let (Ast.StructField (_, _, field_type)) =
+        get_struct_field struct_name field struct_defs
+      in
+      match field_type with
+      | T_obj obj ->
+          [ (field, field_type) ] @ type_fields fields obj struct_defs
+      | _ ->
+          Printf.eprintf "Unable to get field for non-object variable";
+          exit (-1) )
+
 and type_identifier id struct_defs type_env =
   match id with
   | Ast.Var i ->
       let var_type = get_var_in_env i type_env in
       (TVar (i, var_type), var_type)
   | Ast.ObjField (i, f) -> (
-      let t = get_var_in_env i type_env in
-      match t with
+      let var_type = get_var_in_env i type_env in
+      match var_type with
       | T_obj obj ->
-          let (Ast.StructField (_, _, field_type)) =
-            get_struct_field obj f struct_defs
-          in
-          (TObjField (i, t, f, field_type), field_type)
+          let typed_fields = type_fields f obj struct_defs in
+          let _, field_type = List.hd (List.rev typed_fields) in
+          (TObjField (i, var_type, typed_fields), field_type)
       | _ ->
-          Printf.eprintf "something went wrong";
+          Printf.eprintf "Unable to get field for non-object variable";
           exit (-1) )
 
 and type_struct_field_init field struct_name func_defs struct_defs type_env =

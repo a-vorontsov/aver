@@ -121,7 +121,7 @@ assignment:
 
 identifier:
   | x = ID { Var x }
-  | obj = ID DOT field = ID { ObjField (obj, field) }
+  | obj = ID DOT fields = separated_list(DOT, ID) { ObjField (obj, fields) }
 
 expr:
   | i = INT { Num ($startpos, i) }

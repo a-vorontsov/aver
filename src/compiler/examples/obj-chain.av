@@ -1,0 +1,52 @@
+struct Asdf {
+    a : int;
+    b : string;
+    c : Asdf;
+}
+
+func main() void {
+    println "Direct reference";
+    let a = Asdf{
+        a = 1;
+        b = "world";
+    };
+    let b = Asdf{
+        a = 1;
+        b = "hello";
+        c = a;
+    };
+    println b.c.b;
+    println a;
+    println b;
+    a.b = "asdf";
+    println a;
+    println b;
+    b.c.b = "something";
+    println b.c.b;
+    println a;
+    println b;
+
+    println "Copying values";
+    let c = Asdf{
+        a = 1;
+        b = "world";
+    };
+    let d = Asdf{
+        a = 1;
+        b = "hello";
+        c = Asdf{
+            a = c.a;
+            b = c.b;
+        };
+    };
+    println d.c.b;
+    println c;
+    println d;
+    c.b = "asdf";
+    println c;
+    println d;
+    d.c.b = "something";
+    println d.c.b;
+    println c;
+    println d;
+}

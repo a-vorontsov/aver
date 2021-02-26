@@ -56,7 +56,49 @@ let confirm_function f p =
 let rec append_bc code bytecode =
   match bytecode with [] -> [ code ] | h :: t -> h :: append_bc code t
 
-let rec gen_expr_bytecode expression vars_table bytecode =
+let rec gen_struct_field_getters fields struct_name bytecode =
+  match fields with
+  | [] ->
+      Printf.eprintf "Unable to get empty field";
+      exit (-1)
+  | [ (field, _) ] ->
+      append_bc (GET_FIELD (get_struct_field struct_name field)) bytecode
+  | (field, field_type) :: fields -> (
+      match field_type with
+      | T_obj name ->
+          append_bc (GET_FIELD (get_struct_field struct_name field)) bytecode
+          @ gen_struct_field_getters fields name bytecode
+      | _ ->
+          Printf.eprintf "Unable to chain non-struct field";
+          exit (-1) )
+
+let rec gen_struct_field_setters fields struct_name bytecode =
+  match fields with
+  | [] ->
+      Printf.eprintf "Unable to set empty field";
+      exit (-1)
+  | [ (field, _) ] ->
+      append_bc (SET_FIELD (get_struct_field struct_name field)) bytecode
+  | (_, field_type) :: fields -> (
+      match field_type with
+      | T_obj name -> gen_struct_field_setters fields name bytecode
+      | _ ->
+          Printf.eprintf "Unable to chain non-struct field";
+          exit (-1) )
+
+let rec gen_identifier_bytecode identifier vars_table bytecode =
+  match identifier with
+  | TVar (v, _) -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
+  | TObjField (v, t, fields) -> (
+      match t with
+      | T_obj name ->
+          append_bc (LOAD_VAR (vars_table#get v)) bytecode
+          @ gen_struct_field_getters fields name bytecode
+      | _ ->
+          Printf.eprintf "Unable to get field from non-object value";
+          exit (-1) )
+
+and gen_expr_bytecode expression vars_table bytecode =
   match expression with
   | TNull _ -> append_bc (LOAD_CONST 0) bytecode
   | TInput _ -> append_bc INPUT bytecode
@@ -64,17 +106,7 @@ let rec gen_expr_bytecode expression vars_table bytecode =
   | TFNum (_, f) -> append_bc (LOAD_CONST_F f) bytecode
   | TBool (_, b) -> append_bc (LOAD_CONST_B b) bytecode
   | TStr (_, s) -> append_bc (LOAD_CONST_S s) bytecode
-  | TIdentifier (_, v) -> (
-      match v with
-      | TVar (v', _) -> append_bc (LOAD_VAR (vars_table#get v')) bytecode
-      | TObjField (v', t, field, _) -> (
-          match t with
-          | T_obj name ->
-              append_bc (LOAD_VAR (vars_table#get v')) bytecode
-              @ append_bc (GET_FIELD (get_struct_field name field)) bytecode
-          | _ ->
-              Printf.eprintf "Unable to get field from non-object value";
-              exit (-1) ) )
+  | TIdentifier (_, v) -> gen_identifier_bytecode v vars_table bytecode
   | TArray (_, _, elements) ->
       List.fold_left
         (fun acc elem -> acc @ gen_expr_bytecode elem vars_table [])
@@ -120,23 +152,32 @@ and gen_arr_dec_bytecode dec bytecode =
       append_bc (gen_default_val t) bytecode
       @ append_bc (MAKE_EMPTY_ARRAY i) bytecode
 
-and gen_assign_bytecode assignment vars_table bytecode =
-  match assignment with
-  | id, _, expression -> (
-      match id with
-      | TVar (name, _) ->
-          gen_expr_bytecode expression vars_table bytecode
-          @ append_bc (STORE_VAR (vars_table#get name)) bytecode
-      | TObjField (v, t, field, _) -> (
-          match t with
-          | T_obj name ->
-              append_bc (LOAD_VAR (vars_table#get v)) bytecode
-              @ gen_expr_bytecode expression vars_table bytecode
-              @ append_bc (SET_FIELD (get_struct_field name field)) bytecode
-              @ append_bc (STORE_VAR (vars_table#get v)) bytecode
-          | _ ->
-              Printf.eprintf "Unable to get field from non-object value";
-              exit (-1) ) )
+and gen_field_assign_bytecode identifier expression vars_table bytecode =
+  match identifier with
+  | TVar (name, _) ->
+      append_bc (LOAD_VAR (vars_table#get name)) bytecode
+      @ gen_expr_bytecode expression vars_table bytecode
+  | TObjField _ -> []
+
+and gen_assign_bytecode (id, _, expression) vars_table bytecode =
+  match id with
+  | TVar (name, _) ->
+      gen_expr_bytecode expression vars_table bytecode
+      @ append_bc (STORE_VAR (vars_table#get name)) bytecode
+  | TObjField (v, t, fields) -> (
+      match t with
+      | T_obj name ->
+          append_bc (LOAD_VAR (vars_table#get v)) bytecode
+          @ ( if List.length fields > 1 then
+              gen_struct_field_getters
+                (List.rev (List.tl (List.rev fields)))
+                name bytecode
+            else [] )
+          @ gen_expr_bytecode expression vars_table bytecode
+          @ List.rev (gen_struct_field_setters fields name bytecode)
+      | _ ->
+          Printf.eprintf "Unable to get field from non-object value";
+          exit (-1) )
 
 and gen_default_val t =
   match t with

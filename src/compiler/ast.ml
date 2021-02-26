@@ -6,7 +6,7 @@ let string_of_loc loc =
 
 type bop = Add | Mult | Div | Sub | Mod
 
-type identifier = Var of string | ObjField of string * string
+type identifier = Var of string | ObjField of string * string list
 
 and expr =
   | Input of loc

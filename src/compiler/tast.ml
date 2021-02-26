@@ -8,7 +8,7 @@ type t_bop = TAdd | TMult | TDiv | TSub | TMod
 
 and t_identifier =
   | TVar of string * Types.type_expr
-  | TObjField of string * Types.type_expr * string * Types.type_expr
+  | TObjField of string * Types.type_expr * (string * Types.type_expr) list
 
 and t_expr =
   | TInput of loc

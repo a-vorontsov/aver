@@ -70,9 +70,9 @@ func remove_head(ll LinkedList) Node {
 func remove_tail(ll LinkedList) Node {
     if (ll.head != null) {
         let current = ll.head;
-        let next = current.next;
         ll.length = ll.length - 1;
-        if (next != null) {
+        if (current.next != null) {
+            let next = current.next;
             while (next.next != null) {
                 current = current.next;
                 next = current.next;
