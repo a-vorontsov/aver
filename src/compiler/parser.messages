@@ -10,7 +10,7 @@ prog: FUNC ID LPAREN ID T_VOID COMMA WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN ID T_VOID SEMICOLON
+prog: FUNC ID LPAREN ID T_VOID TILDE
 ##
 ## Ends in an error in state: 60.
 ##
@@ -46,7 +46,7 @@ prog: FUNC ID LPAREN RPAREN STRUCT_ID LSQUARE WHILE
 ##
 ## Ends in an error in state: 40.
 ##
-## array_type -> STRUCT_ID option(parameterised_type) LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> STRUCT_ID option(parameterised_type) LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## STRUCT_ID option(parameterised_type) LSQUARE
@@ -54,27 +54,14 @@ prog: FUNC ID LPAREN RPAREN STRUCT_ID LSQUARE WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN STRUCT_ID LT T_VOID GT COLON
-##
-## Ends in an error in state: 39.
-##
-## any_type -> STRUCT_ID option(parameterised_type) . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> STRUCT_ID option(parameterised_type) . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
-##
-## The known suffix of the stack is as follows:
-## STRUCT_ID option(parameterised_type)
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: FUNC ID LPAREN RPAREN STRUCT_ID LT T_VOID SEMICOLON
+prog: FUNC ID LPAREN RPAREN STRUCT_ID TILDE T_VOID SEMICOLON
 ##
 ## Ends in an error in state: 36.
 ##
-## parameterised_type -> LT any_type . GT [ SEMICOLON RPAREN LSQUARE LPAREN LBRACE GT EQUALS COMMA ]
+## parameterised_type -> TILDE any_type . TILDE [ TILDE SEMICOLON RPAREN LSQUARE LPAREN LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
-## LT any_type
+## TILDE any_type
 ##
 ## WARNING: This example involves spurious reductions.
 ## This implies that, although the LR(1) items shown above provide an
@@ -85,14 +72,27 @@ prog: FUNC ID LPAREN RPAREN STRUCT_ID LT T_VOID SEMICOLON
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN STRUCT_ID LT WHILE
+prog: FUNC ID LPAREN RPAREN STRUCT_ID TILDE T_VOID TILDE COLON
+##
+## Ends in an error in state: 39.
+##
+## any_type -> STRUCT_ID option(parameterised_type) . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> STRUCT_ID option(parameterised_type) . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
+##
+## The known suffix of the stack is as follows:
+## STRUCT_ID option(parameterised_type)
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: FUNC ID LPAREN RPAREN STRUCT_ID TILDE WHILE
 ##
 ## Ends in an error in state: 32.
 ##
-## parameterised_type -> LT . any_type GT [ SEMICOLON RPAREN LSQUARE LPAREN LBRACE GT EQUALS COMMA ]
+## parameterised_type -> TILDE . any_type TILDE [ TILDE SEMICOLON RPAREN LSQUARE LPAREN LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
-## LT
+## TILDE
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
@@ -101,8 +101,8 @@ prog: FUNC ID LPAREN RPAREN STRUCT_ID WHILE
 ##
 ## Ends in an error in state: 31.
 ##
-## any_type -> STRUCT_ID . option(parameterised_type) [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> STRUCT_ID . option(parameterised_type) LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> STRUCT_ID . option(parameterised_type) [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> STRUCT_ID . option(parameterised_type) LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## STRUCT_ID
@@ -114,7 +114,7 @@ prog: FUNC ID LPAREN RPAREN T_BOOL LSQUARE WHILE
 ##
 ## Ends in an error in state: 29.
 ##
-## array_type -> T_BOOL LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> T_BOOL LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_BOOL LSQUARE
@@ -126,8 +126,8 @@ prog: FUNC ID LPAREN RPAREN T_BOOL WHILE
 ##
 ## Ends in an error in state: 28.
 ##
-## any_type -> T_BOOL . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> T_BOOL . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> T_BOOL . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> T_BOOL . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_BOOL
@@ -139,7 +139,7 @@ prog: FUNC ID LPAREN RPAREN T_CHAR LSQUARE WHILE
 ##
 ## Ends in an error in state: 26.
 ##
-## array_type -> T_CHAR LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> T_CHAR LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_CHAR LSQUARE
@@ -151,8 +151,8 @@ prog: FUNC ID LPAREN RPAREN T_CHAR WHILE
 ##
 ## Ends in an error in state: 25.
 ##
-## any_type -> T_CHAR . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> T_CHAR . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> T_CHAR . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> T_CHAR . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_CHAR
@@ -164,7 +164,7 @@ prog: FUNC ID LPAREN RPAREN T_FLOAT LSQUARE WHILE
 ##
 ## Ends in an error in state: 23.
 ##
-## array_type -> T_FLOAT LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> T_FLOAT LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_FLOAT LSQUARE
@@ -176,8 +176,8 @@ prog: FUNC ID LPAREN RPAREN T_FLOAT WHILE
 ##
 ## Ends in an error in state: 22.
 ##
-## any_type -> T_FLOAT . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> T_FLOAT . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> T_FLOAT . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> T_FLOAT . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_FLOAT
@@ -189,7 +189,7 @@ prog: FUNC ID LPAREN RPAREN T_GENERIC LSQUARE WHILE
 ##
 ## Ends in an error in state: 20.
 ##
-## array_type -> T_GENERIC LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> T_GENERIC LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_GENERIC LSQUARE
@@ -201,8 +201,8 @@ prog: FUNC ID LPAREN RPAREN T_GENERIC WHILE
 ##
 ## Ends in an error in state: 19.
 ##
-## any_type -> T_GENERIC . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> T_GENERIC . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> T_GENERIC . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> T_GENERIC . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_GENERIC
@@ -214,7 +214,7 @@ prog: FUNC ID LPAREN RPAREN T_INT LSQUARE WHILE
 ##
 ## Ends in an error in state: 17.
 ##
-## array_type -> T_INT LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> T_INT LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_INT LSQUARE
@@ -226,8 +226,8 @@ prog: FUNC ID LPAREN RPAREN T_INT WHILE
 ##
 ## Ends in an error in state: 16.
 ##
-## any_type -> T_INT . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> T_INT . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> T_INT . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> T_INT . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_INT
@@ -239,7 +239,7 @@ prog: FUNC ID LPAREN RPAREN T_STRING LSQUARE WHILE
 ##
 ## Ends in an error in state: 14.
 ##
-## array_type -> T_STRING LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> T_STRING LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_STRING LSQUARE
@@ -251,8 +251,8 @@ prog: FUNC ID LPAREN RPAREN T_STRING WHILE
 ##
 ## Ends in an error in state: 13.
 ##
-## any_type -> T_STRING . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> T_STRING . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> T_STRING . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> T_STRING . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_STRING
@@ -427,7 +427,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LSQUARE WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID LT STRUCT_ID GT LET
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE ID TILDE T_BOOL TILDE LET
 ##
 ## Ends in an error in state: 118.
 ##
@@ -590,7 +590,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID T_VOID EQUALS WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID T_VOID RPAREN
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE LET ID T_VOID TILDE
 ##
 ## Ends in an error in state: 185.
 ##
@@ -733,12 +733,12 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN LPAREN STRING WHILE
 ##
 ## Ends in an error in state: 148.
 ##
+## expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
 ## expr -> expr . DIV expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . TIMES expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . PLUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . MINUS expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 ## expr -> expr . MOD expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
-## expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RSQUARE RPAREN PLUS MOD MINUS LT LE GT GE DIV COMMA BNEQUALS BEQUALS ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN expr
@@ -985,7 +985,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRUCT_ID LSQUARE WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRUCT_ID LT STRUCT_ID GT INT
+prog: FUNC ID LPAREN RPAREN T_VOID LBRACE RETURN STRUCT_ID TILDE T_BOOL TILDE INT
 ##
 ## Ends in an error in state: 98.
 ##
@@ -1547,7 +1547,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LSQUARE RSQUARE LSQUARE WHILE
 ##
 ## Ends in an error in state: 34.
 ##
-## array_type -> array_type LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> array_type LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## array_type LSQUARE
@@ -1559,8 +1559,8 @@ prog: FUNC ID LPAREN RPAREN T_VOID LSQUARE RSQUARE WHILE
 ##
 ## Ends in an error in state: 33.
 ##
-## any_type -> array_type . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> array_type . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> array_type . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> array_type . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## array_type
@@ -1572,7 +1572,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LSQUARE WHILE
 ##
 ## Ends in an error in state: 11.
 ##
-## array_type -> T_VOID LSQUARE . RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## array_type -> T_VOID LSQUARE . RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_VOID LSQUARE
@@ -1580,7 +1580,7 @@ prog: FUNC ID LPAREN RPAREN T_VOID LSQUARE WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LPAREN RPAREN T_VOID SEMICOLON
+prog: FUNC ID LPAREN RPAREN T_VOID TILDE
 ##
 ## Ends in an error in state: 65.
 ##
@@ -1602,8 +1602,8 @@ prog: FUNC ID LPAREN RPAREN T_VOID WHILE
 ##
 ## Ends in an error in state: 10.
 ##
-## any_type -> T_VOID . [ SEMICOLON RPAREN LBRACE GT EQUALS COMMA ]
-## array_type -> T_VOID . LSQUARE RSQUARE [ SEMICOLON RPAREN LSQUARE LBRACE GT EQUALS COMMA ]
+## any_type -> T_VOID . [ TILDE SEMICOLON RPAREN LBRACE EQUALS COMMA ]
+## array_type -> T_VOID . LSQUARE RSQUARE [ TILDE SEMICOLON RPAREN LSQUARE LBRACE EQUALS COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## T_VOID
@@ -1635,7 +1635,7 @@ prog: FUNC ID LPAREN WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: FUNC ID LT T_GENERIC GT LET
+prog: FUNC ID TILDE T_GENERIC TILDE LET
 ##
 ## Ends in an error in state: 53.
 ##
@@ -1683,7 +1683,7 @@ prog: STRUCT STRUCT_ID LBRACE ID COLON STRUCT_ID SEMICOLON WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: STRUCT STRUCT_ID LBRACE ID COLON T_VOID RPAREN
+prog: STRUCT STRUCT_ID LBRACE ID COLON T_VOID TILDE
 ##
 ## Ends in an error in state: 42.
 ##
@@ -1749,7 +1749,7 @@ prog: STRUCT STRUCT_ID LBRACE WHILE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: STRUCT STRUCT_ID LT T_GENERIC GT INT
+prog: STRUCT STRUCT_ID TILDE T_GENERIC TILDE INT
 ##
 ## Ends in an error in state: 6.
 ##
@@ -1761,26 +1761,26 @@ prog: STRUCT STRUCT_ID LT T_GENERIC GT INT
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: STRUCT STRUCT_ID LT T_GENERIC WHILE
+prog: STRUCT STRUCT_ID TILDE T_GENERIC WHILE
 ##
 ## Ends in an error in state: 4.
 ##
-## generic_type -> LT T_GENERIC . GT [ LPAREN LBRACE ]
+## generic_type -> TILDE T_GENERIC . TILDE [ LPAREN LBRACE ]
 ##
 ## The known suffix of the stack is as follows:
-## LT T_GENERIC
+## TILDE T_GENERIC
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: STRUCT STRUCT_ID LT WHILE
+prog: STRUCT STRUCT_ID TILDE WHILE
 ##
 ## Ends in an error in state: 3.
 ##
-## generic_type -> LT . T_GENERIC GT [ LPAREN LBRACE ]
+## generic_type -> TILDE . T_GENERIC TILDE [ LPAREN LBRACE ]
 ##
 ## The known suffix of the stack is as follows:
-## LT
+## TILDE
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>

@@ -68,6 +68,7 @@ rule token =
   | generic_type { T_GENERIC }
   | "struct" { STRUCT }
   | "null" { NULL }
+  | "~" { TILDE }
   | struct_id { STRUCT_ID (Lexing.lexeme lexbuf) }
   | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | float { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }

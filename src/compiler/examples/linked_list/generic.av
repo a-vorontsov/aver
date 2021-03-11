@@ -1,23 +1,23 @@
-struct Node<T> {
+struct Node~T~ {
     data : T;
-    next : Node<T>;
+    next : Node~T~;
 }
 
-struct LinkedList<T> {
-    head : Node<T>;
+struct LinkedList~T~ {
+    head : Node~T~;
     length : int;
 }
 
-func insert<T>(ll LinkedList<T>, data T) void {
-    let n = Node<T>{
+func insert~T~(ll LinkedList~T~, data T) void {
+    let n = Node~T~{
         data = data;
         next = ll.head;
     };
     ll.head = n;
     ll.length = ll.length + 1;
 }
-func insert_end<T>(ll LinkedList<T>, data T) void {
-    let n = Node<T>{
+func insert_end~T~(ll LinkedList~T~, data T) void {
+    let n = Node~T~{
         data = data;
     };
     if (ll.head == null) {
@@ -31,19 +31,19 @@ func insert_end<T>(ll LinkedList<T>, data T) void {
     }
     ll.length = ll.length + 1;
 }
-func insert_at<T>(ll LinkedList<T>, data T, idx int) void {
+func insert_at~T~(ll LinkedList~T~, data T, idx int) void {
     if (idx > ll.length) {
         println "Can't insert data into index";
     } else {
         if (idx == 0) {
-            insert<T>(ll, data);
+            insert~T~(ll, data);
         } else {
-            let n = Node<T>{
+            let n = Node~T~{
                 data = data;
             };
             let current = ll.head;
             let i = 0;
-            while (i <= (idx - 2)) {
+            while (i < (idx - 1)) {
                 current = current.next;
                 i = i + 1;
             }
@@ -54,7 +54,7 @@ func insert_at<T>(ll LinkedList<T>, data T, idx int) void {
     }
 }
 
-func remove_head<T>(ll LinkedList<T>) Node<T> {
+func remove_head~T~(ll LinkedList~T~) Node~T~ {
     if (ll.head != null) {
         let temp = ll.head;
         ll.head = temp.next;
@@ -67,7 +67,7 @@ func remove_head<T>(ll LinkedList<T>) Node<T> {
         return null;
     }
 }
-func remove_tail<T>(ll LinkedList<T>) Node<T> {
+func remove_tail~T~(ll LinkedList~T~) Node~T~ {
     if (ll.head != null) {
         let current = ll.head;
         ll.length = ll.length - 1;
@@ -88,17 +88,17 @@ func remove_tail<T>(ll LinkedList<T>) Node<T> {
         return null;
     }
 }
-func remove_at<T>(ll LinkedList<T>, idx int) Node<T> {
+func remove_at~T~(ll LinkedList~T~, idx int) Node~T~ {
     if (ll.head != null) {
         if (idx == 0) {
-            return remove_head<T>(ll);
+            return remove_head~T~(ll);
         } else {
             if (idx == ll.length) {
-                return remove_tail<T>(ll);
+                return remove_tail~T~(ll);
             } else {
                 let current = ll.head;
                 let i = 0;
-                while (i <= idx - 2) {
+                while (i < idx - 1) {
                     current = current.next;
                     i = i + 1;
                 }
@@ -114,13 +114,13 @@ func remove_at<T>(ll LinkedList<T>, idx int) Node<T> {
         return null;
     }
 }
-func empty<T>(ll LinkedList<T>) void {
+func empty~T~(ll LinkedList~T~) void {
     while (ll.head != null) {
-        remove_tail<T>(ll);
+        remove_tail~T~(ll);
     }
 }
 
-func traverse<T>(ll LinkedList<T>) void {
+func traverse~T~(ll LinkedList~T~) void {
     if (ll.head != null) {
         let current = ll.head;
         while (current.next != null) {
@@ -135,25 +135,25 @@ func traverse<T>(ll LinkedList<T>) void {
 }
 
 func main() void {
-    let ll = LinkedList<int>{
+    let ll = LinkedList~int~{
         length = 0;
     };
-    traverse<int>(ll);
+    traverse~int~(ll);
     let i = 0;
     while (i <= 100) {
-        insert_end<int>(ll, i);
+        insert_end~int~(ll, i);
         i = i + 1;
     }
-    traverse<int>(ll);
+    traverse~int~(ll);
     println "Remove all";
-    empty<int>(ll);
-    traverse<int>(ll);
-    let lls = LinkedList<string>{
+    empty~int~(ll);
+    traverse~int~(ll);
+    let lls = LinkedList~string~{
         length = 0;
     };
-    println lls;
-    insert<string>(lls, "a");
-    insert_at<string>(lls, "b", 1);
-    insert_end<string>(lls, "c");
-    println lls;
+    traverse~string~(lls);
+    insert~string~(lls, "a");
+    insert_at~string~(lls, "b", 1);
+    insert_end~string~(lls, "c");
+    traverse~string~(lls);
 }

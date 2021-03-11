@@ -21,7 +21,7 @@
 %token PASS
 %token WHILE
 %token FUNC RETURN STRUCT NULL
-%token EOF
+%token EOF TILDE
 %token T_INT T_FLOAT T_BOOL T_CHAR T_STRING T_VOID T_GENERIC
 
 %left PLUS MINUS
@@ -68,10 +68,10 @@ array_type:
   | t = prim_type LSQUARE RSQUARE { T_array (t) }
 
 generic_type:
-  | LT T_GENERIC GT { Generic }
+  | TILDE T_GENERIC TILDE { Generic }
 
 parameterised_type:
-  | LT t = any_type GT { t }
+  | TILDE t = any_type TILDE { t }
 
 prog:
   | s = _struct* f = func* EOF { s,f }
@@ -131,19 +131,19 @@ identifier:
   | obj = ID DOT fields = separated_list(DOT, ID) { ObjField (obj, fields) }
 
 expr:
+  | LPAREN e = expr RPAREN { e }
   | i = INT { Num ($startpos, i) }
   | f = FLOAT { FNum ($startpos, f) }
   | s = STRING { Str ($startpos, s) }
   | x = identifier { Identifier ($startpos, x) }
   | NULL { Null $startpos }
+  | e1 = expr o = op e2 = expr { Binop ($startpos, o, e1, e2) }
   | s = struct_init { s }
   | LSQUARE a = separated_list(COMMA, expr) RSQUARE { Array ($startpos, a) }
   | a = array_dec { ArrayDec($startpos, a) }
   | a = array_access { ArrayAccess ($startpos, a) }
   | INPUT { Input $startpos }
   | f = function_call { AssignCall ($startpos, f) }
-  | e1 = expr o = op e2 = expr { Binop ($startpos, o, e1, e2) }
-  | LPAREN e = expr RPAREN { e }
 
 array_access:
   | x = identifier LSQUARE e = expr RSQUARE { x, e }
