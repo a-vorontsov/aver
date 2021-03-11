@@ -20,6 +20,7 @@ let float = '-'? digit+ '.' digit+
 let letter = ['a'-'z' 'A'-'Z']
 let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 let struct_id = ['A'-'Z'] ['a'-'z' 'A'-'Z' '_']*
+let generic_type = ['A'-'Z']
 
 rule token =
   parse
@@ -64,6 +65,7 @@ rule token =
   | "char" { T_CHAR }
   | "string" { T_STRING }
   | "void" { T_VOID }
+  | generic_type { T_GENERIC }
   | "struct" { STRUCT }
   | "null" { NULL }
   | struct_id { STRUCT_ID (Lexing.lexeme lexbuf) }

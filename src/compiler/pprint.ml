@@ -25,11 +25,11 @@ let rec pprint_expr ~indent expr =
   let print_expr = printf "%sExpr: %s\n" indent in
   let new_indent = indent_space ^ indent in
   match expr with
-  | Input -> print_expr "Input"
-  | Num i -> print_expr (sprintf "Int %d" i)
-  | FNum f -> print_expr (sprintf "Float %f" f)
-  | Bool b -> print_expr (sprintf "Bool %b" b)
-  | Str s -> print_expr (sprintf "String %s" s)
+  | Input _ -> print_expr "Input"
+  | Num (_, i) -> print_expr (sprintf "Int %d" i)
+  | FNum (_, f) -> print_expr (sprintf "Float %f" f)
+  | Bool (_, b) -> print_expr (sprintf "Bool %b" b)
+  | Str (_, s) -> print_expr (sprintf "String %s" s)
   | Var v -> print_expr (sprintf "Var %s" v)
   | Binop (b, e, e') ->
       print_expr (sprintf "Op %s" (pprint_op b));

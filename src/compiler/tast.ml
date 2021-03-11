@@ -30,7 +30,7 @@ and t_array_dec =
   | TSingleDim of Types.type_expr * int
   | TMultiDim of t_array_dec * int
 
-and t_array_access = string * t_expr
+and t_array_access = t_identifier * t_expr
 
 and t_booleanop =
   | TBEquals

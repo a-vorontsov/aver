@@ -1,0 +1,25 @@
+opam-version: "2.0"
+synopsis: "Compiler for the Aver language"
+description: "Compiler for the Aver language"
+version: "0.1"
+authors: ["Aleksandr Vorontsov"]
+maintainer: "aleksandr@vorontsov.co.uk"
+homepage: "https://github.com/a-vorontsov/6ccs3prj"
+bug-reports: "https://github.com/a-vorontsov/6ccs3prj/issues"
+depends: [
+  "dune" {>= "2.7"}
+  "menhir" {>= "20200624"}
+  "menhirLib" {>= "20200624"}
+  "menhirSdk" {>= "20200624"}
+]
+build: [
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+  ]
+]
+dev-repo: "git+https://github.com/a-vorontsov/6ccs3prj.git"

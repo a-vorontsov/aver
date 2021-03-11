@@ -53,8 +53,7 @@ let confirm_function f p =
   let func = Hashtbl.find_opt functions_table (f, p) in
   match func with Some func' -> func' | None -> exit (-1)
 
-let rec append_bc code bytecode =
-  match bytecode with [] -> [ code ] | h :: t -> h :: append_bc code t
+let append_bc code bytecode = bytecode @ [ code ]
 
 let rec gen_struct_field_getters fields struct_name bytecode =
   match fields with
@@ -65,7 +64,7 @@ let rec gen_struct_field_getters fields struct_name bytecode =
       append_bc (GET_FIELD (get_struct_field struct_name field)) bytecode
   | (field, field_type) :: fields -> (
       match field_type with
-      | T_obj name ->
+      | T_obj (name, _) ->
           append_bc (GET_FIELD (get_struct_field struct_name field)) bytecode
           @ gen_struct_field_getters fields name bytecode
       | _ ->
@@ -81,7 +80,7 @@ let rec gen_struct_field_setters fields struct_name bytecode =
       append_bc (SET_FIELD (get_struct_field struct_name field)) bytecode
   | (_, field_type) :: fields -> (
       match field_type with
-      | T_obj name -> gen_struct_field_setters fields name bytecode
+      | T_obj (name, _) -> gen_struct_field_setters fields name bytecode
       | _ ->
           Printf.eprintf "Unable to chain non-struct field";
           exit (-1) )
@@ -91,7 +90,7 @@ let rec gen_identifier_bytecode identifier vars_table bytecode =
   | TVar (v, _) -> append_bc (LOAD_VAR (vars_table#get v)) bytecode
   | TObjField (v, t, fields) -> (
       match t with
-      | T_obj name ->
+      | T_obj (name, _) ->
           append_bc (LOAD_VAR (vars_table#get v)) bytecode
           @ gen_struct_field_getters fields name bytecode
       | _ ->
@@ -114,7 +113,7 @@ and gen_expr_bytecode expression vars_table bytecode =
       @ append_bc (MAKE_ARRAY (List.length elements)) bytecode
   | TArrayAccess (_, _, (v, i)) ->
       gen_expr_bytecode i vars_table bytecode
-      @ append_bc (LOAD_VAR (vars_table#get v)) bytecode
+      @ gen_identifier_bytecode v vars_table bytecode
       @ append_bc LOAD_FROM_ARRAY bytecode
   | TArrayDec (_, _, dec) -> gen_arr_dec_bytecode dec bytecode
   | TAssignCall (_, (name, _, params)) ->
@@ -152,13 +151,6 @@ and gen_arr_dec_bytecode dec bytecode =
       append_bc (gen_default_val t) bytecode
       @ append_bc (MAKE_EMPTY_ARRAY i) bytecode
 
-and gen_field_assign_bytecode identifier expression vars_table bytecode =
-  match identifier with
-  | TVar (name, _) ->
-      append_bc (LOAD_VAR (vars_table#get name)) bytecode
-      @ gen_expr_bytecode expression vars_table bytecode
-  | TObjField _ -> []
-
 and gen_assign_bytecode (id, _, expression) vars_table bytecode =
   match id with
   | TVar (name, _) ->
@@ -166,7 +158,7 @@ and gen_assign_bytecode (id, _, expression) vars_table bytecode =
       @ append_bc (STORE_VAR (vars_table#get name)) bytecode
   | TObjField (v, t, fields) -> (
       match t with
-      | T_obj name ->
+      | T_obj (name, _) ->
           append_bc (LOAD_VAR (vars_table#get v)) bytecode
           @ ( if List.length fields > 1 then
               gen_struct_field_getters
@@ -299,13 +291,10 @@ and gen_stmt_bytecode statement vars_table bytecode =
   | TAssign (_, assignment) ->
       gen_assign_bytecode assignment vars_table bytecode
   | TArrayAssign (_, ((v, i), expression)) ->
-      if vars_table#exists v then
-        gen_expr_bytecode expression vars_table bytecode
-        @ gen_expr_bytecode i vars_table bytecode
-        @ append_bc (LOAD_VAR (vars_table#get v)) bytecode
-        @ append_bc STORE_TO_ARRAY bytecode
-        @ append_bc (STORE_VAR (vars_table#get v)) bytecode
-      else exit (-1)
+      gen_expr_bytecode expression vars_table bytecode
+      @ gen_expr_bytecode i vars_table bytecode
+      @ gen_identifier_bytecode v vars_table bytecode
+      @ append_bc STORE_TO_ARRAY bytecode
   | TPrint (_, expression) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc PRINT bytecode

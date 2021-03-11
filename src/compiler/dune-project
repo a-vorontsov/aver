@@ -1,2 +1,5 @@
 (lang dune 2.7)
+
+(name aver)
+
 (using menhir 2.1)

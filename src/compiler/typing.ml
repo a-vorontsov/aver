@@ -1,18 +1,6 @@
 open Tast
 open Types
 
-let init_func_defs funcs =
-  List.map
-    (fun (Ast.Func (_, func_name, func_type, func_params, _)) ->
-      (func_name, func_type, func_params))
-    funcs
-
-let init_structs structs =
-  List.map
-    (fun (Ast.Struct (_, struct_name, struct_fields)) ->
-      (struct_name, struct_fields))
-    structs
-
 let init_env_with_params params =
   let env = Hashtbl.create 16 in
   List.iter
@@ -40,37 +28,47 @@ let get_var_in_env var_name env =
 
 let get_func_type_from_defs func_name func_defs =
   let has_found =
-    List.find_opt (fun (name, _, _) -> name = func_name) func_defs
+    List.find_opt
+      (fun (Ast.Func (_, name, _, _, _, _)) -> name = func_name)
+      func_defs
   in
   match has_found with
-  | Some (name, func_type, func_params) -> (name, func_type, func_params)
+  | Some f -> f
   | None ->
       Printf.eprintf "Unable to get type of undefined function\n";
       exit (-1)
 
+(* Check whether or not a struct has been declared *)
 let struct_exists struct_name structs =
-  let has_found = List.find_opt (fun (name, _) -> name = struct_name) structs in
+  let has_found =
+    List.find_opt
+      (fun (Ast.Struct (_, name, _, _)) -> name = struct_name)
+      structs
+  in
   match has_found with Some _ -> true | None -> false
 
+(* Attempt to get a struct from list by name *)
 let get_struct struct_name structs =
-  let has_found = List.find_opt (fun (name, _) -> name = struct_name) structs in
+  let has_found =
+    List.find_opt
+      (fun (Ast.Struct (_, name, _, _)) -> name = struct_name)
+      structs
+  in
   match has_found with
   | Some s -> s
   | None ->
       Printf.eprintf "Unable to get undefined struct\n";
       exit (-1)
 
-let struct_field_exists struct_name struct_field structs =
-  if struct_exists struct_name structs then
-    let _, fields = get_struct struct_name structs in
-    let has_found =
-      List.find_opt (fun (Ast.StructField (_, n, _)) -> n = struct_field) fields
-    in
-    match has_found with Some _ -> true | None -> false
-  else false
+(* Check whether or not a field exists in a defined struct *)
+let struct_field_exists (Ast.Struct (_, _, _, fields)) struct_field =
+  let has_found =
+    List.find_opt (fun (Ast.StructField (_, n, _)) -> n = struct_field) fields
+  in
+  match has_found with Some _ -> true | None -> false
 
-let get_struct_field struct_name struct_field structs =
-  let _, f = get_struct struct_name structs in
+(* Get field within a defined struct *)
+let get_struct_field (Ast.Struct (_, _, _, f)) struct_field =
   let has_found =
     List.find_opt (fun (Ast.StructField (_, n, _)) -> n = struct_field) f
   in
@@ -80,28 +78,43 @@ let get_struct_field struct_name struct_field structs =
       Printf.eprintf "Unable to get undefined struct field\n";
       exit (-1)
 
-let rec type_program (program : Ast.prog) =
+(* Type checking for the entire program *)
+let rec type_program program =
+  ( match Generics.type_generics_usage_program program with
+  | Ok () -> ()
+  | Error e ->
+      Printf.eprintf "%s\n" e;
+      exit (-1) );
   match program with
-  | structs, prog ->
-      let struct_defs = init_structs structs in
-      ( type_structs structs struct_defs,
-        type_funcs prog (init_func_defs prog) struct_defs )
+  | structs, funcs ->
+      let struct_defs = structs in
+      (type_structs structs struct_defs, type_funcs funcs funcs struct_defs)
 
+(* Type checking for all declared structs *)
 and type_structs structs struct_defs =
   List.map (fun s -> type_struct s struct_defs) structs
 
-and type_struct (Ast.Struct (loc, struct_name, struct_fields)) struct_defs =
+(* Type checking for structs *)
+and type_struct (Ast.Struct (loc, struct_name, maybe_generic, struct_fields))
+    struct_defs =
   let typed_fields =
     List.map (fun f -> type_struct_field f struct_defs) struct_fields
   in
-  let struct_type = T_obj struct_name in
+  let struct_type =
+    T_obj
+      ( struct_name,
+        match maybe_generic with
+        | Some Ast.Generic -> Some T_generic
+        | None -> None )
+  in
   TStruct (loc, struct_name, struct_type, typed_fields)
 
+(* Type checking for all defined fields in a struct *)
 and type_struct_field (Ast.StructField (loc, field_name, field_type))
     struct_defs =
   let t =
     match field_type with
-    | T_obj f ->
+    | T_obj (f, _) ->
         if struct_exists f struct_defs then field_type
         else (
           Printf.eprintf "Written type is not defined\n";
@@ -110,10 +123,12 @@ and type_struct_field (Ast.StructField (loc, field_name, field_type))
   in
   TStructField (loc, field_name, t)
 
+(* Apply type checking for all declared functions *)
 and type_funcs funcs func_defs struct_defs =
   List.map (fun f -> type_func f func_defs struct_defs) funcs
 
-and type_func (Ast.Func (loc, func_name, func_type, func_params, func_body))
+(* Type checking for functions *)
+and type_func (Ast.Func (loc, func_name, _, func_type, func_params, func_body))
     func_defs struct_defs =
   let t_body, return_type =
     type_block ~func_body ~func_defs ~block_type:T_void ~struct_defs
@@ -127,6 +142,7 @@ and type_func (Ast.Func (loc, func_name, func_type, func_params, func_body))
       (string_of_loc loc);
     exit (-1) )
 
+(* Type checking for block bodies *)
 and type_block ~func_body ?(block_type = T_void) ~func_defs ~struct_defs
     ~type_env =
   match func_body with
@@ -153,6 +169,7 @@ and type_block ~func_body ?(block_type = T_void) ~func_defs ~struct_defs
       in
       (t_stmt :: t_stmts, block_type')
 
+(* Type checking for statements *)
 and type_stmt stmt func_defs struct_defs type_env =
   match stmt with
   | Ast.Declare (loc, (var_name, var_type, var_expr)) ->
@@ -168,6 +185,9 @@ and type_stmt stmt func_defs struct_defs type_env =
             else (
               Printf.eprintf "%s\nAnnoted type does not match expression\n"
                 (string_of_loc loc);
+              Printf.eprintf "Expected: %s\nGot: %s\n"
+                (type_to_string type_annotation)
+                (type_to_string expr_type);
               exit (-1) )
         | Some type_annotation, None ->
             (TDeclare (loc, (var_name, type_annotation, None)), T_void)
@@ -184,7 +204,8 @@ and type_stmt stmt func_defs struct_defs type_env =
               (string_of_loc loc);
             exit (-1) )
       else (
-        Printf.eprintf "%s\nVariable declared twice\n" (string_of_loc loc);
+        Printf.eprintf "%s\nVariable, %s, declared twice\n" (string_of_loc loc)
+          var_name;
         exit (-1) )
   | Ast.Assign (loc, (identifier, var_expr)) -> (
       let typed_id, id_type = type_identifier identifier struct_defs type_env in
@@ -199,10 +220,13 @@ and type_stmt stmt func_defs struct_defs type_env =
           else (
             Printf.eprintf "%s\nAssignment type does not match variable type\n"
               (string_of_loc loc);
+            Printf.eprintf "Expected: %s\nGot: %s\n" (type_to_string id_type)
+              (type_to_string expr_type);
             exit (-1) ) )
   | Ast.ArrayAssign (loc, ((arr_name, idx_expr), expr)) ->
+      let typed_id, id_type = type_identifier arr_name struct_defs type_env in
       let var_type =
-        match get_var_in_env arr_name type_env with
+        match id_type with
         | T_array t -> t
         | _ ->
             Printf.eprintf "%s\nUnable to assign to undeclared variable\n"
@@ -217,7 +241,7 @@ and type_stmt stmt func_defs struct_defs type_env =
           type_expr expr func_defs struct_defs type_env
         in
         if var_type = expr_type then
-          (TArrayAssign (loc, ((arr_name, idx_typed_expr), typed_expr)), T_void)
+          (TArrayAssign (loc, ((typed_id, idx_typed_expr), typed_expr)), T_void)
         else (
           Printf.eprintf "%s\nUnable to assign to undeclared variable\n"
             (string_of_loc loc);
@@ -256,6 +280,9 @@ and type_stmt stmt func_defs struct_defs type_env =
             Printf.eprintf
               "%s\nIf/Then statement blocks are not of the same type\n"
               (string_of_loc loc);
+            Printf.eprintf "If block: %s\nElse block: %s\n"
+              (type_to_string block_type)
+              (type_to_string block_type');
             exit (-1) ) )
   | Ast.While (loc, condition, block) ->
       let typed_condition, _ =
@@ -266,20 +293,36 @@ and type_stmt stmt func_defs struct_defs type_env =
           ~type_env
       in
       (TWhile (loc, typed_condition, block_type, typed_block), block_type)
-  | Ast.Call (loc, (func_name, func_params)) ->
-      let typed_params, param_types =
-        type_call_params func_params func_defs struct_defs type_env
+  | Ast.Call (loc, (func_name, maybe_type_expr, func_params)) -> (
+      let maybe_instantiated_function =
+        Generics.instantiate_maybe_generic_function_def maybe_type_expr
+          (get_func_type_from_defs func_name func_defs)
       in
-      let _, func_type, func_params =
-        get_func_type_from_defs func_name func_defs
-      in
-      if List.rev param_types = params_to_types func_params then
-        (TCall (loc, (func_name, func_type, typed_params)), T_void)
-      else (
-        Printf.eprintf
-          "%s\nFunction call parameter types do not match defined types\n"
-          (string_of_loc loc);
-        exit (-1) )
+      match maybe_instantiated_function with
+      | Ok instantiated_function ->
+          let typed_params, param_types =
+            type_call_params func_params func_defs struct_defs type_env
+          in
+          let (Ast.Func (_, _, _, func_type, func_params, _)) =
+            instantiated_function
+          in
+          if List.rev param_types = params_to_types func_params then
+            (TCall (loc, (func_name, func_type, typed_params)), T_void)
+          else (
+            Printf.eprintf
+              "%s\n\
+               Function call parameter types do not match defined types\n\
+               Expected: %s\n\
+               Got: %s\n"
+              (string_of_loc loc)
+              (String.concat ", "
+                 (List.map type_to_string (params_to_types func_params)))
+              (String.concat ", "
+                 (List.map type_to_string (List.rev param_types)));
+            exit (-1) )
+      | Error e ->
+          Printf.eprintf "%s\n%s\n" (string_of_loc loc) e;
+          exit (-1) )
   | Ast.Return (loc, expr) ->
       let typed_expr, expr_type =
         type_expr expr func_defs struct_defs type_env
@@ -287,6 +330,7 @@ and type_stmt stmt func_defs struct_defs type_env =
       (TReturn (loc, typed_expr, expr_type), expr_type)
   | Ast.Pass loc -> (TPass loc, T_void)
 
+(* Type checking for function call parameters *)
 and type_call_params params func_defs struct_defs type_env =
   List.fold_left
     (fun (exprs, types) expr ->
@@ -296,6 +340,7 @@ and type_call_params params func_defs struct_defs type_env =
       (typed_expr :: exprs, expr_type :: types))
     ([], []) params
 
+(* Type checking for boolean conditional expressions *)
 and type_bexpr (Ast.Bincond (loc, booleanop, expr, expr')) func_defs struct_defs
     type_env =
   let typed_expr, expr_type = type_expr expr func_defs struct_defs type_env in
@@ -344,8 +389,11 @@ and type_bexpr (Ast.Bincond (loc, booleanop, expr, expr')) func_defs struct_defs
       else (
         Printf.eprintf "%s\nLHS and RHS of boolean condition do not match\n"
           (string_of_loc loc);
+        Printf.eprintf "LHS: %s\nRHS: %s\n" (type_to_string expr_type)
+          (type_to_string expr_type');
         exit (-1) )
 
+(* Type checking for values within arrays *)
 and type_array arr func_defs struct_defs type_env =
   let open List in
   let typed_exprs =
@@ -366,6 +414,7 @@ and type_array arr func_defs struct_defs type_env =
       Printf.eprintf "Array contains values of more than one type\n";
       exit (-1)
 
+(* Type checking for array declarations *)
 and type_arr_dec dec =
   match dec with
   | Ast.SingleDim (t, s) -> (TSingleDim (t, s), T_array t)
@@ -373,27 +422,30 @@ and type_arr_dec dec =
       let arr_dec, t = type_arr_dec a in
       (TMultiDim (arr_dec, s), T_array t)
 
-and type_fields fields struct_name struct_defs =
+(* Type checking for object fields *)
+and type_fields fields struct_def =
   match fields with
   | [] ->
       Printf.eprintf "Unable to get type of non-existent field";
       exit 1
   | [ field ] ->
       let (Ast.StructField (_, _, field_type)) =
-        get_struct_field struct_name field struct_defs
+        get_struct_field struct_def field
       in
       [ (field, field_type) ]
   | field :: fields -> (
       let (Ast.StructField (_, _, field_type)) =
-        get_struct_field struct_name field struct_defs
+        get_struct_field struct_def field
       in
       match field_type with
-      | T_obj obj ->
-          [ (field, field_type) ] @ type_fields fields obj struct_defs
+      | T_obj _ -> [ (field, field_type) ] @ type_fields fields struct_def
       | _ ->
-          Printf.eprintf "Unable to get field for non-object variable";
+          let (Ast.Struct (_, struct_name, _, _)) = struct_def in
+          Printf.eprintf "Unable to get field, %s, for non-object variable, %s"
+            field struct_name;
           exit (-1) )
 
+(* Type checking for variable identifiers *)
 and type_identifier id struct_defs type_env =
   match id with
   | Ast.Var i ->
@@ -402,19 +454,21 @@ and type_identifier id struct_defs type_env =
   | Ast.ObjField (i, f) -> (
       let var_type = get_var_in_env i type_env in
       match var_type with
-      | T_obj obj ->
-          let typed_fields = type_fields f obj struct_defs in
+      | T_obj (obj, _) ->
+          let struct_def = get_struct obj struct_defs in
+          let typed_fields = type_fields f struct_def in
           let _, field_type = List.hd (List.rev typed_fields) in
           (TObjField (i, var_type, typed_fields), field_type)
       | _ ->
-          Printf.eprintf "Unable to get field for non-object variable";
+          Printf.eprintf "Unable to get field(s) for non-object variable, %s" i;
           exit (-1) )
 
-and type_struct_field_init field struct_name func_defs struct_defs type_env =
+(* Type checking for struct field initialisation *)
+and type_struct_field_init field struct_def func_defs struct_defs type_env =
   let field_name, field_expr = field in
-  if struct_field_exists struct_name field_name struct_defs then
+  if struct_field_exists struct_def field_name then
     let (Ast.StructField (loc, _, field_type)) =
-      get_struct_field struct_name field_name struct_defs
+      get_struct_field struct_def field_name
     in
     let typed_field_expr, field_expr_type =
       type_expr field_expr func_defs struct_defs type_env
@@ -425,12 +479,17 @@ and type_struct_field_init field struct_name func_defs struct_defs type_env =
       Printf.eprintf
         "%s\nField expression does not match defined struct field\n"
         (string_of_loc loc);
+      Printf.eprintf "Expected: %s\nGot: %s\n"
+        (type_to_string field_type)
+        (type_to_string field_expr_type);
       exit (-1) )
   else (
     Printf.eprintf
-      "Unable to initialise struct field that does not exist in struct\n";
+      "Unable to initialise struct field, %s, that does not exist in struct\n"
+      field_name;
     exit (-1) )
 
+(* Type checking for single expressions *)
 and type_expr expr func_defs struct_defs type_env =
   match expr with
   | Ast.Null loc -> (TNull loc, T_any)
@@ -449,16 +508,19 @@ and type_expr expr func_defs struct_defs type_env =
       let arr_type = T_array (List.hd arr_types) in
       (TArray (loc, arr_type, typed_exprs), arr_type)
   | Ast.ArrayAccess (loc, (v, e)) ->
-      let var_type = get_var_in_env v type_env in
+      let typed_id, id_type = type_identifier v struct_defs type_env in
       let typed_expr, expr_type = type_expr e func_defs struct_defs type_env in
       if expr_type = T_int then (
-        match var_type with
-        | T_array t -> (TArrayAccess (loc, var_type, (v, typed_expr)), t)
+        match id_type with
+        | T_array t -> (TArrayAccess (loc, id_type, (typed_id, typed_expr)), t)
         | _ ->
             Printf.eprintf "Invalid type\n";
+            Printf.eprintf "Expected: Array\nGot: %s\n" (type_to_string id_type);
             exit (-1) )
       else (
         Printf.eprintf "Arrays must be indexed using integers\n";
+        Printf.eprintf "Expected: %s\nGot: %s\n" (type_to_string T_int)
+          (type_to_string expr_type);
         exit (-1) )
   | Ast.ArrayDec (loc, a) ->
       let arr_dec, t = type_arr_dec a in
@@ -496,6 +558,7 @@ and type_expr expr func_defs struct_defs type_env =
                       Printf.eprintf
                         "%s\nUnable to perform binary operation on given type\n"
                         (string_of_loc loc);
+                      Printf.eprintf "Got: %s\n" (type_to_string expr_type);
                       exit (-1) ),
                   typed_expr,
                   typed_expr' ),
@@ -509,43 +572,68 @@ and type_expr expr func_defs struct_defs type_env =
                 Printf.eprintf
                   "%s\nUnable to perform binary operation on given type\n"
                   (string_of_loc loc);
+                Printf.eprintf "Got: %s\n" (type_to_string expr_type);
                 exit (-1) )
         | _ ->
             Printf.eprintf
               "%s\nUnable to perform binary operation on given type\n"
               (string_of_loc loc);
+            Printf.eprintf "Got: %s\n" (type_to_string expr_type);
             exit (-1) )
       else (
         Printf.eprintf "%s\nLHS and RHS of binary operation do not match\n"
           (string_of_loc loc);
+        Printf.eprintf "LHS: %s\nRHS: %s\n" (type_to_string expr_type)
+          (type_to_string expr_type');
         exit (-1) )
-  | Ast.AssignCall (loc, (func_name, func_params)) ->
-      let typed_params, param_types =
-        type_call_params func_params func_defs struct_defs type_env
+  | Ast.AssignCall (loc, (func_name, maybe_type_expr, func_params)) -> (
+      let maybe_instantiated_function =
+        Generics.instantiate_maybe_generic_function_def maybe_type_expr
+          (get_func_type_from_defs func_name func_defs)
       in
-      let _, func_type, func_params =
-        get_func_type_from_defs func_name func_defs
+      match maybe_instantiated_function with
+      | Ok instantiated_function ->
+          let typed_params, param_types =
+            type_call_params func_params func_defs struct_defs type_env
+          in
+          let (Ast.Func (_, _, _, func_type, func_params, _)) =
+            instantiated_function
+          in
+          if param_types = params_to_types func_params then
+            (TAssignCall (loc, (func_name, func_type, typed_params)), func_type)
+          else (
+            Printf.eprintf
+              "%s\n\
+               Function call parameter types do not match defined types\n\
+               Expected: %s\n\
+               Got: %s" (string_of_loc loc)
+              (String.concat ", "
+                 (List.map type_to_string (params_to_types func_params)))
+              (String.concat ", " (List.map type_to_string param_types));
+            exit (-1) )
+      | Error e ->
+          Printf.eprintf "%s\n%s\n" (string_of_loc loc) e;
+          exit (-1) )
+  | Ast.StructInit (loc, struct_name, maybe_type_expr, struct_fields) -> (
+      let maybe_instantiated_struct_def =
+        Generics.instantiate_maybe_generic_struct_def maybe_type_expr
+          (get_struct struct_name struct_defs)
       in
-      if param_types = params_to_types func_params then
-        (TAssignCall (loc, (func_name, func_type, typed_params)), func_type)
-      else (
-        Printf.eprintf
-          "%s\nFunction call parameter types do not match defined types\n"
-          (string_of_loc loc);
-        exit (-1) )
-  | Ast.StructInit (loc, struct_name, struct_fields) ->
-      if struct_exists struct_name struct_defs then
-        let typed_struct_fields =
-          List.map
-            (fun f ->
-              type_struct_field_init f struct_name func_defs struct_defs
-                type_env)
-            struct_fields
-        in
-        ( TStructInit (loc, struct_name, T_obj struct_name, typed_struct_fields),
-          T_obj struct_name )
-      else (
-        Printf.eprintf
-          "%s\nUnable to initialise struct object that does not exist\n"
-          (string_of_loc loc);
-        exit (-1) )
+      match maybe_instantiated_struct_def with
+      | Ok instantiated_struct_def ->
+          let typed_struct_fields =
+            List.map
+              (fun f ->
+                type_struct_field_init f instantiated_struct_def func_defs
+                  struct_defs type_env)
+              struct_fields
+          in
+          ( TStructInit
+              ( loc,
+                struct_name,
+                T_obj (struct_name, maybe_type_expr),
+                typed_struct_fields ),
+            T_obj (struct_name, maybe_type_expr) )
+      | Error e ->
+          Printf.eprintf "%s\n%s\n" (string_of_loc loc) e;
+          exit (-1) )

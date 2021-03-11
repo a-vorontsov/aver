@@ -22,7 +22,7 @@
 %token WHILE
 %token FUNC RETURN STRUCT NULL
 %token EOF
-%token T_INT T_FLOAT T_BOOL T_CHAR T_STRING T_VOID
+%token T_INT T_FLOAT T_BOOL T_CHAR T_STRING T_VOID T_GENERIC
 
 %left PLUS MINUS
 %left DIV TIMES MOD
@@ -56,7 +56,8 @@
   | T_CHAR  { T_char }
   | T_STRING { T_string }
   | T_VOID { T_void }
-  | s = STRUCT_ID { T_obj (s) }
+  | s = STRUCT_ID maybe_param = parameterised_type? { T_obj (s, maybe_param) }
+  | T_GENERIC { T_generic }
 
 any_type:
   | t = prim_type { t }
@@ -66,17 +67,23 @@ array_type:
   | a = array_type LSQUARE RSQUARE { T_array (a) }
   | t = prim_type LSQUARE RSQUARE { T_array (t) }
 
+generic_type:
+  | LT T_GENERIC GT { Generic }
+
+parameterised_type:
+  | LT t = any_type GT { t }
+
 prog:
   | s = _struct* f = func* EOF { s,f }
 
 _struct:
-  | STRUCT x = STRUCT_ID LBRACE s = struct_field* RBRACE { Struct ($startpos, x, s) }
+  | STRUCT x = STRUCT_ID maybe_generic = generic_type? LBRACE s = struct_field* RBRACE { Struct ($startpos, x, maybe_generic, s) }
 
 struct_field:
   | x = ID COLON t = any_type SEMICOLON { StructField ($startpos, x, t) }
 
 func:
-  | FUNC x = ID ps = params t = any_type b = block { Func ($startpos, x, t, ps, b) }
+  | FUNC x = ID maybe_generic = generic_type? ps = params t = any_type b = block { Func ($startpos, x, maybe_generic, t, ps, b) }
 
 block:
   | LBRACE ls = line* RBRACE { ls }
@@ -139,7 +146,7 @@ expr:
   | LPAREN e = expr RPAREN { e }
 
 array_access:
-  | x = ID LSQUARE e = expr RSQUARE { x, e }
+  | x = identifier LSQUARE e = expr RSQUARE { x, e }
 
 array_assign:
   | a = array_access EQUALS e = expr { a, e }
@@ -149,10 +156,10 @@ array_dec:
   | t = prim_type LSQUARE i = INT RSQUARE { SingleDim (t, i) }
 
 struct_init:
-  | s = STRUCT_ID LBRACE f = struct_field_init* RBRACE { StructInit ($startpos, s, f) }
+  | s = STRUCT_ID maybe_param = parameterised_type? LBRACE f = struct_field_init* RBRACE { StructInit ($startpos, s, maybe_param, f) }
 
 struct_field_init:
-  | x = ID EQUALS e = expr SEMICOLON { x,e }
+  | x = ID EQUALS e = expr SEMICOLON { x, e }
 
 function_call:
- | x = ID LPAREN p = separated_list(COMMA, expr) RPAREN { x, p }
+ | x = ID maybe_param = parameterised_type? LPAREN p = separated_list(COMMA, expr) RPAREN { x, maybe_param, p }

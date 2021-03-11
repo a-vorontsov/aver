@@ -8,6 +8,8 @@ type bop = Add | Mult | Div | Sub | Mod
 
 type identifier = Var of string | ObjField of string * string list
 
+type generic = Generic
+
 and expr =
   | Input of loc
   | Null of loc
@@ -21,13 +23,13 @@ and expr =
   | ArrayDec of loc * array_dec
   | Binop of loc * bop * expr * expr
   | AssignCall of loc * function_call
-  | StructInit of loc * string * (string * expr) list
+  | StructInit of loc * string * Types.type_expr option * (string * expr) list
 
 and array_dec =
   | SingleDim of Types.type_expr * int
   | MultiDim of array_dec * int
 
-and array_access = string * expr
+and array_access = identifier * expr
 
 and booleanop =
   | BEquals
@@ -47,7 +49,7 @@ and assignment = identifier * expr
 
 and array_assignment = array_access * expr
 
-and function_call = string * expr list
+and function_call = string * Types.type_expr option * expr list
 
 and stmt =
   | Declare of loc * declaration
@@ -63,14 +65,20 @@ and stmt =
 
 and block = stmt list
 
-and func = Func of loc * string * Types.type_expr * params * block
+and func =
+  | Func of loc * string * generic option * Types.type_expr * params * block
 
 and funcs = func list
 
 and struct_field = StructField of loc * string * Types.type_expr
 
-and _struct = Struct of loc * string * struct_field list
+and _struct = Struct of loc * string * generic option * struct_field list
 
 and structs = _struct list
 
 and prog = structs * funcs
+
+let rec get_array_dec_base arr =
+  match arr with
+  | SingleDim (a, _) -> a
+  | MultiDim (a, _) -> get_array_dec_base a

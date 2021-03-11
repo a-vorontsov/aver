@@ -1,23 +1,23 @@
-struct Node {
-    data : int;
-    next : Node;
+struct Node<T> {
+    data : T;
+    next : Node<T>;
 }
 
-struct LinkedList {
-    head : Node;
+struct LinkedList<T> {
+    head : Node<T>;
     length : int;
 }
 
-func insert(ll LinkedList, data int) void {
-    let n = Node{
+func insert<T>(ll LinkedList<T>, data T) void {
+    let n = Node<T>{
         data = data;
         next = ll.head;
     };
     ll.head = n;
     ll.length = ll.length + 1;
 }
-func insert_end(ll LinkedList, data int) void {
-    let n = Node{
+func insert_end<T>(ll LinkedList<T>, data T) void {
+    let n = Node<T>{
         data = data;
     };
     if (ll.head == null) {
@@ -31,19 +31,19 @@ func insert_end(ll LinkedList, data int) void {
     }
     ll.length = ll.length + 1;
 }
-func insert_at(ll LinkedList, data int, idx int) void {
+func insert_at<T>(ll LinkedList<T>, data T, idx int) void {
     if (idx > ll.length) {
         println "Can't insert data into index";
     } else {
         if (idx == 0) {
-            insert(ll, data);
+            insert<T>(ll, data);
         } else {
-            let n = Node{
+            let n = Node<T>{
                 data = data;
             };
             let current = ll.head;
             let i = 0;
-            while (i < (idx - 1)) {
+            while (i <= (idx - 2)) {
                 current = current.next;
                 i = i + 1;
             }
@@ -54,7 +54,7 @@ func insert_at(ll LinkedList, data int, idx int) void {
     }
 }
 
-func remove_head(ll LinkedList) Node {
+func remove_head<T>(ll LinkedList<T>) Node<T> {
     if (ll.head != null) {
         let temp = ll.head;
         ll.head = temp.next;
@@ -67,7 +67,7 @@ func remove_head(ll LinkedList) Node {
         return null;
     }
 }
-func remove_tail(ll LinkedList) Node {
+func remove_tail<T>(ll LinkedList<T>) Node<T> {
     if (ll.head != null) {
         let current = ll.head;
         ll.length = ll.length - 1;
@@ -88,17 +88,17 @@ func remove_tail(ll LinkedList) Node {
         return null;
     }
 }
-func remove_at(ll LinkedList, idx int) Node {
+func remove_at<T>(ll LinkedList<T>, idx int) Node<T> {
     if (ll.head != null) {
         if (idx == 0) {
-            return remove_head(ll);
+            return remove_head<T>(ll);
         } else {
             if (idx == ll.length) {
-                return remove_tail(ll);
+                return remove_tail<T>(ll);
             } else {
                 let current = ll.head;
                 let i = 0;
-                while (i < idx - 1) {
+                while (i <= idx - 2) {
                     current = current.next;
                     i = i + 1;
                 }
@@ -114,13 +114,13 @@ func remove_at(ll LinkedList, idx int) Node {
         return null;
     }
 }
-func empty(ll LinkedList) void {
+func empty<T>(ll LinkedList<T>) void {
     while (ll.head != null) {
-        remove_tail(ll);
+        remove_tail<T>(ll);
     }
 }
 
-func traverse(ll LinkedList) void {
+func traverse<T>(ll LinkedList<T>) void {
     if (ll.head != null) {
         let current = ll.head;
         while (current.next != null) {
@@ -135,17 +135,25 @@ func traverse(ll LinkedList) void {
 }
 
 func main() void {
-    let ll = LinkedList{
+    let ll = LinkedList<int>{
         length = 0;
     };
-    traverse(ll);
+    traverse<int>(ll);
     let i = 0;
-    while (i <= 10000) {
-        insert_end(ll, i);
+    while (i <= 100) {
+        insert_end<int>(ll, i);
         i = i + 1;
     }
-    traverse(ll);
+    traverse<int>(ll);
     println "Remove all";
-    empty(ll);
-    traverse(ll);
+    empty<int>(ll);
+    traverse<int>(ll);
+    let lls = LinkedList<string>{
+        length = 0;
+    };
+    println lls;
+    insert<string>(lls, "a");
+    insert_at<string>(lls, "b", 1);
+    insert_end<string>(lls, "c");
+    println lls;
 }
