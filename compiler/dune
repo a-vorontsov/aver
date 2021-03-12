@@ -14,5 +14,5 @@
 
 (executable
  (name main)
- (public_name aver)
+ (public_name averc)
  (libraries menhirLib))

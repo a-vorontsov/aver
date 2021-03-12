@@ -1,5 +1,5 @@
 (lang dune 2.7)
 
-(name aver)
+(name averc)
 
 (using menhir 2.1)

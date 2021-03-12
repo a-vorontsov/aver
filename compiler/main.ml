@@ -39,10 +39,12 @@ let write_file s out =
 let () =
   if Array.length Sys.argv == 2 then (
     let file = Sys.argv.(1) in
-    ignore print_newline;
+    if Filename.extension file = "av" then ignore print_newline;
     let bc = parse_file file in
     match bc with
     | Ok x -> write_file x (Filename.remove_extension file)
     | Error e ->
         eprintf "%s" e;
         exit (-1) )
+  else eprintf "Unable to open non aver file";
+  exit (-1)
