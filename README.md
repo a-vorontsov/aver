@@ -50,3 +50,25 @@ Install the built binaries to a single directory, `bin/`, at the root of this pr
 ```bash
 make install
 ```
+
+## Usage
+
+Compile a `.av` file into bytecode by running the following command:
+
+```sh
+averc <file>.av
+```
+
+Run a compiled bytecode file using the following command:
+
+### Without JIT optimisation:
+
+```sh
+aver-nojit <file>.avb
+```
+
+### With JIT optimisation:
+
+```sh
+aver <file>.avb
+```
