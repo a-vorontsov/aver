@@ -8,6 +8,8 @@ Developed during my final year project for King's College London under supervisi
 
 Aver's compiler is written in OCaml which generates bytecode for a VM built using RPython.
 
+A unix system is recommended for compiling and running this project.
+
 ### Compiler
 
 OCaml and Dune
@@ -20,7 +22,7 @@ Python2 and [RPython](https://rpython.readthedocs.io/en/latest/).
 
 #### Installing RPython
 
-To use RPython you need the PyPy source which includes the RPython framework.
+To use RPython you need the PyPy source which includes the RPython framework. Obtaining the source can be done by cloning the mercurial repository using the following commands:
 
 ```bash
 $ cd <path_to>
