@@ -5,3 +5,4 @@ _build
 *.native
 bin
 logfile*
+*.avb

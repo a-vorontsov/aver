@@ -4,8 +4,8 @@ description: "Compiler for the Aver language"
 version: "0.1"
 authors: ["Aleksandr Vorontsov"]
 maintainer: "aleksandr@vorontsov.co.uk"
-homepage: "https://github.com/a-vorontsov/6ccs3prj"
-bug-reports: "https://github.com/a-vorontsov/6ccs3prj/issues"
+homepage: "https://github.com/a-vorontsov/aver"
+bug-reports: "https://github.com/a-vorontsov/aver/issues"
 depends: [
   "dune" {>= "2.7"}
   "menhir" {>= "20200624"}
@@ -22,4 +22,4 @@ build: [
     jobs
   ]
 ]
-dev-repo: "git+https://github.com/a-vorontsov/6ccs3prj.git"
+dev-repo: "git+https://github.com/a-vorontsov/aver.git"
