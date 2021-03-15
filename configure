@@ -1,0 +1,59 @@
+#!/bin/sh
+echo "Checking for tool installations..."
+
+echo -n > .env
+
+echo -n "OCaml -> "
+which ocaml 2> /dev/null > /dev/null
+if [ $? -eq 0 ]; then
+    OCAML=`which ocaml`
+else
+    echo "Unable to find suitable OCaml installation."
+    rm .env
+fi
+echo $OCAML
+printf "OCAML=%s\n" $OCAML >> .env
+
+echo -n "Dune -> "
+which dune 2> /dev/null > /dev/null
+if [ $? -eq 0 ]; then
+    DUNE=`which dune`
+else
+    echo "Unable to find suitable Dune installation."
+    rm .env
+fi
+echo $DUNE
+printf "DUNE=%s\n" $DUNE >> .env
+
+echo -n "Python interpreter -> "
+which pypy 2> /dev/null > /dev/null
+if [ $? -eq 0 ]; then
+    PYTHON=`which pypy`
+elif [ $? -ne 0 ]; then
+    which python2 2> /dev/null > /dev/null
+    if [ $? -eq 0 ]; then
+        PYTHON=`which python2`
+    else
+        echo "Unable to find suitable python interpreter."
+        rm .env
+    fi
+fi
+echo $PYTHON
+printf "PYTHON=%s\n" $PYTHON >> .env
+
+echo -n "RPython -> "
+if [ x$PYPY_SRC != x ]; then
+    RPYTHON=$PYPY_SRC/rpython/bin/rpython
+    if [ ! -f $RPYTHON ]; then
+        RPYTHON=""
+        rm .env
+    fi
+fi
+if [ x$RPYTHON = x ]; then
+    echo "Unable to find suitable RPython location."
+    rm .env
+fi
+echo $RPYTHON
+printf "RPYTHON=%s" $RPYTHON >> .env
+
+echo "Done."
