@@ -66,10 +66,16 @@ class VM(object):
                 literal = frame.literal_get(ops[1])
 
                 if literal is None:
-                    print "Error"
+                    print "Error in LOAD_CONST"
+                    print "---"
                     print self.call_stack_size
+                    print "---"
                     print func.print_func()
+                    print "---"
                     print ops
+                    print "---"
+                    print "literals"
+                    frame.literal_print()
                     assert False
 
                 frame.stack_push(literal)
@@ -78,7 +84,7 @@ class VM(object):
                 value = frame.local_get(x)
 
                 if value is None:
-                    print "Error"
+                    print "Error in LOAD_VAR"
                     print self.call_stack_size
                     print func.print_func()
                     print ops
@@ -230,7 +236,7 @@ class VM(object):
                 for i in range(params):
                     val = frame.stack_pop()
                     if val is None:
-                        print "Error"
+                        print "Error in CALL params"
                         print self.call_stack_size
                         print func.print_func()
                         print ops

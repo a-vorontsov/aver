@@ -3,7 +3,7 @@ func bubbleSort(list int[]) void {
     let i = 0;
     while (i < n - 1) {
         let j = 0;
-        while (j < (n - i - 1)) {
+        while (j < n - i - 1) {
             if (list[j] > list[j+1]) {
                 let temp = list[j];
                 list[j] = list[j+1];

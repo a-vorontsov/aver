@@ -20,8 +20,9 @@ class Frame(object):
         self.stack = [None] * (stack_size + 1)
         make_sure_not_resized(self.stack)
 
-        self.literals = [None] * (len(literal_vars) + 1)
+        self.literals = [None] * len(literal_vars)
         make_sure_not_resized(self.literals)
+        assert len(literal_vars) == len(self.literals)
         for i in range(len(literal_vars)):
             self.literals[i] = literal_vars[i]
 

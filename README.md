@@ -24,7 +24,7 @@ Python2 and [RPython](https://rpython.readthedocs.io/en/latest/).
 
 To use RPython you need the PyPy source which includes the RPython framework. Obtaining the source can be done by cloning the mercurial repository using the following commands:
 
-```bash
+```sh
 $ cd <path_to>
 $ hg clone https://foss.heptapod.net/pypy/pypy
 $ export PYPY_SRC=<path_to>/pypy
@@ -34,14 +34,14 @@ $ export PYPY_SRC=<path_to>/pypy
 
 Once all frameworks and tools have been installed, run the following commands to configure environment variables to a local file and build the compiler and the non-JIT optimised version of the interpreter:
 
-```bash
+```sh
 ./configure
 make
 ```
 
 To build the interpreter with JIT run the following command:
 
-```bash
+```sh
 make build-jit
 ```
 
@@ -49,7 +49,7 @@ make build-jit
 
 Install the built binaries to a single directory, `bin/`, at the root of this project where you'll find the compiler, `averc`, and bytecode interpreters `aver{-nojit}`.
 
-```bash
+```sh
 make install
 ```
 

@@ -295,6 +295,7 @@ and gen_stmt_bytecode statement vars_table bytecode =
       @ gen_expr_bytecode i vars_table bytecode
       @ gen_identifier_bytecode v vars_table bytecode
       @ append_bc STORE_TO_ARRAY bytecode
+      @ append_bc POP bytecode
   | TPrint (_, expression) ->
       gen_expr_bytecode expression vars_table bytecode
       @ append_bc PRINT bytecode
