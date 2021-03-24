@@ -54,6 +54,6 @@ if [ x$RPYTHON = x ]; then
     rm .env
 fi
 echo $RPYTHON
-printf "RPYTHON=%s" $RPYTHON >> .env
+printf "RPYTHON=%s\n" $RPYTHON >> .env
 
 echo "Done."
