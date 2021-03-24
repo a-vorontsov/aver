@@ -1,11 +1,17 @@
 default: build
 
-build:
+.PHONY: compiler vm
+.SILENT: clean
+
+build: compiler vm
+
+compiler:
 	@cd compiler && make
+
+vm:
 	@cd vm && make
 
-build-jit:
-	@cd compiler && make
+jit: compiler
 	@cd vm && make jit
 
 install:

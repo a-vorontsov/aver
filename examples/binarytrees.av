@@ -1,0 +1,75 @@
+struct Node {
+    left : Node;
+    right : Node;
+}
+
+func bottomUpTree(depth int) Node {
+    if (depth <= 0) {
+        return Node{};
+    } else {
+        return Node{
+            left = bottomUpTree(depth - 1);
+            right = bottomUpTree(depth - 1);
+        };
+    }
+}
+
+func itemCheck(n Node) int {
+    if (n.left == null) {
+        return 1;
+    } else {
+        return 1 + itemCheck(n.left) + itemCheck(n.right);
+    }
+}
+
+func main() void {
+    let minDepth = 4;
+
+    let n = 21;
+    let maxDepth = n;
+
+    if (minDepth + 2 > n) {
+        maxDepth = minDepth + 2;
+    } else {
+        pass;
+    }
+
+    let stretchDepth = maxDepth + 1;
+
+    let check = itemCheck(bottomUpTree(stretchDepth));
+    print "stretch tree of depth ";
+    print stretchDepth;
+    print "    check: ";
+    println check;
+
+    let longLivedTree = bottomUpTree(maxDepth);
+
+    let depth = minDepth;
+    while (depth <= maxDepth) {
+        let iterations = 1;
+        let j = 0;
+        while (j < (maxDepth - depth + minDepth)) {
+            iterations = (iterations * 2);
+            j = j + 1;
+        }
+        check = 0;
+
+        let i = 1;
+        while (i <= iterations) {
+            check = check + itemCheck(bottomUpTree(depth));
+            i = i + 1;
+        }
+
+        print iterations;
+        print "    trees of depth ";
+        print depth;
+        print "    check: ";
+        println check;
+
+        depth = depth + 2;
+    }
+    print "long lived tree of depth ";
+    print maxDepth;
+    print "    check: ";
+    println itemCheck(longLivedTree);
+}
