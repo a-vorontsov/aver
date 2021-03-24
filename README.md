@@ -8,7 +8,7 @@ Developed during my final year project for King's College London under supervisi
 
 Aver's compiler is written in OCaml which generates bytecode for a VM built using RPython.
 
-A unix system is recommended for compiling and running this project.
+A unix system is recommended for compiling and running this project as pypy and rpython have pre-built binaries with support for unix systems.
 
 ### Compiler
 
@@ -30,6 +30,13 @@ $ hg clone https://foss.heptapod.net/pypy/pypy
 $ export PYPY_SRC=<path_to>/pypy
 ```
 
+RPython may require `libffi` and `pkg-config` which can be installed via your architecture's package manager
+e.g.
+
+```sh
+$ sudo apt install libffi-dev pkg-config
+```
+
 ---
 
 Once all frameworks and tools have been installed, run the following commands to configure environment variables to a local file and build the compiler and the non-JIT optimised version of the interpreter:
@@ -42,7 +49,7 @@ make
 To build the interpreter with JIT run the following command:
 
 ```sh
-make build-jit
+make jit
 ```
 
 ## Install

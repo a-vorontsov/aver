@@ -8,7 +8,7 @@ build: compiler vm
 compiler:
 	@cd compiler && make
 
-vm:
+vm: compiler
 	@cd vm && make
 
 jit: compiler
