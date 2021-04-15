@@ -174,7 +174,7 @@ class VM(object):
                 jump_to = ops[1]
                 pc = pc + jump_to
             elif opcode == OpCode.PRINT:
-                os.write(0, frame.stack_pop().get_string())
+                os.write(1, frame.stack_pop().get_string())
             elif opcode == OpCode.PRINTLN:
                 print frame.stack_pop().get_string()
             elif opcode == OpCode.INPUT:
@@ -271,5 +271,4 @@ class VM(object):
             if not buf:
                 return res
             res += buf
-            if res[-1] == '\n':
-                return res[:-1]
+            return res.rstrip("\r\n")

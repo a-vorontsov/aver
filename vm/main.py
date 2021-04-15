@@ -122,10 +122,8 @@ def entry_point(argv):
         print "You must supply a filename"
         return 1
 
-    try:
-        run(os.open(filename, os.O_RDONLY, 0777))
-    except:
-        return 1
+    file = os.open(filename, os.O_RDONLY, 0777)
+    run(file)
 
     return 0
 
