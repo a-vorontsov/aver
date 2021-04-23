@@ -3,7 +3,8 @@ open Instruction
 open Bytecode
 open Typing
 
-let emit b = String.concat "\n" (List.map as_string b)
+let emit b =
+  "# Begin Aver Bytecode\n" ^ String.concat "\n" (List.map as_string b)
 
 let filename = ref ""
 

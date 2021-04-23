@@ -35,6 +35,8 @@ class Float(PrimitiveObject):
 
     def div(self, rhs):
         assert isinstance(rhs, Float)
+        if rhs.value == 0.0:
+            raise ValueError
         result = self.value / rhs.value
         return Float(float(result))
 

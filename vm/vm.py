@@ -112,7 +112,11 @@ class VM(object):
                 rhs = frame.stack_pop()
                 lhs = frame.stack_pop()
 
-                result = lhs.div(rhs)
+                try:
+                    result = lhs.div(rhs)
+                except ValueError:
+                    print get_printable_location(pc, func, self)
+                    raise ValueError
                 frame.stack_push(result)
             elif opcode == OpCode.MULTIPLY:
                 rhs = frame.stack_pop()

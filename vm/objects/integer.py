@@ -35,6 +35,8 @@ class Integer(PrimitiveObject):
 
     def div(self, rhs):
         assert isinstance(rhs, Integer)
+        if rhs.value == 0:
+            raise ValueError
         result = self.value // rhs.value
         return Integer(int(result))
 
