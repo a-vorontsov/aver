@@ -1,6 +1,5 @@
 import sys
 import os
-import array
 
 from opcodes import OpCode, stack_effect
 from symboltable import Symbol, SymbolType

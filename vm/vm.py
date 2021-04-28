@@ -136,6 +136,9 @@ class VM(object):
 
                 if lhs.eq(rhs):
                     jump_to = ops[1]
+                    new_pc = pc + jump_to
+                    if new_pc < pc:
+                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                     pc = pc + jump_to
             elif opcode == OpCode.CMPEQ:
                 rhs = frame.stack_pop()
@@ -143,6 +146,9 @@ class VM(object):
 
                 if lhs.neq(rhs):
                     jump_to = ops[1]
+                    new_pc = pc + jump_to
+                    if new_pc < pc:
+                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                     pc = pc + jump_to
             elif opcode == OpCode.CMPGE:
                 rhs = frame.stack_pop()
@@ -150,6 +156,9 @@ class VM(object):
 
                 if lhs.lt(rhs):
                     jump_to = ops[1]
+                    new_pc = pc + jump_to
+                    if new_pc < pc:
+                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                     pc = pc + jump_to
             elif opcode == OpCode.CMPGT:
                 rhs = frame.stack_pop()
@@ -157,6 +166,9 @@ class VM(object):
 
                 if lhs.le(rhs):
                     jump_to = ops[1]
+                    new_pc = pc + jump_to
+                    if new_pc < pc:
+                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                     pc = pc + jump_to
             elif opcode == OpCode.CMPLE:
                 rhs = frame.stack_pop()
@@ -164,6 +176,9 @@ class VM(object):
 
                 if lhs.gt(rhs):
                     jump_to = ops[1]
+                    new_pc = pc + jump_to
+                    if new_pc < pc:
+                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                     pc = pc + jump_to
             elif opcode == OpCode.CMPLT:
                 rhs = frame.stack_pop()
@@ -171,11 +186,15 @@ class VM(object):
 
                 if lhs.ge(rhs):
                     jump_to = ops[1]
+                    new_pc = pc + jump_to
+                    if new_pc < pc:
+                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                     pc = pc + jump_to
             elif opcode == OpCode.JMP:
-                jitdriver.can_enter_jit(
-                    pc=pc, func=func, self=self, frame=frame)
                 jump_to = ops[1]
+                new_pc = pc + jump_to
+                if new_pc < pc:
+                    jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                 pc = pc + jump_to
             elif opcode == OpCode.PRINT:
                 os.write(1, frame.stack_pop().get_string())
