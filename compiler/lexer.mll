@@ -22,11 +22,11 @@ let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 let struct_id = ['A'-'Z'] ['a'-'z' 'A'-'Z' '_']*
 let generic_type = ['A'-'Z']
 
-rule token =
+rule read_token =
   parse
-  | white { token lexbuf }
-  | newline { next_line lexbuf; token lexbuf }
-  | "//" { read_single_line_comment lexbuf }
+  | white { read_token lexbuf }
+  | newline { next_line lexbuf; read_token lexbuf }
+  | "//" { read_comment lexbuf }
   | "/" { DIV }
   | "-" { MINUS }
   | "*" { TIMES }
@@ -75,25 +75,18 @@ rule token =
   | id { ID (Lexing.lexeme lexbuf) }
   | '"' { read_string (Buffer.create 16) lexbuf }
   | eof { EOF }
-  | _ { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }
+  | _ { raise (Error (Printf.sprintf "At offset %d: Unexpected character.\n" (Lexing.lexeme_start lexbuf))) }
 
-and read_single_line_comment = parse
-  | newline { next_line lexbuf; token lexbuf }
+and read_comment = parse
+  | newline { next_line lexbuf; read_token lexbuf }
   | eof { EOF }
-  | _ { read_single_line_comment lexbuf }
+  | _ { read_comment lexbuf }
 
 and read_string buf = parse
   | '"'       { STRING (Buffer.contents buf) }
-  | '\\' '/'  { Buffer.add_char buf '/'; read_string buf lexbuf }
-  | '\\' '\\' { Buffer.add_char buf '\\'; read_string buf lexbuf }
-  | '\\' 'b'  { Buffer.add_char buf '\b'; read_string buf lexbuf }
-  | '\\' 'f'  { Buffer.add_char buf '\012'; read_string buf lexbuf }
-  | '\\' 'n'  { Buffer.add_char buf '\n'; read_string buf lexbuf }
-  | '\\' 'r'  { Buffer.add_char buf '\r'; read_string buf lexbuf }
-  | '\\' 't'  { Buffer.add_char buf '\t'; read_string buf lexbuf }
-  | [^ '"' '\\']+
+  | [^ '"']+
     { Buffer.add_string buf (Lexing.lexeme lexbuf);
       read_string buf lexbuf
     }
-  | eof { raise (Error ("String is not terminated")) }
-  | _ { raise (Error (Printf.sprintf "Illegal string character: at %d\n" (Lexing.lexeme_start lexbuf))) }
+  | eof { raise (Error ("EOF: String has not been terminated.")) }
+  | _ { raise (Error (Printf.sprintf "At offset %d: Illegal character.\n" (Lexing.lexeme_start lexbuf))) }

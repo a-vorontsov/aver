@@ -1,8 +1,0 @@
-func a(n int) void {
-    println n;
-    a(n + 1);
-}
-
-func main() void {
-    a(0);
-}

@@ -6,7 +6,7 @@ let print_error_position lexbuf =
     (pos.pos_cnum - pos.pos_bol + 1)
 
 let parse lexbuf =
-  try Parser.prog Lexer.token lexbuf with
+  try Parser.prog Lexer.read_token lexbuf with
   | Lexer.Error msg ->
       Printf.eprintf "Lexing Error at %s: %s\n"
         (print_error_position lexbuf)
