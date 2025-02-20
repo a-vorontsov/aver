@@ -4,7 +4,20 @@ let string_of_loc loc =
   Printf.sprintf "Line:%d Position:%d" loc.Lexing.pos_lnum
     (loc.Lexing.pos_cnum - loc.Lexing.pos_bol + 1)
 
-type t_bop = TAdd | TMult | TDiv | TSub | TMod
+type t_bop =
+  | TAdd
+  | TMult
+  | TDiv
+  | TSub
+  | TMod
+  | TBAnd
+  | TBOr
+  | TBEquals
+  | TBNequals
+  | TGreaterThan
+  | TLessThan
+  | TGreaterThanEq
+  | TLessThanEq
 
 and t_identifier =
   | TVar of string * Types.type_expr
@@ -30,18 +43,7 @@ and t_array_dec =
   | TSingleDim of Types.type_expr * int
   | TMultiDim of t_array_dec * int
 
-and t_array_access = t_identifier * t_expr
-
-and t_booleanop =
-  | TBEquals
-  | TBNequals
-  | TGreaterThan
-  | TLessThan
-  | TGreaterThanEq
-  | TLessThanEq
-
-and t_condition =
-  | TBincond of loc * t_booleanop * Types.type_expr * t_expr * t_expr
+and t_array_access = t_identifier * t_expr list
 
 and t_params = (loc * string * Types.type_expr) list
 
@@ -59,8 +61,8 @@ and t_stmt =
   | TArrayAssign of loc * t_array_assignment
   | TPrint of loc * t_expr
   | TPrintln of loc * t_expr
-  | TIf of loc * t_condition * Types.type_expr * t_block * t_block
-  | TWhile of loc * t_condition * Types.type_expr * t_block
+  | TIf of loc * t_expr * Types.type_expr * t_block * t_block option
+  | TWhile of loc * t_expr * Types.type_expr * t_block
   | TCall of loc * t_function_call
   | TReturn of loc * t_expr * Types.type_expr
   | TPass of loc

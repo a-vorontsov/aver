@@ -97,6 +97,13 @@ let rec gen_identifier_bytecode identifier vars_table bytecode =
           Printf.eprintf "Unable to get field from non-object value";
           exit (-1) )
 
+and gen_array_access_bytecode (v, exprs) vars_table bytecode =
+  gen_identifier_bytecode v vars_table bytecode
+  @ List.fold_left
+      (fun acc e ->
+        acc @ gen_expr_bytecode e vars_table [] @ append_bc LOAD_FROM_ARRAY [])
+      [] exprs
+
 and gen_expr_bytecode expression vars_table bytecode =
   match expression with
   | TNull _ -> append_bc (LOAD_CONST 0) bytecode
@@ -111,10 +118,7 @@ and gen_expr_bytecode expression vars_table bytecode =
         (fun acc elem -> acc @ gen_expr_bytecode elem vars_table [])
         bytecode (List.rev elements)
       @ append_bc (MAKE_ARRAY (List.length elements)) bytecode
-  | TArrayAccess (_, _, (v, i)) ->
-      gen_expr_bytecode i vars_table bytecode
-      @ gen_identifier_bytecode v vars_table bytecode
-      @ append_bc LOAD_FROM_ARRAY bytecode
+  | TArrayAccess (_, _, a) -> gen_array_access_bytecode a vars_table bytecode
   | TArrayDec (_, _, dec) -> gen_arr_dec_bytecode dec bytecode
   | TAssignCall (_, (name, _, params)) ->
       gen_call_bytecode name params vars_table bytecode
@@ -131,7 +135,29 @@ and gen_expr_bytecode expression vars_table bytecode =
               match t with T_int | T_float -> DIVIDE | _ -> exit (-1) )
           | TMod -> ( match t with T_int | T_float -> MOD | _ -> exit (-1) )
           | TSub -> (
-              match t with T_int | T_float -> SUBTRACT | _ -> exit (-1) ) )
+              match t with T_int | T_float -> SUBTRACT | _ -> exit (-1) )
+          | TLessThan -> (
+              match t with T_int | T_float -> CMPLT | _ -> exit (-1) )
+          | TGreaterThan -> (
+              match t with T_int | T_float -> CMPGT | _ -> exit (-1) )
+          | TLessThanEq -> (
+              match t with T_int | T_float -> CMPLE | _ -> exit (-1) )
+          | TGreaterThanEq -> (
+              match t with T_int | T_float -> CMPGE | _ -> exit (-1) )
+          | TBEquals -> (
+              match t with
+              | T_int | T_float | T_string | T_char | T_bool | T_array _
+              | T_obj _ ->
+                  CMPEQ
+              | _ -> exit (-1) )
+          | TBNequals -> (
+              match t with
+              | T_int | T_float | T_string | T_char | T_bool | T_array _
+              | T_obj _ ->
+                  CMPNEQ
+              | _ -> exit (-1) )
+          | TBAnd -> ( match t with T_bool -> CMPAND | _ -> exit (-1) )
+          | TBOr -> ( match t with T_bool -> CMPOR | _ -> exit (-1) ) )
           bytecode
   | TStructInit (_, name, _, fields) ->
       let f = get_struct name in
@@ -196,53 +222,8 @@ and gen_declare_bytecode declaration vars_table bytecode =
           @ append_bc (STORE_VAR (vars_table#insert name)) bytecode )
 
 and gen_condition_bytecode condition jump_to vars_table bytecode =
-  match condition with
-  | TBincond (_, op, t, expression, expression') ->
-      gen_expr_bytecode expression vars_table bytecode
-      @ gen_expr_bytecode expression' vars_table bytecode
-      @ append_bc
-          ( match op with
-          | TBEquals -> (
-              match t with
-              | T_any | T_int | T_float | T_bool | T_char | T_string | T_obj _
-                ->
-                  CMPEQ jump_to
-              | _ ->
-                  print_endline "boolean operation not supported for types";
-                  exit (-1) )
-          | TBNequals -> (
-              match t with
-              | T_any | T_int | T_float | T_bool | T_char | T_string | T_obj _
-                ->
-                  CMPNEQ jump_to
-              | _ ->
-                  print_endline "boolean operation not supported for types";
-                  exit (-1) )
-          | TGreaterThan -> (
-              match t with
-              | T_int | T_float -> CMPGT jump_to
-              | _ ->
-                  print_endline "boolean operation not supported for types";
-                  exit (-1) )
-          | TGreaterThanEq -> (
-              match t with
-              | T_int | T_float -> CMPGE jump_to
-              | _ ->
-                  print_endline "boolean operation not supported for types";
-                  exit (-1) )
-          | TLessThan -> (
-              match t with
-              | T_int | T_float -> CMPLT jump_to
-              | _ ->
-                  print_endline "boolean operation not supported for types";
-                  exit (-1) )
-          | TLessThanEq -> (
-              match t with
-              | T_int | T_float -> CMPLE jump_to
-              | _ ->
-                  print_endline "boolean operation not supported for types";
-                  exit (-1) ) )
-          bytecode
+  gen_expr_bytecode condition vars_table bytecode
+  @ append_bc (JUMP_TRUE jump_to) bytecode
 
 and gen_while_bytecode condition statement_list vars_table bytecode =
   let stmts =
@@ -262,19 +243,27 @@ and gen_if_bytecode condition statements statements' vars_table bytecode =
       (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
       bytecode statements
   in
-  let stmts_else =
-    List.fold_left
-      (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
-      bytecode statements'
-  in
-  let condition =
-    gen_condition_bytecode condition
-      (List.length stmts_if + 1)
-      vars_table bytecode
-  in
-  condition @ stmts_if
-  @ append_bc (JUMP (List.length stmts_else)) bytecode
-  @ stmts_else
+  match statements' with
+  | Some s ->
+      let stmts_else =
+        List.fold_left
+          (fun acc stmt -> acc @ gen_stmt_bytecode stmt vars_table [])
+          bytecode s
+      in
+      let condition =
+        gen_condition_bytecode condition
+          (List.length stmts_if + 1)
+          vars_table bytecode
+      in
+      condition @ stmts_if
+      @ append_bc (JUMP (List.length stmts_else)) bytecode
+      @ stmts_else
+  | None ->
+      let condition =
+        gen_condition_bytecode condition (List.length stmts_if) vars_table
+          bytecode
+      in
+      condition @ stmts_if
 
 and gen_call_bytecode name params vars_table bytecode =
   List.fold_left
@@ -284,16 +273,33 @@ and gen_call_bytecode name params vars_table bytecode =
       (CALL (confirm_function name (List.length params), List.length params))
       bytecode
 
+and gen_array_assign_getters exprs vars_table =
+  List.fold_left
+    (fun acc e ->
+      acc @ gen_expr_bytecode e vars_table [] @ append_bc LOAD_FROM_ARRAY [])
+    [] (List.rev exprs)
+
+and gen_array_assign_setters exprs vars_table =
+  List.fold_left
+    (fun acc e ->
+      acc @ gen_expr_bytecode e vars_table [] @ append_bc STORE_TO_ARRAY [])
+    [] (List.rev exprs)
+
 and gen_stmt_bytecode statement vars_table bytecode =
   match statement with
   | TDeclare (_, declaration) ->
       gen_declare_bytecode declaration vars_table bytecode
   | TAssign (_, assignment) ->
       gen_assign_bytecode assignment vars_table bytecode
-  | TArrayAssign (_, ((v, i), expression)) ->
-      gen_expr_bytecode expression vars_table bytecode
-      @ gen_expr_bytecode i vars_table bytecode
+  | TArrayAssign (_, ((v, exprs), expression)) ->
+      ( if List.length exprs > 1 then
+        gen_array_assign_getters
+          (List.rev (List.tl (List.rev exprs)))
+          vars_table
+      else [] )
+      @ gen_expr_bytecode expression vars_table bytecode
       @ gen_identifier_bytecode v vars_table bytecode
+      @ List.rev (gen_array_assign_setters exprs vars_table)
       @ append_bc STORE_TO_ARRAY bytecode
       @ append_bc POP bytecode
   | TPrint (_, expression) ->

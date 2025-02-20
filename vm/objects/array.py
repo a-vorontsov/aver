@@ -1,4 +1,5 @@
 from primitive_object import PrimitiveObject
+from boolean import Boolean
 from null import Null
 from rpython.rlib.debug import make_sure_not_resized
 
@@ -44,17 +45,17 @@ class Array(PrimitiveObject):
     def eq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
         if isinstance(rhs, Null):
-            return False
+            return Boolean(False)
         else:
             assert isinstance(rhs, Array)
             result = self.list == rhs.list
-            return result
+            return Boolean(result)
 
     def neq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
         if isinstance(rhs, Null):
-            return True
+            return Boolean(True)
         else:
             assert isinstance(rhs, Array)
             result = self.list != rhs.list
-            return result
+            return Boolean(result)

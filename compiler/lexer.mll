@@ -19,7 +19,7 @@ let int = '-'? digit+
 let float = '-'? digit+ '.' digit+
 let letter = ['a'-'z' 'A'-'Z']
 let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
-let struct_id = ['A'-'Z'] ['a'-'z' 'A'-'Z' '_']*
+let struct_id = ['A'-'Z'] ['a'-'z' 'A'-'Z' '_']+
 let generic_type = ['A'-'Z']
 
 rule read_token =
@@ -32,6 +32,8 @@ rule read_token =
   | "*" { TIMES }
   | "+" { PLUS }
   | "%" { MOD }
+  | "&&" { BAND }
+  | "||" { BOR }
   | "(" { LPAREN }
   | ")" { RPAREN }
   | "{" { LBRACE }
@@ -44,7 +46,7 @@ rule read_token =
   | "<" { LT }
   | "<=" { LE }
   | ">" { GT }
-  | ">=" { LE }
+  | ">=" { GE }
   | ":" { COLON }
   | ";" { SEMICOLON }
   | "," { COMMA }

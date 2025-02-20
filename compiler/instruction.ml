@@ -17,13 +17,16 @@ type instruction =
   | PRINT
   | PRINTLN
   | INPUT
-  | CMPNEQ of int
-  | CMPEQ of int
-  | CMPLT of int
-  | CMPLE of int
-  | CMPGT of int
-  | CMPGE of int
+  | CMPNEQ
+  | CMPEQ
+  | CMPLT
+  | CMPLE
+  | CMPGT
+  | CMPGE
+  | CMPAND
+  | CMPOR
   | JUMP of int
+  | JUMP_TRUE of int
   | MAKE_ARRAY of int
   | MAKE_EMPTY_ARRAY of int
   | LOAD_FROM_ARRAY
@@ -57,23 +60,26 @@ let as_string = function
   | PRINT -> "13"
   | PRINTLN -> "14"
   | INPUT -> "15"
-  | CMPNEQ i -> sprintf "16\t%d" i
-  | CMPEQ i -> sprintf "17\t%d" i
-  | CMPLT i -> sprintf "18\t%d" i
-  | CMPLE i -> sprintf "19\t%d" i
-  | CMPGT i -> sprintf "20\t%d" i
-  | CMPGE i -> sprintf "21\t%d" i
-  | JUMP i -> sprintf "22\t%d" i
-  | MAKE_ARRAY i -> sprintf "23\t%d" i
-  | MAKE_EMPTY_ARRAY i -> sprintf "24\t%d" i
-  | LOAD_FROM_ARRAY -> "25"
-  | STORE_TO_ARRAY -> "26"
-  | MAKE_OBJECT i -> sprintf "27\t%d" i
-  | GET_FIELD i -> sprintf "28\t%d" i
-  | SET_FIELD i -> sprintf "29\t%d" i
-  | CALL (i, i') -> sprintf "30\t%d\t%d" i i'
-  | MAKE_FUNCTION (i, i') -> sprintf "31\t%d\t%d" i i'
-  | HALT -> "32"
-  | RETURN -> "33"
-  | PASS -> "34"
-  | POP -> "35"
+  | CMPNEQ -> "16"
+  | CMPEQ -> "17"
+  | CMPLT -> "18"
+  | CMPLE -> "19"
+  | CMPGT -> "20"
+  | CMPGE -> "21"
+  | CMPAND -> "22"
+  | CMPOR -> "23"
+  | JUMP i -> sprintf "24\t%d" i
+  | JUMP_TRUE i -> sprintf "25\t%d" i
+  | MAKE_ARRAY i -> sprintf "26\t%d" i
+  | MAKE_EMPTY_ARRAY i -> sprintf "27\t%d" i
+  | LOAD_FROM_ARRAY -> "28"
+  | STORE_TO_ARRAY -> "29"
+  | MAKE_OBJECT i -> sprintf "30\t%d" i
+  | GET_FIELD i -> sprintf "31\t%d" i
+  | SET_FIELD i -> sprintf "32\t%d" i
+  | CALL (i, i') -> sprintf "33\t%d\t%d" i i'
+  | MAKE_FUNCTION (i, i') -> sprintf "34\t%d\t%d" i i'
+  | HALT -> "35"
+  | RETURN -> "36"
+  | PASS -> "37"
+  | POP -> "38"

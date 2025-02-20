@@ -2,11 +2,9 @@ import sys
 import os
 
 from opcodes import OpCode, stack_effect
-from symboltable import Symbol, SymbolType
 from frame import Frame
 from function import Function
 
-from objects.primitive_object import PrimitiveObject
 from objects.boolean import Boolean
 from objects.char import Char
 from objects.float import Float
@@ -15,8 +13,6 @@ from objects.string import String
 from objects.null import Null
 
 from vm import VM
-
-from rpython.rlib import rfile, jit
 
 BYTECODE_HEADER = "# Begin Aver Bytecode"
 

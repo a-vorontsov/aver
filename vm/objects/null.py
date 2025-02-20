@@ -1,5 +1,5 @@
 from primitive_object import PrimitiveObject
-
+import boolean
 
 class Null(PrimitiveObject):
     def get_string(self):
@@ -9,7 +9,7 @@ class Null(PrimitiveObject):
         print "null"
 
     def eq(self, rhs):
-        return isinstance(rhs, Null)
+        return boolean.Boolean(isinstance(rhs, Null))
 
     def neq(self, rhs):
-        return not isinstance(rhs, Null)
+        return boolean.Boolean(not isinstance(rhs, Null))

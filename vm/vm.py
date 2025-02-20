@@ -52,7 +52,7 @@ class VM(object):
             ops = func.bytecode[pc]
             opcode = ops[0]
 
-            debug = False
+            debug = True
             if debug:
                 print "stack"
                 frame.stack_print()
@@ -61,6 +61,7 @@ class VM(object):
                 print "literals"
                 frame.literal_print()
                 print get_printable_location(pc, func, self)
+                print "---"
 
             if opcode == OpCode.LOAD_CONST:
                 literal = frame.literal_get(ops[1])
@@ -134,68 +135,68 @@ class VM(object):
                 rhs = frame.stack_pop()
                 lhs = frame.stack_pop()
 
-                if lhs.eq(rhs):
-                    jump_to = ops[1]
-                    new_pc = pc + jump_to
-                    if new_pc < pc:
-                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
-                    pc = pc + jump_to
+                result = lhs.neq(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.CMPEQ:
                 rhs = frame.stack_pop()
                 lhs = frame.stack_pop()
 
-                if lhs.neq(rhs):
-                    jump_to = ops[1]
-                    new_pc = pc + jump_to
-                    if new_pc < pc:
-                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
-                    pc = pc + jump_to
+                result = lhs.eq(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.CMPGE:
                 rhs = frame.stack_pop()
                 lhs = frame.stack_pop()
 
-                if lhs.lt(rhs):
-                    jump_to = ops[1]
-                    new_pc = pc + jump_to
-                    if new_pc < pc:
-                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
-                    pc = pc + jump_to
+                result = lhs.ge(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.CMPGT:
                 rhs = frame.stack_pop()
                 lhs = frame.stack_pop()
 
-                if lhs.le(rhs):
-                    jump_to = ops[1]
-                    new_pc = pc + jump_to
-                    if new_pc < pc:
-                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
-                    pc = pc + jump_to
+                result = lhs.gt(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.CMPLE:
                 rhs = frame.stack_pop()
                 lhs = frame.stack_pop()
 
-                if lhs.gt(rhs):
-                    jump_to = ops[1]
-                    new_pc = pc + jump_to
-                    if new_pc < pc:
-                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
-                    pc = pc + jump_to
+                result = lhs.le(rhs)
+                frame.stack_push(result)
             elif opcode == OpCode.CMPLT:
                 rhs = frame.stack_pop()
                 lhs = frame.stack_pop()
 
-                if lhs.ge(rhs):
-                    jump_to = ops[1]
-                    new_pc = pc + jump_to
-                    if new_pc < pc:
-                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
-                    pc = pc + jump_to
-            elif opcode == OpCode.JMP:
+                result = lhs.lt(rhs)
+                frame.stack_push(result)
+            elif opcode == OpCode.CMPAND:
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                result = lhs.cmpand(rhs)
+                frame.stack_push(result)
+            elif opcode == OpCode.CMPOR:
+                rhs = frame.stack_pop()
+                lhs = frame.stack_pop()
+
+                result = lhs.cmpor(rhs)
+                frame.stack_push(result)
+            elif opcode == OpCode.JUMP:
                 jump_to = ops[1]
                 new_pc = pc + jump_to
                 if new_pc < pc:
                     jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
                 pc = pc + jump_to
+            elif opcode == OpCode.JUMP_TRUE:
+                jump_to = ops[1]
+                condition_result = frame.stack_pop()
+
+                assert isinstance(condition_result, Boolean)
+                result = condition_result.get_value()
+
+                if result == False:
+                    new_pc = pc + jump_to
+                    if new_pc < pc:
+                        jitdriver.can_enter_jit(pc=pc, func=func, self=self, frame=frame)
+                    pc = pc + jump_to
             elif opcode == OpCode.PRINT:
                 os.write(1, frame.stack_pop().get_string())
             elif opcode == OpCode.PRINTLN:
@@ -218,18 +219,21 @@ class VM(object):
                     value.set_value_at(i, elem)
                 frame.stack_push(value)
             elif opcode == OpCode.LOAD_FROM_ARRAY:
-                var = frame.stack_pop()
-                assert isinstance(var, Array)
                 idx = frame.stack_pop()
                 assert isinstance(idx, Integer)
+                var = frame.stack_pop()
+                assert isinstance(var, Array)
                 tmp = var.get_value_at(idx.value)
                 frame.stack_push(tmp)
             elif opcode == OpCode.STORE_TO_ARRAY:
                 var = frame.stack_pop()
                 assert isinstance(var, Array)
+                print var.get_string()
                 idx = frame.stack_pop()
                 assert isinstance(idx, Integer)
+                print idx.get_string()
                 val = frame.stack_pop()
+                print val.get_string()
                 var.set_value_at(idx.value, val)
                 frame.stack_push(var)
             elif opcode == OpCode.MAKE_OBJECT:

@@ -7,9 +7,6 @@ func all(n int) void {
     println sqr(n);
     all(n + 1);
   }
-  else {
-    pass;
-  }
 }
 
 func main() void {

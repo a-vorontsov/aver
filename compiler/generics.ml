@@ -59,7 +59,7 @@ and type_generics_usage_stmt stmt maybe_in_generic_structure =
   | Some Generic -> Ok ()
   | None -> (
       match stmt with
-      | Declare (_, (_, maybe_type, maybe_expr)) ->
+      | Declare (_, _, maybe_type, maybe_expr) ->
           let r =
             type_generics_usage_maybe_type maybe_type maybe_in_generic_structure
           in
@@ -69,29 +69,33 @@ and type_generics_usage_stmt stmt maybe_in_generic_structure =
                 type_generics_usage_expr expr maybe_in_generic_structure
             | None -> Ok ()
           else r
-      | Assign (_, (_, expr)) ->
+      | Assign (_, _, expr) ->
           type_generics_usage_expr expr maybe_in_generic_structure
-      | ArrayAssign _ -> Ok ()
+      | ArrayAssign (_, _, expr) ->
+          type_generics_usage_expr expr maybe_in_generic_structure
       | Print (_, expr) ->
           type_generics_usage_expr expr maybe_in_generic_structure
       | Println (_, expr) ->
           type_generics_usage_expr expr maybe_in_generic_structure
       | If (_, cond, block, block') ->
-          let r = type_generics_usage_bincond cond maybe_in_generic_structure in
+          let r = type_generics_usage_expr cond maybe_in_generic_structure in
           if Result.is_ok r then
             let r' =
               type_generics_usage_block block maybe_in_generic_structure
             in
             if Result.is_ok r' then
-              type_generics_usage_block block' maybe_in_generic_structure
+              match block' with
+              | Some block ->
+                  type_generics_usage_block block maybe_in_generic_structure
+              | None -> r'
             else r'
           else r
       | While (_, cond, block) ->
-          let r = type_generics_usage_bincond cond maybe_in_generic_structure in
+          let r = type_generics_usage_expr cond maybe_in_generic_structure in
           if Result.is_ok r then
             type_generics_usage_block block maybe_in_generic_structure
           else r
-      | Call (_, (_, maybe_type_param, exprs)) ->
+      | Call (_, _, maybe_type_param, exprs) ->
           let r =
             type_generics_usage_maybe_type maybe_type_param
               maybe_in_generic_structure
@@ -109,16 +113,6 @@ and type_generics_usage_stmt stmt maybe_in_generic_structure =
           type_generics_usage_expr expr maybe_in_generic_structure
       | Pass _ -> Ok () )
 
-and type_generics_usage_bincond (Bincond (_, _, expr, expr'))
-    maybe_in_generic_structure =
-  match maybe_in_generic_structure with
-  | Some Generic -> Ok ()
-  | None ->
-      let r = type_generics_usage_expr expr maybe_in_generic_structure in
-      if Result.is_ok r then
-        type_generics_usage_expr expr' maybe_in_generic_structure
-      else r
-
 and type_generics_usage_expr expr maybe_in_generic_structure =
   match maybe_in_generic_structure with
   | Some Generic -> Ok ()
@@ -134,8 +128,8 @@ and type_generics_usage_expr expr maybe_in_generic_structure =
           in
           if List.for_all (fun r -> Result.is_ok r) results then Ok ()
           else Error "Use of generic type but not in generic block"
-      | ArrayAccess (_, (_, expr)) ->
-          type_generics_usage_expr expr maybe_in_generic_structure
+      | ArrayAccess (_, access) ->
+          type_generics_usage_array_access access maybe_in_generic_structure
       | ArrayDec (_, a) ->
           type_generics_usage_type (get_array_dec_base a)
             maybe_in_generic_structure
@@ -146,7 +140,7 @@ and type_generics_usage_expr expr maybe_in_generic_structure =
           | Ok (), Ok () -> r
           | Error _, _ -> r
           | _, Error _ -> r' )
-      | AssignCall (_, (_, maybe_type_param, exprs)) ->
+      | AssignCall (_, _, maybe_type_param, exprs) ->
           let r =
             type_generics_usage_maybe_type maybe_type_param
               maybe_in_generic_structure
@@ -175,6 +169,18 @@ and type_generics_usage_expr expr maybe_in_generic_structure =
             if List.for_all (fun r -> Result.is_ok r) results then Ok ()
             else Error "Use of generic type but not in generic block"
           else r )
+
+and type_generics_usage_array_access (_, exprs) maybe_in_generic_structure =
+  match maybe_in_generic_structure with
+  | Some Generic -> Ok ()
+  | None ->
+      let results =
+        List.map
+          (fun e -> type_generics_usage_expr e maybe_in_generic_structure)
+          exprs
+      in
+      if List.for_all (fun r -> Result.is_ok r) results then Ok ()
+      else Error "Use of generic type in array access but not in generic block"
 
 and type_generics_usage_maybe_type maybe_type_expr maybe_in_generic_structure =
   match maybe_type_expr with

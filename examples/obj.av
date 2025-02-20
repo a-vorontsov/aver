@@ -1,0 +1,49 @@
+func main() void {
+    let a = 1 < 2; // should get "hello"
+    if (a) {
+        println "hello";
+    } else {
+        println "world";
+    }
+
+    a = 1 > 2; // should get "world"
+    if (a) {
+        println "hello";
+    } else {
+        println "world";
+    }
+
+    a = 1 == 2; // should get "world"
+    if (a) {
+        println "hello";
+    }
+
+    a = 2 <= 2; // should get "hello"
+    if (a) {
+        println "hello";
+    } else {
+        println "world";
+    }
+
+    a = 1 >= 1; // should get "hello"
+    if (a) {
+        println "hello";
+    } else {
+        println "world";
+    }
+
+    a = 1 != 2; // should get "hello"
+    if (a) {
+        println "hello";
+    } else {
+        println "world";
+    }
+
+    println "------";
+
+    if (1 == 1 || 2 != 2 && 2 < 2) { // should get "hello"
+        println "hello";
+    } else {
+        println "world";
+    }
+}

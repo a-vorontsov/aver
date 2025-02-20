@@ -1,6 +1,6 @@
 %{
-  open Ast
-  open Types
+    open Ast
+    open Types
 %}
 
 %token <int> INT
@@ -9,6 +9,7 @@
 %token <string> STRING
 %token <string> STRUCT_ID
 %token TIMES PLUS DIV MINUS MOD
+%token BAND BOR
 %token EQUALS
 %token BEQUALS BNEQUALS GT GE LT LE
 %token LPAREN RPAREN
@@ -24,142 +25,175 @@
 %token EOF TILDE
 %token T_INT T_FLOAT T_BOOL T_CHAR T_STRING T_VOID T_GENERIC
 
+%left BOR
+%left BAND
+%left BEQUALS BNEQUALS GT GE LT LE
 %left PLUS MINUS
 %left DIV TIMES MOD
-
-%on_error_reduce
-  stmt
-  expr
 
 %start <Ast.prog> prog
 %%
 
-%inline bop:
-  | BEQUALS { BEquals }
-  | BNEQUALS { BNequals }
-  | GT { GreaterThan }
-  | GE { GreaterThanEq }
-  | LT { LessThan }
-  | LE { LessThanEq }
+%inline binop:
+    | BOR { BOr }
+    | BAND { BAnd }
+    | BEQUALS { BEquals }
+    | BNEQUALS { BNequals }
+    | GT { GreaterThan }
+    | GE { GreaterThanEq }
+    | LT { LessThan }
+    | LE { LessThanEq }
+    | DIV { Div }
+    | TIMES { Mult }
+    | PLUS { Add }
+    | MINUS { Sub }
+    | MOD { Mod }
 
-%inline op:
-  | DIV { Div }
-  | TIMES { Mult }
-  | PLUS { Add }
-  | MINUS { Sub }
-  | MOD { Mod }
-
-%inline prim_type:
-  | T_INT { T_int }
-  | T_FLOAT { T_float }
-  | T_BOOL { T_bool }
-  | T_CHAR  { T_char }
-  | T_STRING { T_string }
-  | T_VOID { T_void }
-  | s = STRUCT_ID maybe_param = parameterised_type? { T_obj (s, maybe_param) }
-  | T_GENERIC { T_generic }
+%inline primitive_type:
+    | T_INT { T_int }
+    | T_FLOAT { T_float }
+    | T_BOOL { T_bool }
+    | T_CHAR  { T_char }
+    | T_STRING { T_string }
+    | T_VOID { T_void }
+    | T_GENERIC { T_generic }
 
 any_type:
-  | t = prim_type { t }
-  | a = array_type { a }
+    | _struct = struct_type { _struct }
+    | array = array_type { array }
+    | primitive = primitive_type { primitive }
+
+struct_type:
+    | s = STRUCT_ID maybe_param = parameterised_type? { T_obj (s, maybe_param) }
 
 array_type:
-  | a = array_type LSQUARE RSQUARE { T_array (a) }
-  | t = prim_type LSQUARE RSQUARE { T_array (t) }
+    | a = array_type LSQUARE RSQUARE { T_array (a) }
+    | t = primitive_type LSQUARE RSQUARE { T_array (t) }
 
 generic_type:
-  | TILDE T_GENERIC TILDE { Generic }
+    | TILDE T_GENERIC TILDE { Generic }
 
 parameterised_type:
-  | TILDE t = any_type TILDE { t }
-
-prog:
-  | s = _struct* f = func* EOF { s,f }
+    | TILDE t = any_type TILDE { t }
 
 _struct:
-  | STRUCT x = STRUCT_ID maybe_generic = generic_type? LBRACE s = struct_field* RBRACE { Struct ($startpos, x, maybe_generic, s) }
+    | STRUCT id = STRUCT_ID maybe_generic = generic_type? LBRACE s = struct_field* RBRACE { Struct ($startpos, id, maybe_generic, s) }
 
 struct_field:
-  | x = ID COLON t = any_type SEMICOLON { StructField ($startpos, x, t) }
+    | id = ID COLON t = any_type SEMICOLON { StructField ($startpos, id, t) }
+
+prog:
+    | structs = _struct* functions = func* EOF { structs, functions }
 
 func:
-  | FUNC x = ID maybe_generic = generic_type? ps = params t = any_type b = block { Func ($startpos, x, maybe_generic, t, ps, b) }
-
-block:
-  | LBRACE ls = line* RBRACE { ls }
-
-line:
-  | s = stmt { s }
+    | FUNC function_identifier = ID maybe_generic = generic_type? function_params = params function_return_type = any_type function_body = block {
+        Func (
+            $startpos,
+            function_identifier,
+            maybe_generic,
+            function_return_type,
+            function_params,
+            function_body
+        )
+    }
 
 params:
-  | LPAREN ps = param_list RPAREN { ps }
-
-param_list:
-  | ps = separated_list(COMMA, param) { ps }
+    LPAREN parameters = separated_list(COMMA, param) RPAREN { parameters }
 
 param:
-  | x = ID t = any_type { $startpos, x, t }
+    | x = ID t = any_type { $startpos, x, t }
 
-stmt:
-  | s = single_stmt SEMICOLON { s }
-  | IF LPAREN c = condition RPAREN s1 = block ELSE s2 = block { If ($startpos, c, s1, s2) }
-  | WHILE LPAREN c = condition RPAREN s = block { While ($startpos, c, s) }
+block:
+    | LBRACE statements = statement* RBRACE { statements }
 
-single_stmt:
-  | LET d = declaration { Declare ($startpos, d) }
-  | a = assignment { Assign ($startpos, a) }
-  | a = array_assign { ArrayAssign ($startpos, a) }
-  | PRINT e = expr { Print ($startpos, e) }
-  | PRINTLN e = expr { Println ($startpos, e) }
-  | PASS { Pass $startpos }
-  | RETURN e = expr { Return ($startpos, e) }
-  | f = function_call { Call ($startpos, f) }
+statement:
+    | s = single_line_statement SEMICOLON { s }
+    | i = if_statement { i }
+    | w = while_statement { w }
 
-condition:
-  | e1 = expr o = bop e2 = expr { Bincond ($startpos, o, e1, e2) }
+if_statement:
+    | IF LPAREN e = expr RPAREN s1 = block ELSE s2 = block { If ($startpos, e, s1, Some(s2)) }
+    | IF LPAREN e = expr RPAREN s1 = block { If ($startpos, e, s1, None) }
 
-declaration:
-  | x = ID t = any_type EQUALS e = expr { x, Some t, Some e }
-  | x = ID EQUALS e = expr { x, None, Some e }
-  | x = ID t = any_type { x, Some t, None }
+while_statement:
+    | WHILE LPAREN e = expr RPAREN s = block { While ($startpos, e, s) }
 
-assignment:
-  | x = identifier EQUALS e = expr { x, e }
+single_line_statement:
+    | d = declaration { d }
+    | a = assignment { a }
+    | a = array_assignment { a }
 
-identifier:
-  | x = ID { Var x }
-  | obj = ID DOT fields = separated_list(DOT, ID) { ObjField (obj, fields) }
+    | p = print { p }
+    | r = return { r }
 
-expr:
-  | LPAREN e = expr RPAREN { e }
-  | i = INT { Num ($startpos, i) }
-  | f = FLOAT { FNum ($startpos, f) }
-  | s = STRING { Str ($startpos, s) }
-  | x = identifier { Identifier ($startpos, x) }
-  | NULL { Null $startpos }
-  | e1 = expr o = op e2 = expr { Binop ($startpos, o, e1, e2) }
-  | s = struct_init { s }
-  | LSQUARE a = separated_list(COMMA, expr) RSQUARE { Array ($startpos, a) }
-  | a = array_dec { ArrayDec($startpos, a) }
-  | a = array_access { ArrayAccess ($startpos, a) }
-  | INPUT { Input $startpos }
-  | f = function_call { AssignCall ($startpos, f) }
+    | p = pass { p }
 
-array_access:
-  | x = identifier LSQUARE e = expr RSQUARE { x, e }
-
-array_assign:
-  | a = array_access EQUALS e = expr { a, e }
-
-array_dec:
-  | a = array_dec LSQUARE i = INT RSQUARE { MultiDim (a, i) }
-  | t = prim_type LSQUARE i = INT RSQUARE { SingleDim (t, i) }
-
-struct_init:
-  | s = STRUCT_ID maybe_param = parameterised_type? LBRACE f = struct_field_init* RBRACE { StructInit ($startpos, s, maybe_param, f) }
-
-struct_field_init:
-  | x = ID EQUALS e = expr SEMICOLON { x, e }
+    | f = function_call { f }
 
 function_call:
- | x = ID maybe_param = parameterised_type? LPAREN p = separated_list(COMMA, expr) RPAREN { x, maybe_param, p }
+    | x = ID maybe_param = parameterised_type? LPAREN p = separated_list(COMMA, expr) RPAREN {
+        Call (
+            $startpos,
+            x,
+            maybe_param,
+            p
+        )
+    }
+
+declaration:
+    | LET d = declare { d }
+
+declare:
+    | x = ID t = any_type EQUALS e = expr { Declare ($startpos, x, Some t, Some e) }
+    | x = ID EQUALS e = expr { Declare ($startpos, x, None, Some e) }
+    | x = ID t = any_type { Declare ($startpos, x, Some t, None) }
+
+assignment:
+    | id = identifier EQUALS e = expr { Assign ($startpos, id, e) }
+
+expr:
+    | LPAREN e = expr RPAREN { e }
+    | i = INT { Num ($startpos, i) }
+    | f = FLOAT { FNum ($startpos, f) }
+    | s = STRING { Str ($startpos, s) }
+    | x = identifier { Identifier ($startpos, x) }
+
+    | s = STRUCT_ID maybe_param = parameterised_type? LBRACE f = struct_field_init* RBRACE { StructInit ($startpos, s, maybe_param, f) }
+
+    | LSQUARE a = separated_list(COMMA, expr) RSQUARE { Array ($startpos, a) }
+    | a = array_dec { ArrayDec($startpos, a) }
+    | a = array_access { ArrayAccess ($startpos, a) }
+
+    | NULL { Null $startpos }
+    | INPUT { Input $startpos }
+
+    | x = ID maybe_param = parameterised_type? LPAREN p = separated_list(COMMA, expr) RPAREN { AssignCall ($startpos, x, maybe_param, p) }
+
+    | e1 = expr b = binop e2 = expr { Binop($startpos, b, e1, e2) }
+
+identifier:
+    | id = ID { Var id }
+    | obj = ID DOT fields = separated_list(DOT, ID) { ObjField (obj, fields) }
+
+array_access:
+    | id = identifier indices = nonempty_list(delimited(LSQUARE, expr, RSQUARE)) { id, indices }
+
+array_assignment:
+    | a = array_access EQUALS e = expr { ArrayAssign ($startpos, a, e) }
+
+array_dec:
+    | a = array_dec LSQUARE i = INT RSQUARE { MultiDim (a, i) }
+    | t = primitive_type LSQUARE i = INT RSQUARE { SingleDim (t, i) }
+
+struct_field_init:
+    | id = ID EQUALS e = expr SEMICOLON { id, e }
+
+print:
+    | PRINT e = expr { Print ($startpos, e) }
+    | PRINTLN e = expr { Println ($startpos, e) }
+
+return:
+    | RETURN e = expr { Return ($startpos, e) }
+
+pass:
+    | PASS { Pass $startpos }

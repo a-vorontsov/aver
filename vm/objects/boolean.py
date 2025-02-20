@@ -1,5 +1,5 @@
 from primitive_object import PrimitiveObject
-from null import Null
+import null
 
 
 class Boolean(PrimitiveObject):
@@ -20,18 +20,36 @@ class Boolean(PrimitiveObject):
 
     def eq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
-        if isinstance(rhs, Null):
-            return False
+        if isinstance(rhs, null.Null):
+            return Boolean(False)
         else:
             assert isinstance(rhs, Boolean)
             result = self.value == rhs.value
-            return result
+            return Boolean(result)
 
     def neq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
-        if isinstance(rhs, Null):
-            return True
+        if isinstance(rhs, null.Null):
+            return Boolean(True)
         else:
             assert isinstance(rhs, Boolean)
             result = self.value != rhs.value
-            return result
+            return Boolean(result)
+
+    def cmpand(self, rhs):
+        assert isinstance(rhs, PrimitiveObject)
+        if isinstance(rhs, null.Null):
+            return Boolean(True)
+        else:
+            assert isinstance(rhs, Boolean)
+            result = self.value and rhs.value
+            return Boolean(result)
+
+    def cmpor(self, rhs):
+        assert isinstance(rhs, PrimitiveObject)
+        if isinstance(rhs, null.Null):
+            return Boolean(True)
+        else:
+            assert isinstance(rhs, Boolean)
+            result = self.value or rhs.value
+            return Boolean(result)

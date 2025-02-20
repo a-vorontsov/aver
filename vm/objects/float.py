@@ -1,4 +1,5 @@
 from primitive_object import PrimitiveObject
+from boolean import Boolean
 from null import Null
 
 
@@ -43,37 +44,37 @@ class Float(PrimitiveObject):
     def eq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
         if isinstance(rhs, Null):
-            return False
+            return Boolean(False)
         else:
             assert isinstance(rhs, Float)
             result = self.value == rhs.value
-            return result
+            return Boolean(result)
 
     def neq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
         if isinstance(rhs, Null):
-            return True
+            return Boolean(True)
         else:
             assert isinstance(rhs, Float)
             result = self.value != rhs.value
-            return result
+            return Boolean(result)
 
     def lt(self, rhs):
         assert isinstance(rhs, Float)
         result = self.value < rhs.value
-        return result
+        return Boolean(result)
 
     def le(self, rhs):
         assert isinstance(rhs, Float)
         result = self.value <= rhs.value
-        return result
+        return Boolean(result)
 
     def gt(self, rhs):
         assert isinstance(rhs, Float)
         result = self.value > rhs.value
-        return result
+        return Boolean(result)
 
     def ge(self, rhs):
         assert isinstance(rhs, Float)
         result = self.value >= rhs.value
-        return result
+        return Boolean(result)

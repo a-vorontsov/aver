@@ -1,4 +1,5 @@
 from primitive_object import PrimitiveObject
+from boolean import Boolean
 from null import Null
 
 
@@ -21,17 +22,17 @@ class Char(PrimitiveObject):
     def eq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
         if isinstance(rhs, Null):
-            return False
+            return Boolean(False)
         else:
             assert isinstance(rhs, Char)
             result = self.value == rhs.value
-            return result
+            return Boolean(result)
 
     def neq(self, rhs):
         assert isinstance(rhs, PrimitiveObject)
         if isinstance(rhs, Null):
-            return True
+            return Boolean(True)
         else:
             assert isinstance(rhs, Char)
             result = self.value != rhs.value
-            return result
+            return Boolean(result)

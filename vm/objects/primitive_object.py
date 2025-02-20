@@ -31,3 +31,9 @@ class PrimitiveObject(object):
 
     def gt(self, rhs):
         raise NotImplementedError()
+
+    def cmpand(self, rhs):
+        raise NotImplementedError()
+
+    def cmpor(self, rhs):
+        raise NotImplementedError()

@@ -24,20 +24,23 @@ class OpCode(object):
     CMPLE = 19
     CMPGT = 20
     CMPGE = 21
-    JMP = 22
-    MAKE_ARRAY = 23
-    MAKE_EMPTY_ARRAY = 24
-    LOAD_FROM_ARRAY = 25
-    STORE_TO_ARRAY = 26
-    MAKE_OBJECT = 27
-    GET_FIELD = 28
-    SET_FIELD = 29
-    CALL = 30
-    MAKE_FUNCTION = 31
-    HALT = 32
-    RETURN = 33
-    PASS = 34
-    POP = 35
+    CMPAND = 22
+    CMPOR = 23
+    JUMP = 24
+    JUMP_TRUE = 25
+    MAKE_ARRAY = 26
+    MAKE_EMPTY_ARRAY = 27
+    LOAD_FROM_ARRAY = 28
+    STORE_TO_ARRAY = 29
+    MAKE_OBJECT = 30
+    GET_FIELD = 31
+    SET_FIELD = 32
+    CALL = 33
+    MAKE_FUNCTION = 34
+    HALT = 35
+    RETURN = 36
+    PASS = 37
+    POP = 38
 
 
 _stack_effects = [
@@ -63,7 +66,10 @@ _stack_effects = [
     -2,  # CMPLE
     -2,  # CMPGT
     -2,  # CMPGE
-    0,  # JMP
+    -2, # CMPAND
+    -2, # CMPOR
+    0,  # JUMP
+    -1, # JUMP_TRUE
     1,  # MAKE_ARRAY
     0,  # MAKE_EMPTY_ARRAY
     -1,  # LOAD_FROM_ARRAY

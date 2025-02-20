@@ -4,7 +4,20 @@ let string_of_loc loc =
   Printf.sprintf "Line:%d Column:%d" loc.Lexing.pos_lnum
     (loc.Lexing.pos_cnum - loc.Lexing.pos_bol + 1)
 
-type bop = Add | Mult | Div | Sub | Mod
+type bop =
+  | Add
+  | Mult
+  | Div
+  | Sub
+  | Mod
+  | BAnd
+  | BOr
+  | BEquals
+  | BNequals
+  | GreaterThan
+  | LessThan
+  | GreaterThanEq
+  | LessThanEq
 
 type identifier = Var of string | ObjField of string * string list
 
@@ -22,44 +35,26 @@ and expr =
   | ArrayAccess of loc * array_access
   | ArrayDec of loc * array_dec
   | Binop of loc * bop * expr * expr
-  | AssignCall of loc * function_call
+  | AssignCall of loc * string * Types.type_expr option * expr list
   | StructInit of loc * string * Types.type_expr option * (string * expr) list
 
 and array_dec =
   | SingleDim of Types.type_expr * int
   | MultiDim of array_dec * int
 
-and array_access = identifier * expr
-
-and booleanop =
-  | BEquals
-  | BNequals
-  | GreaterThan
-  | LessThan
-  | GreaterThanEq
-  | LessThanEq
-
-and condition = Bincond of loc * booleanop * expr * expr
+and array_access = identifier * expr list
 
 and params = (loc * string * Types.type_expr) list
 
-and declaration = string * Types.type_expr option * expr option
-
-and assignment = identifier * expr
-
-and array_assignment = array_access * expr
-
-and function_call = string * Types.type_expr option * expr list
-
 and stmt =
-  | Declare of loc * declaration
-  | Assign of loc * assignment
-  | ArrayAssign of loc * array_assignment
+  | Declare of loc * string * Types.type_expr option * expr option
+  | Assign of loc * identifier * expr
+  | ArrayAssign of loc * array_access * expr
   | Print of loc * expr
   | Println of loc * expr
-  | If of loc * condition * block * block
-  | While of loc * condition * block
-  | Call of loc * function_call
+  | If of loc * expr * block * block option
+  | While of loc * expr * block
+  | Call of loc * string * Types.type_expr option * expr list
   | Return of loc * expr
   | Pass of loc
 
